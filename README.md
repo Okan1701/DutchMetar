@@ -1,5 +1,7 @@
 # About
 
+[![Build Status](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
+
 DutchMetar is a .NET project for scraping METAR data from all available stations in the Netherlands.
 The goal is to create a database that contains historic metar data.
 
