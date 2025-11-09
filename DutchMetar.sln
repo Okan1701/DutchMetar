@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DutchMetar.Core", "src\DutchMetar.Core\DutchMetar.Core.csproj", "{70EEDF64-4ACD-45AF-873C-13B8D841B637}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{41412DD6-B5CE-4EFB-B685-B3DCC5637202}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{539AFB74-4728-4776-B1FC-E2F0FAA889D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DutchMetar.Core.Tests", "tests\DutchMetar.Core.Tests\DutchMetar.Core.Tests.csproj", "{C44675EB-88E0-43E8-BEDD-BBCF7CAE5324}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69468ADD-91BE-42D6-B1A8-1646B15DA899}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DutchMetar.Hangfire.Host", "src\DutchMetar.Hangfire.Host\DutchMetar.Hangfire.Host.csproj", "{92467F6A-EC64-4444-B19A-89C4863E8F56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70EEDF64-4ACD-45AF-873C-13B8D841B637}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70EEDF64-4ACD-45AF-873C-13B8D841B637}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70EEDF64-4ACD-45AF-873C-13B8D841B637}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70EEDF64-4ACD-45AF-873C-13B8D841B637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C44675EB-88E0-43E8-BEDD-BBCF7CAE5324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C44675EB-88E0-43E8-BEDD-BBCF7CAE5324}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C44675EB-88E0-43E8-BEDD-BBCF7CAE5324}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C44675EB-88E0-43E8-BEDD-BBCF7CAE5324}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92467F6A-EC64-4444-B19A-89C4863E8F56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92467F6A-EC64-4444-B19A-89C4863E8F56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92467F6A-EC64-4444-B19A-89C4863E8F56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92467F6A-EC64-4444-B19A-89C4863E8F56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{70EEDF64-4ACD-45AF-873C-13B8D841B637} = {41412DD6-B5CE-4EFB-B685-B3DCC5637202}
+		{C44675EB-88E0-43E8-BEDD-BBCF7CAE5324} = {539AFB74-4728-4776-B1FC-E2F0FAA889D4}
+		{92467F6A-EC64-4444-B19A-89C4863E8F56} = {41412DD6-B5CE-4EFB-B685-B3DCC5637202}
+	EndGlobalSection
+EndGlobal
