@@ -2,6 +2,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="README.md" />
+    <File Path="azure-pipelines.yml" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/DutchMetar.Core/DutchMetar.Core.csproj" />
