@@ -20,12 +20,12 @@ steps:
     displayName: Run solution tests
     inputs:
       command: 'test'
-      projects: 'DutchMetar.sln'
+      projects: 'DutchMetar.slnx'
       testRunTitle: '.NET Tests'
 
   - task: DotNetCoreCLI@2
     displayName: Build solution
     inputs:
       command: 'build'
-      projects: 'DutchMetar.sln'
+      projects: 'DutchMetar.slnx'
       arguments: '-c Release'

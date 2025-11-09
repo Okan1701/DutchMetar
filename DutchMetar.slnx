@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="README.md" />
+    <File Path="azure-pipelines.yml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/DutchMetar.Core/DutchMetar.Core.csproj" />
+    <Project Path="src/DutchMetar.Hangfire.Host/DutchMetar.Hangfire.Host.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DutchMetar.Core.Tests/DutchMetar.Core.Tests.csproj" />
+  </Folder>
+</Solution>
