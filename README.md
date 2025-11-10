@@ -1,4 +1,6 @@
 # About
+> [!WARNING]  
+> This project is still a work in progress!
 
 [![Build Status](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
 
@@ -49,3 +51,7 @@ The following example operations can be performed to help you get started
 dotnet ef migrations add <MIGRATION_NAME> --startup-project ..\DutchMetar.Hangfire.Host -o .\Infrastructure\Data\Migrations
 ```
 Ensure working directory of the terminal is set to the folder containing `DutchMetar.Core.csproj`!
+
+### Using Docker Compose
+Additionally, you can use docker compose to run the entire project. See file `docker-compose.yml`.
+When starting all containers at once, some may fail and auto-restart due to SQL server not getting ready on time.
