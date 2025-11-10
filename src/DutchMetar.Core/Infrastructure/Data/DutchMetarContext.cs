@@ -10,6 +10,8 @@ public class DutchMetarContext : DbContext
     public DbSet<Airport> Airports { get; set; }
     
     public DbSet<Metar> Metars { get; set; }
+    
+    public DbSet<MetarImportResult> MetarImportResults { get; set; }
 
     public DutchMetarContext()
     {
