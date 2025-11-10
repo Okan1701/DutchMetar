@@ -7,4 +7,8 @@ public class MetarParseException : DutchMetarException
     public MetarParseException(string? message) : base(message)
     {
     }
+
+    public MetarParseException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
 }

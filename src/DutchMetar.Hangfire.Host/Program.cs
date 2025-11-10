@@ -28,8 +28,12 @@ app.UseHangfireDashboard("", new DashboardOptions
 });
 
 // Apply database migrations
-var context = app.Services.GetRequiredService<DutchMetarContext>();
-context.Database.EnsureCreated();
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<DutchMetarContext>();
+    context.Database.EnsureCreated();
+}
+
 
 // Register recurring jobs
 RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));

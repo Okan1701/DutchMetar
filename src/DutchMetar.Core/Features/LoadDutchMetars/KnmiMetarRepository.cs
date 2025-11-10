@@ -46,7 +46,7 @@ public class KnmiMetarRepository : IKnmiMetarRepository
         return metarTextBlocks.Select(metarBlock =>
         {
             var match = pattern.Match(metarBlock);
-            return match.Value.Trim();
+            return match.Value.Replace("\n", " ").Trim();
         }).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
     }
 }

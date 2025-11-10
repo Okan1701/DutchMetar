@@ -1,9 +1,11 @@
 using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Features.LoadDutchMetars.Exceptions;
 using DutchMetar.Core.Features.LoadDutchMetars.Interfaces;
 using DutchMetar.Core.Infrastructure.Data;
 using MetarParserCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Metar = MetarParserCore.Objects.Metar;
 
 namespace DutchMetar.Core.Features.LoadDutchMetars;
 
@@ -31,7 +33,16 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
         
         foreach (var metar in metars)
         {
-            var decodedMetar = parser.Parse(metar);
+            Metar decodedMetar;
+
+            try
+            {
+                decodedMetar = parser.Parse(metar);
+            }
+            catch (Exception ex)
+            {
+                throw new MetarParseException($"Failed to parse {metar}", ex);
+            }
 
             if (string.IsNullOrWhiteSpace(decodedMetar?.Airport)) continue;
             
