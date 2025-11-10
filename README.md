@@ -30,7 +30,7 @@ In order to run the project, you must install the following:
 ### Build the solution
 Open a terminal window in the folder containing DutchMetar.sln and run the following commands:
 
-```
+```powershell
 dotnet restore
 dotnet build
 ```
@@ -42,12 +42,12 @@ To run a specific project, navigate to the folder containing the .csproj file su
 Entityframework Core is used to create and update the SQL database using migrations.
 The following example operations can be performed to help you get started
 
-```
-// Create or update database
-// Ensure the specified startup project contains a valid connection string!
- dotnet ef database update --startup-project ..\DutchMetar.Hangfire.Host  
+```powershell
+# Create or update database
+# Ensure the specified startup project contains a valid connection string!
+dotnet ef database update --startup-project ..\DutchMetar.Hangfire.Host  
 
-// Create a new migration
+# Create a new migration
 dotnet ef migrations add <MIGRATION_NAME> --startup-project ..\DutchMetar.Hangfire.Host -o .\Infrastructure\Data\Migrations
 ```
 Ensure working directory of the terminal is set to the folder containing `DutchMetar.Core.csproj`!
