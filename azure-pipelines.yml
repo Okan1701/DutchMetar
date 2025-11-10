@@ -9,23 +9,41 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '10.x'
-      includePreviewVersions: true
+stages:
+  - stage: build
+    jobs:
+      - job: buildSolution
+        displayName: Build & Test Solution
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET 10
+            inputs:
+              packageType: 'sdk'
+              version: '10.x'
+              includePreviewVersions: true
 
-  - task: DotNetCoreCLI@2
-    displayName: Run solution tests
-    inputs:
-      command: 'test'
-      projects: 'DutchMetar.slnx'
-      testRunTitle: '.NET Tests'
+          - task: DotNetCoreCLI@2
+            displayName: Build solution
+            inputs:
+              command: 'build'
+              projects: 'DutchMetar.slnx'
+              arguments: '-c Release'
 
-  - task: DotNetCoreCLI@2
-    displayName: Build solution
-    inputs:
-      command: 'build'
-      projects: 'DutchMetar.slnx'
-      arguments: '-c Release'
+          - task: DotNetCoreCLI@2
+            displayName: Run solution tests
+            inputs:
+              command: 'test'
+              projects: 'DutchMetar.slnx'
+              testRunTitle: '.NET Tests'
+
+      - job: publishHangfireImage
+        displayName: Publish DutchMetar Hangfire image
+        steps: 
+          - task: Docker@2
+            inputs:
+              containerRegistry: 'Docker Hub'
+              repository: 'ultimateantic/dutchmetar-jobs'
+              command: 'buildAndPush'
+              Dockerfile: 'src/DutchMetar.Hangfire.Host/Dockerfile'
+              buildContext: '.'
+              tags: 'latest'
