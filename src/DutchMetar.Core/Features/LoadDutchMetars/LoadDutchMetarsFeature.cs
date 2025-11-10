@@ -27,40 +27,62 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Retrieving METARs from KNMI");
-        var correlationId = Guid.NewGuid();
-        var metars = await _repository.GetKnmiRawMetarsAsync();
         var parser = new MetarParser();
-        
-        foreach (var metar in metars)
+        var importResult = new MetarImportResult();
+        var correlationId = Guid.NewGuid();
+        importResult.CorrelationId = correlationId;
+        _context.MetarImportResults.Add(importResult);
+
+        try
         {
-            Metar decodedMetar;
+            var metars = await _repository.GetKnmiRawMetarsAsync();
+            importResult.IsSuccess = true;
+            foreach (var metar in metars)
+            {
+                Metar decodedMetar;
 
-            try
-            {
-                decodedMetar = parser.Parse(metar);
-            }
-            catch (Exception ex)
-            {
-                throw new MetarParseException($"Failed to parse {metar}", ex);
-            }
+                try
+                {
+                    decodedMetar = parser.Parse(metar);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to parse {Metar}", metar);
+                    throw;
+                }
 
-            if (string.IsNullOrWhiteSpace(decodedMetar?.Airport)) continue;
+                if (string.IsNullOrWhiteSpace(decodedMetar?.Airport)) continue;
             
-            var airport = await GetAirportIncludingLatestMetarAsync(decodedMetar.Airport, correlationId, cancellationToken);
-            var mappedMetarEntity = _metarMapper.MapDecodedMetarToEntity(decodedMetar, metar, airport, correlationId);
+                var airport = await GetAirportIncludingLatestMetarAsync(decodedMetar.Airport, correlationId, cancellationToken);
+                if (airport.Id == 0) importResult.AddedAirportCount++;
+                
+                var mappedMetarEntity = _metarMapper.MapDecodedMetarToEntity(decodedMetar, metar, airport, correlationId);
             
-            var latestSavedMetar = airport.MetarReports.FirstOrDefault();
-            if (latestSavedMetar == null || latestSavedMetar?.IssuedAt < mappedMetarEntity.IssuedAt)
-            {
-                _context.Metars.Add(mappedMetarEntity);
+                var latestSavedMetar = airport.MetarReports.FirstOrDefault();
+                if (latestSavedMetar == null || latestSavedMetar?.IssuedAt < mappedMetarEntity.IssuedAt)
+                {
+                    _context.Metars.Add(mappedMetarEntity);
+                    importResult.AddedMetarCount++;
+                }
+                else if (latestSavedMetar != null && latestSavedMetar.IssuedAt.Date == mappedMetarEntity.IssuedAt.Date &&
+                         mappedMetarEntity.IsCorrected)
+                {
+                    // METAR is a correction to previous issued one, so we update existing record 
+                    _context.Metars.Remove(latestSavedMetar);
+                    _context.Metars.Add(mappedMetarEntity);
+                    importResult.CorrectedMetarCount++;
+                }
             }
-            else if (latestSavedMetar != null && latestSavedMetar.IssuedAt.Date == mappedMetarEntity.IssuedAt.Date &&
-                mappedMetarEntity.IsCorrected)
-            {
-                // METAR is a correction to previous issued one, so we update existing record 
-                _context.Metars.Remove(latestSavedMetar);
-                _context.Metars.Add(mappedMetarEntity);
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "METAR Import failed");
+            importResult.IsSuccess = false;
+            importResult.ExceptionName = ex.GetType().Name;
+            importResult.ExceptionMessage = ex.Message;
+            importResult.ExceptionTrace = ex.StackTrace;
+            await _context.SaveChangesAsync(cancellationToken);
+            throw;
         }
         
         await _context.SaveChangesAsync(cancellationToken);
