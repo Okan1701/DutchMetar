@@ -1,23 +1,16 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
+﻿FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["src/DutchMetar.HangfireHost/DutchMetar.HangfireHost.csproj", "src/DutchMetar.HangfireHost/"]
-RUN dotnet restore "src/DutchMetar.HangfireHost/DutchMetar.HangfireHost.csproj"
-COPY . .
-WORKDIR "/src/src/DutchMetar.HangfireHost"
-RUN dotnet build "./DutchMetar.HangfireHost.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Copy everything
+COPY . ./
+# Restore as distinct layers
+RUN dotnet restore
+# Build and publish a release
+RUN dotnet publish ./src/DutchMetar.Hangfire.Host -c Release -o out --no-restore
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./DutchMetar.HangfireHost.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "DutchMetar.HangfireHost.dll"]
+COPY --from=build /app/out .
+ENV ASPNETCORE_URLS=http://*:5000
+ENTRYPOINT ["dotnet", "DutchMetar.Hangfire.Host.dll"]

@@ -1,0 +1,29 @@
+﻿services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    restart: on-failure
+    ports:
+      - "1434:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - MSSQL_SA_PASSWORD=Secret12345!
+    volumes:
+      - mssql-data:/var/opt/mssql
+  
+  hangfire:
+    build: 
+      context: .
+      dockerfile: .\src\DutchMetar.Hangfire.Host\Dockerfile
+    restart: on-failure
+    ports:
+      - "5000:5000"
+    environment:
+      - ConnectionStrings__DutchMetarMssql=Server=mssql;Database=dutchmetar;User Id=sa;Password=Secret12345!;TrustServerCertificate=True;
+      - ConnectionStrings__HangfireMssql=Server=mssql;Database=dutchmetar;User Id=sa;Password=Secret12345!;TrustServerCertificate=True;
+    depends_on:
+      mssql:
+        condition: service_started
+
+volumes:
+  mssql-data:

@@ -1,6 +1,8 @@
 using DutchMetar.Core.Features.LoadDutchMetars;
 using DutchMetar.Core.Features.LoadDutchMetars.Interfaces;
 using DutchMetar.Core.Infrastructure;
+using DutchMetar.Core.Infrastructure.Data;
+using DutchMetar.Hangfire.Host;
 using Hangfire;
 
 const string hangfireConnectionStringKey = "HangfireMssql";
@@ -21,8 +23,13 @@ app.UseHangfireDashboard("", new DashboardOptions
     AppPath = null,
     DarkModeEnabled = true,
     DashboardTitle = "DutchMetar - Hangfire",
-    DisplayStorageConnectionString = true
+    DisplayStorageConnectionString = true,
+    Authorization = [new HangfireAuthorizationFilter()]
 });
+
+// Apply database migrations
+var context = app.Services.GetRequiredService<DutchMetarContext>();
+context.Database.EnsureCreated();
 
 // Register recurring jobs
 RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));
