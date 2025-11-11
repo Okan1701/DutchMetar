@@ -6,9 +6,6 @@ public class MetarImportResult : Entity
 {
     public ImportResult Result { get; set; } = ImportResult.None;
     
-    [Obsolete("Will be removed soon in favour of ImportResult")]
-    public bool IsSuccess { get; set; }
-    
     public int AddedMetarCount { get; set; }
     
     public int CorrectedMetarCount { get; set; }

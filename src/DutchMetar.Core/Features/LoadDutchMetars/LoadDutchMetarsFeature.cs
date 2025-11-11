@@ -38,7 +38,6 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
         try
         {
             var metars = await _repository.GetKnmiRawMetarsAsync();
-            importResult.IsSuccess = true;
             importResult.Result = ImportResult.Succeeded;
             foreach (var metar in metars)
             {
@@ -82,7 +81,6 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
         catch (Exception ex)
         {
             _logger.LogError(ex, "METAR Import failed");
-            importResult.IsSuccess = false;
             importResult.Result = ImportResult.Failed;
             importResult.ExceptionName = ex.GetType().Name;
             importResult.ExceptionMessage = ex.Message;
