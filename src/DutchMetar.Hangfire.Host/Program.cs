@@ -4,6 +4,7 @@ using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.Hangfire.Host;
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
 
 const string hangfireConnectionStringKey = "HangfireMssql";
 
@@ -31,7 +32,7 @@ app.UseHangfireDashboard("", new DashboardOptions
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<DutchMetarContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
 
 
