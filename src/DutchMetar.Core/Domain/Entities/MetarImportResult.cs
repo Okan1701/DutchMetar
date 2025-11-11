@@ -1,7 +1,12 @@
-﻿namespace DutchMetar.Core.Domain.Entities;
+﻿using DutchMetar.Core.Domain.Enums;
+
+namespace DutchMetar.Core.Domain.Entities;
 
 public class MetarImportResult : Entity
 {
+    public ImportResult Result { get; set; } = ImportResult.None;
+    
+    [Obsolete("Will be removed soon in favour of ImportResult")]
     public bool IsSuccess { get; set; }
     
     public int AddedMetarCount { get; set; }
@@ -15,4 +20,6 @@ public class MetarImportResult : Entity
     public string? ExceptionMessage { get; set; }
     
     public string? ExceptionTrace { get; set; }
+    
+    public string? FailedMetarParses { get; set; }
 }

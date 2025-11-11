@@ -1,4 +1,5 @@
 using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Domain.Enums;
 using DutchMetar.Core.Features.LoadDutchMetars.Exceptions;
 using DutchMetar.Core.Features.LoadDutchMetars.Interfaces;
 using DutchMetar.Core.Infrastructure.Data;
@@ -30,6 +31,7 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
         var parser = new MetarParser();
         var importResult = new MetarImportResult();
         var correlationId = Guid.NewGuid();
+        var failedMetarParses = new List<string>();
         importResult.CorrelationId = correlationId;
         _context.MetarImportResults.Add(importResult);
 
@@ -37,6 +39,7 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
         {
             var metars = await _repository.GetKnmiRawMetarsAsync();
             importResult.IsSuccess = true;
+            importResult.Result = ImportResult.Succeeded;
             foreach (var metar in metars)
             {
                 Metar decodedMetar;
@@ -48,7 +51,9 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to parse {Metar}", metar);
-                    throw;
+                    importResult.Result = ImportResult.SucceededWithErrors;
+                    failedMetarParses.Add(metar);
+                    continue;
                 }
 
                 if (string.IsNullOrWhiteSpace(decodedMetar?.Airport)) continue;
@@ -78,13 +83,15 @@ public class LoadDutchMetarsFeature : ILoadDutchMetarsFeature
         {
             _logger.LogError(ex, "METAR Import failed");
             importResult.IsSuccess = false;
+            importResult.Result = ImportResult.Failed;
             importResult.ExceptionName = ex.GetType().Name;
             importResult.ExceptionMessage = ex.Message;
             importResult.ExceptionTrace = ex.StackTrace;
             await _context.SaveChangesAsync(cancellationToken);
             throw;
         }
-        
+
+        if (failedMetarParses.Count > 0) importResult.FailedMetarParses = string.Join(";", failedMetarParses);
         await _context.SaveChangesAsync(cancellationToken);
     }
     

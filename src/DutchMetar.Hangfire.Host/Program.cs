@@ -36,6 +36,7 @@ using (var scope = app.Services.CreateScope())
 
 
 // Register recurring jobs
+GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
 RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));
 
 app.Run();
