@@ -17,8 +17,8 @@
       <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
       <PackageReference Include="Hangfire.Core" Version="1.8.22" />
       <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
-      <PackageReference Include="Microsoft.Data.SqlClient" Version="*" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0-rc.2.25502.107">
+      <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
