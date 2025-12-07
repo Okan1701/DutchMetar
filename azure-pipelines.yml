@@ -40,7 +40,7 @@ stages:
             inputs:
               command: 'build'
               projects: 'DutchMetar.slnx'
-              arguments: '-c Release'
+              arguments: '-c Release --no-restore'
 
           - task: DotNetCoreCLI@2
             displayName: Run solution tests
@@ -50,6 +50,7 @@ stages:
               testRunTitle: '.NET Tests'
 
       - job: publishHangfireImage
+        condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
         displayName: Publish DutchMetar Hangfire image
         dependsOn: buildSolution
         steps: 
