@@ -27,12 +27,9 @@ stages:
               version: '10.x'
               includePreviewVersions: true
 
-          - task: DotNetCoreCLI@2
+          - task: CmdLine@2
             inputs:
-              command: 'restore'
-              feedsToUse: 'config'
-              nugetConfigPath: 'nuget.config'
-              externalFeedCredentials: 'GitHub Packages'
+              script: 'dotnet nuget add source --username $(UserName) --password $(ApiKey) --store-password-in-clear-text --name github "$(FeedUrl)"'
 
           - task: DotNetCoreCLI@2
             displayName: Build solution
