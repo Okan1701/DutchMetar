@@ -24,6 +24,10 @@ stages:
               version: '10.x'
               includePreviewVersions: true
 
+          - task: NuGetAuthenticate@1
+            inputs:
+              nuGetServiceConnections: 'GitHub Packages'
+
           - task: DotNetCoreCLI@2
             displayName: Build solution
             inputs:
