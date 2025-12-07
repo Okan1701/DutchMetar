@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
+    <File Path="nuget.config" />
     <File Path="README.md" />
     <File Path="azure-pipelines.yml" />
     <File Path="docker-compose.yml" />
