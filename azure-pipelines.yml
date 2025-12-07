@@ -9,6 +9,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+- group: GitHubPackages
+
 stages:
   - stage: build
     jobs:
@@ -24,9 +27,10 @@ stages:
               version: '10.x'
               includePreviewVersions: true
 
-          - task: NuGetAuthenticate@1
+          - task: DotNetCoreCLI@2
             inputs:
-              nuGetServiceConnections: 'GitHub Packages'
+              command: 'custom'
+              custom: 'nuget add source --username $(UserName) --password $(ApiKey) --name github "$(FeedUrl)"'
 
           - task: DotNetCoreCLI@2
             displayName: Build solution
