@@ -27,9 +27,13 @@ stages:
               version: '10.x'
               includePreviewVersions: true
 
-          - task: CmdLine@2
+          - task: DotNetCoreCLI@2
             inputs:
-              script: 'dotnet nuget add source --username $(UserName) --password $(ApiKey) --store-password-in-clear-text --name github "$(FeedUrl)"'
+              command: 'restore'
+              projects: 'DutchMetar.slnx'
+              feedsToUse: 'config'
+              nugetConfigPath: 'nuget.config'
+              externalFeedCredentials: 'GitHub Packages'
 
           - task: DotNetCoreCLI@2
             displayName: Build solution
