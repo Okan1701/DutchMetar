@@ -1,0 +1,24 @@
+﻿@page "/Airport/{AirportIcao}"
+@using DutchMetar.Web.Client.Components.Card
+<h1>@AirportIcao.ToUpperInvariant()</h1>
+
+<h3>Latest Weather</h3>
+<div class="latest-weather-items">
+    <Card>
+        <CardBigValue Value="23 °C" Label="Temperature"></CardBigValue>
+    </Card>
+    <Card>
+        <CardBigValue Value="6 °C" Label="Dewpoint"></CardBigValue>
+    </Card>
+    <Card>
+        <CardBigValue Value="230 / 12 kt" Label="Wind"></CardBigValue>
+    </Card>
+    <Card>
+        <CardBigValue Value="1021 hPA" Label="Pressure"></CardBigValue>
+    </Card>
+    <Card>
+        <CardBigValue Value="9999 m" Label="Visibility"></CardBigValue>
+    </Card>
+</div>
+
+<h3>Historical Graphs</h3>
