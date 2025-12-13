@@ -1,0 +1,15 @@
+﻿.airports {
+    display: flex;
+    flex-direction: column;
+}
+
+.airport {
+    border-bottom: 1px #8e8e8e solid;
+    padding: 10px;
+}
+
+.airport:hover {
+    background-color: #fff9f9;
+    transition: 100ms;
+    cursor: pointer;
+}

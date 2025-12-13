@@ -49,6 +49,7 @@ h1:focus {
 body {
     margin: 0;
     font-family: Verdana, sans-serif;
+    background-color: #d4dddf;
     /*background-color: #181a1b;*/
     /*color: white;*/
 }
