@@ -12,9 +12,35 @@
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.app {
+    height: 100vh;
+}
+
+.app-layout {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+}
+
+.navmenu {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f4f4;
+    height: 100%;
+}
+
+.navmenu > div {
+    flex: 1;
+}
+
+.content {
+    flex: 1;
+}
