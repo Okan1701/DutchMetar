@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DutchMetar.Core\DutchMetar.Core.csproj" />
     <ProjectReference Include="..\DutchMetar.Web.Client\DutchMetar.Web.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.2.25502.107" />
   </ItemGroup>
