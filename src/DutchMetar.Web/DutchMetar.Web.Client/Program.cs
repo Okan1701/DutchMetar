@@ -1,5 +1,5 @@
-using DutchMetar.Web.Client.Services.Interfaces;
 using DutchMetar.Web.Shared.Services;
+using DutchMetar.Web.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

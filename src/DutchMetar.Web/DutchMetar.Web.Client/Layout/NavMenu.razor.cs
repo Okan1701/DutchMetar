@@ -1,5 +1,5 @@
-﻿using DutchMetar.Web.Client.Services.Interfaces;
-using DutchMetar.Web.Shared.Models;
+﻿using DutchMetar.Web.Shared.Models;
+using DutchMetar.Web.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 
 namespace DutchMetar.Web.Client.Layout;

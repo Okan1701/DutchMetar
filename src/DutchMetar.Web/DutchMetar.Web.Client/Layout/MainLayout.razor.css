@@ -25,7 +25,7 @@
 
 .app-layout {
     display: flex;
-    gap: 20px;
+    gap: 0;
     height: 100%;
 }
 
@@ -43,4 +43,5 @@
 
 .content {
     flex: 1;
+    padding: 0 20px;
 }
