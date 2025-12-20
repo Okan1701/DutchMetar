@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
-using DutchMetar.Web.Client.Services.Interfaces;
 using DutchMetar.Web.Shared.Constants;
 using DutchMetar.Web.Shared.Models;
+using DutchMetar.Web.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 
 namespace DutchMetar.Web.Shared.Services;
@@ -22,11 +22,24 @@ public class AirportService : IAirportService
         var client = _httpClientFactory.CreateClient();
         client.BaseAddress = new Uri(_navigationManager.BaseUri);
 
-        var httpResult = await client.GetAsync(EndpointConstants.AirportSummariesEndpoint);
+        var httpResult = await client.GetAsync(EndpointConstants.AirportEndpoint);
         httpResult.EnsureSuccessStatusCode();
         
         var airports = await httpResult.Content.ReadFromJsonAsync<AirportSummary[]>();
 
         return airports ?? throw new NullReferenceException("Failed to deserialize JSON");
+    }
+    
+    public async Task<AirportDetails> GetAirportDetailsAsync(string airportIcaoCode)
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(_navigationManager.BaseUri);
+
+        var httpResult = await client.GetAsync(EndpointConstants.AirportEndpoint + airportIcaoCode);
+        httpResult.EnsureSuccessStatusCode();
+        
+        var airportDetails = await httpResult.Content.ReadFromJsonAsync<AirportDetails>();
+
+        return airportDetails ?? throw new NullReferenceException("Failed to deserialize JSON");
     }
 }
