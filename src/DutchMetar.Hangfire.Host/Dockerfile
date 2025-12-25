@@ -4,7 +4,7 @@ WORKDIR /app
 # Copy everything
 COPY . ./
 # Restore as distinct layers
-RUN dotnet restore
+RUN dotnet restore --configfile nuget.config
 # Build and publish a release
 RUN dotnet publish ./src/DutchMetar.Hangfire.Host -c Release -o out --no-restore
 
