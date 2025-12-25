@@ -60,7 +60,7 @@ stages:
                 </configuration>
                 "@
                 
-                Set-Content -Path "./src/DutchMetar.Hangfire.Host/nuget.config" -Value $xmlContent -Encoding UTF8
+                Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
 
           - task: Docker@2
             displayName: Build & Push
