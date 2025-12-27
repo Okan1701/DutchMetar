@@ -1,4 +1,5 @@
 ﻿using DutchMetar.Core.Features.AIrportDetails.Interfaces;
+using DutchMetar.Core.Features.AirportPerDayHistory.Interfaces;
 using DutchMetar.Core.Features.AirportSummary.Interfaces;
 using DutchMetar.Web.Mapping;
 using DutchMetar.Web.Shared.Constants;
@@ -13,11 +14,13 @@ public class AirportController : ControllerBase
 {
     private readonly IGetAirportSummariesFeature _getAirportSummariesFeature;
     private readonly IGetAirportDetailsFeature _getAirportDetailsFeature;
+    private readonly IGetAirportDayHistoryFeature _getAirportDayHistoryFeature;
 
-    public AirportController(IGetAirportSummariesFeature getAirportSummariesFeature, IGetAirportDetailsFeature getAirportDetailsFeature)
+    public AirportController(IGetAirportSummariesFeature getAirportSummariesFeature, IGetAirportDetailsFeature getAirportDetailsFeature, IGetAirportDayHistoryFeature getAirportDayHistoryFeature)
     {
         _getAirportSummariesFeature = getAirportSummariesFeature;
         _getAirportDetailsFeature = getAirportDetailsFeature;
+        _getAirportDayHistoryFeature = getAirportDayHistoryFeature;
     }
     
     [HttpGet]
@@ -35,7 +38,22 @@ public class AirportController : ControllerBase
         {
             Icao =  airportDetails.Icao,
             LastUpdated =  airportDetails.LastUpdated,
-            CurrentWeather = AirportCurrentMetarMapping.Map(airportDetails.CurrentWeather)
+            CurrentWeather = airportDetails.CurrentWeather != null ? AirportCurrentMetarMapping.Map(airportDetails.CurrentWeather) : null,
+            HistoricalWeather = airportDetails.HistoricalWeather.Select(AirportCurrentMetarMapping.Map).ToArray()
         });
+    }
+
+    [HttpGet("{airportIcao}/history")]
+    public async Task<IActionResult> GetAirportHistory([FromRoute] string airportIcao, [FromQuery] DateOnly? targetDate,
+        CancellationToken cancellationToken)
+    {
+        targetDate ??= DateOnly.FromDateTime(DateTime.Today);
+        var result = await _getAirportDayHistoryFeature.GetAirportDayHistoryAsync(new()
+        {
+            Date = targetDate.Value,
+            Icao = airportIcao
+        }, cancellationToken);
+
+        return Ok(result.MapToWebModel());
     }
 }
