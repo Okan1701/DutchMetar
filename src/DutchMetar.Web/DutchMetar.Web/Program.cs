@@ -1,4 +1,5 @@
 using DutchMetar.Core.Features.AirportDetails;
+using DutchMetar.Core.Features.AirportPerDayHistory;
 using DutchMetar.Core.Features.AirportSummary;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Web.Components;
@@ -16,6 +17,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddAirportSummaryFeature();
 builder.Services.AddAirportDetailsFeature();
+builder.Services.AddAirportDayHistoryFeature();
 
 // Shared services
 builder.Services.AddScoped<IAirportService, AirportService>();
