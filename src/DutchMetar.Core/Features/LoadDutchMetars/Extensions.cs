@@ -5,6 +5,7 @@ namespace DutchMetar.Core.Features.LoadDutchMetars;
 
 public static class Extensions
 {
+    [Obsolete("To be deleted once actual KNMI Data Platform is used as source")]
     public static void AddLoadDutchMetarsFeature(this IServiceCollection services)
     {
         services.AddScoped<ILoadDutchMetarsFeature, LoadDutchMetarsFeature>();

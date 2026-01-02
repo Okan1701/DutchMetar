@@ -29,8 +29,4 @@
       <ProjectReference Include="..\DutchMetar.Core\DutchMetar.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Jobs\" />
-    </ItemGroup>
-
 </Project>
