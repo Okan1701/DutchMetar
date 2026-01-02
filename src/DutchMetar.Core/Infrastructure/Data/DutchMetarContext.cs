@@ -12,6 +12,8 @@ public class DutchMetarContext : DbContext
     public DbSet<Metar> Metars { get; set; }
     
     public DbSet<MetarImportResult> MetarImportResults { get; set; }
+    
+    public DbSet<KnmiMetarFile> KnmiMetarFiles { get; set; }
 
     public DutchMetarContext()
     {
@@ -19,6 +21,13 @@ public class DutchMetarContext : DbContext
 
     public DutchMetarContext(DbContextOptions options) : base(options)
     {
+    }
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<KnmiMetarFile>()
+            .HasIndex(u => u.FileName)
+            .IsUnique();
     }
 
     public override int SaveChanges()
