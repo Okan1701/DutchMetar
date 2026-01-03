@@ -1,5 +1,7 @@
 using DutchMetar.Core.Features.LoadDutchMetars;
 using DutchMetar.Core.Features.LoadDutchMetars.Interfaces;
+using DutchMetar.Core.Features.ProcessKnmiMetarFiles;
+using DutchMetar.Core.Features.ProcessKnmiMetarFiles.Interfaces;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
 using DutchMetar.Core.Infrastructure;
@@ -12,6 +14,7 @@ const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLoadDutchMetarsFeature();
+builder.Services.AddProcessKnmiMetarFilesFeature();
 builder.Services.AddSyncKnmiMetarFileListFeature(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddHangfireServer();
@@ -42,7 +45,7 @@ using (var scope = app.Services.CreateScope())
 // Register recurring jobs
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(120));
-RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));
+RecurringJob.AddOrUpdate<IProcessKnmiMetarFilesFeature>("processKnmiMetarFiles", feature => feature.ProcessMetarFileBatchAsync(CancellationToken.None),  Cron.HourInterval(10));
 RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiFilesAfterOldestSavedFile(CancellationToken.None),  Cron.HourInterval(2));
 RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFilesBeforeEarliestSavedFiles", feature => feature.SyncKnmiFilesBeforeEarliestSavedFile(CancellationToken.None),  Cron.HourInterval(1));
 
