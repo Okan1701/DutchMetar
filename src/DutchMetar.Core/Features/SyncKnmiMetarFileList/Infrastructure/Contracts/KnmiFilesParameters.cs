@@ -12,7 +12,7 @@ public class KnmiFilesParameters
     public DateTime? Begin { get; set; }
     
     /// <summary>
-    /// Used with <see cref="Start"/> to specify a date range.
+    /// Used with <see cref="Begin"/> to specify a date range.
     /// </summary>
     public DateTime? End { get; set; }
 
