@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
@@ -24,6 +25,13 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _options.AuthorizationToken);
         var url = GetUrlWithQueryParameters(FilesUrl, parameters);
         var response = await _httpClient.GetAsync(url, cancellationToken);
+        
+        // Assumption: KNMI API returns 429 code on rate limit reached
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            throw new MaxRequestLimitReachedException();
+        }
+        
         response.EnsureSuccessStatusCode();
         
         var data =  await response.Content.ReadFromJsonAsync<KnmiListFilesResponse>(cancellationToken);

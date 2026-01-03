@@ -43,7 +43,7 @@ using (var scope = app.Services.CreateScope())
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(120));
 RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));
-RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiFiles(CancellationToken.None),  Cron.HourInterval(2));
-
+RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiFilesAfterOldestSavedFile(CancellationToken.None),  Cron.HourInterval(2));
+RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFilesBeforeEarliestSavedFiles", feature => feature.SyncKnmiFilesBeforeEarliestSavedFile(CancellationToken.None),  Cron.HourInterval(1));
 
 app.Run();

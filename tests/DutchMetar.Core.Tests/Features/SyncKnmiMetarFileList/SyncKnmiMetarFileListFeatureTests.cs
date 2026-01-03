@@ -53,7 +53,7 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
                 ResultCount = 1
             });
         
-        await _feature.SyncKnmiFiles();
+        await _feature.SyncKnmiFilesAfterOldestSavedFile();
 
         var allSavedFiles = await _context.KnmiMetarFiles.ToArrayAsync();
         Assert.Single(allSavedFiles);
@@ -107,7 +107,7 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
         _mockedApiClient.GetMetarFileSummaries(Arg.Is<KnmiFilesParameters>(x => x.NextPageToken != null), Arg.Any<CancellationToken>())
             .Returns(page2ApiResponse);
         
-        await _feature.SyncKnmiFiles();
+        await _feature.SyncKnmiFilesAfterOldestSavedFile();
 
         var allSavedFiles = await _context.KnmiMetarFiles.ToArrayAsync();
         Assert.Equal(page1ApiResponse.Files.Count + page2ApiResponse.Files.Count, allSavedFiles.Length);
