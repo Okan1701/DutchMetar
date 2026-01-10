@@ -13,4 +13,7 @@ public class KnmiMetarFile : Entity
     public required DateTime FileLastModifiedAt { get; set; }
 
     public bool IsFileProcessed { get; set; }
+    
+    [MaxLength(EntityConstants.DefaultMaxStringLength)]
+    public string? ExtractedRawMetar { get; set; }
 }

@@ -3,7 +3,7 @@ using DutchMetar.Core.Domain.Enums;
 using DutchMetar.Core.Features.LoadDutchMetars.Interfaces;
 using MetarParserCore.Enums;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList;
+namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
 
 public class MetarMapper : IMetarMapper
 {

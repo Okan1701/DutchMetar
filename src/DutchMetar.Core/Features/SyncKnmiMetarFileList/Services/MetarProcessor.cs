@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Metar = MetarParserCore.Objects.Metar;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList;
+namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
 
 public class MetarProcessor : IMetarProcessor
 {
