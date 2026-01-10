@@ -12,7 +12,9 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly KnmiMetarApiOptions _options;
-    private const string FilesUrl = "https://api.dataplatform.knmi.nl/open-data/v1/datasets/metar/versions/1.0/files";
+    private const string FileListUrl = "https://api.dataplatform.knmi.nl/open-data/v1/datasets/metar/versions/1.0/files";
+    private const string FileDownloadUrl =
+        "https://api.dataplatform.knmi.nl/open-data/v1/datasets/metar/versions/1.0/files/{0}/url";
 
     public KnmiMetarApiClient(HttpClient httpClient, IOptions<KnmiMetarApiOptions> options)
     {
@@ -23,10 +25,10 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
     public async Task<KnmiListFilesResponse> GetMetarFileSummaries(KnmiFilesParameters parameters, CancellationToken cancellationToken = default)
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _options.AuthorizationToken);
-        var url = GetUrlWithQueryParameters(FilesUrl, parameters);
+        var url = GetUrlWithQueryParameters(FileListUrl, parameters);
         var response = await _httpClient.GetAsync(url, cancellationToken);
         
-        // Assumption: KNMI API returns 429 code on rate limit reached
+        // KNMI API returns 429 code on rate limit reached
         if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
             throw new MaxRequestLimitReachedException();
@@ -37,6 +39,30 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         var data =  await response.Content.ReadFromJsonAsync<KnmiListFilesResponse>(cancellationToken);
         
         return data ?? throw new NullReferenceException("Failed to deserialize response");
+    }
+    
+    public async Task<string> GetKnmiMetarFileContentAsync(string fileName, CancellationToken cancellationToken = default)
+    {
+        var url = string.Format(FileDownloadUrl, fileName);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _options.AuthorizationToken);
+        var response = await _httpClient.GetAsync(url, cancellationToken);
+        
+        // Assumption: KNMI API returns 429 code on rate limit reached
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            throw new MaxRequestLimitReachedException();
+        }
+        response.EnsureSuccessStatusCode();
+        
+        var fileDownload = await  response.Content.ReadFromJsonAsync<KnmiFileDownload>(cancellationToken);
+
+        if (fileDownload == null)
+        {
+            throw new NullReferenceException("Failed to deserialize KNMI file download response");
+        }
+        
+        var content = await _httpClient.GetStringAsync(fileDownload.TemporaryDownloadUrl, cancellationToken);
+        return content;
     }
 
     private string GetUrlWithQueryParameters(string baseUrl, KnmiFilesParameters parameters)

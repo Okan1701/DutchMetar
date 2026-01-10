@@ -17,4 +17,12 @@ public interface IKnmiMetarApiClient
     /// <param name="cancellationToken">(Optional) cancellation token to abort the operation.</param>
     /// <returns><see cref="KnmiListFilesResponse"/></returns>
     Task<KnmiListFilesResponse> GetMetarFileSummaries(KnmiFilesParameters parameters, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Gets the string content of the specified <param name="fileName"></param>
+    /// </summary>
+    /// <param name="fileName">Filename to retrieve the contents of.</param>
+    /// <param name="cancellationToken">(Optional) cancellation token to abort the operation.</param>
+    /// <returns></returns>
+    Task<string> GetKnmiMetarFileContentAsync(string fileName, CancellationToken cancellationToken = default);
 }
