@@ -12,23 +12,18 @@ namespace DutchMetar.Core.Features.SyncKnmiMetarFileList;
 
 public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 {
-    private readonly IKnmiMetarApiClient _knmiMetarApiClient;
     private readonly DutchMetarContext _dutchMetarContext;
+    private readonly IMetarFileBulkRetriever _fileBulkRetriever;
     private readonly ILogger<SyncKnmiMetarFileListFeature> _logger;
-    private readonly IMetarProcessor _metarProcessor;
     
     // Will not retrieve files from older years
     private const int DefaultStartYear = 2025;
-    private const string MetarStringRegex = @"<!--\s*(METAR.*?)\s*-->";
-    private const string AirportNameRegex = @"<aixm:name>(.*?)<\/aixm:name>";
-
     
-    public SyncKnmiMetarFileListFeature(IKnmiMetarApiClient knmiMetarApiClient, DutchMetarContext dutchMetarContext, ILogger<SyncKnmiMetarFileListFeature> logger, IMetarProcessor metarProcessor)
+    public SyncKnmiMetarFileListFeature(DutchMetarContext dutchMetarContext, ILogger<SyncKnmiMetarFileListFeature> logger, IMetarFileBulkRetriever fileBulkRetriever)
     {
-        _knmiMetarApiClient = knmiMetarApiClient;
         _dutchMetarContext = dutchMetarContext;
         _logger = logger;
-        _metarProcessor = metarProcessor;
+        _fileBulkRetriever = fileBulkRetriever;
     }
     
     public async Task SyncKnmiMetarFiles(CancellationToken cancellationToken = default)
@@ -40,17 +35,17 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
             .Select(x => x.FileCreatedAt)
             .LastOrDefaultAsync(cancellationToken);
         
-        var earliestSavedFileDate = await _dutchMetarContext.KnmiMetarFiles
+        var newestSavedFile = await _dutchMetarContext.KnmiMetarFiles
             .OrderByDescending(x => x.FileCreatedAt)
             .Select(x => x.FileCreatedAt)
             .FirstOrDefaultAsync(cancellationToken);
         
-        _logger.LogDebug("Current locally saved dataset time range: {OldestDate} - {EarliestDate}", oldestSavedFileDate, earliestSavedFileDate);
+        _logger.LogDebug("Current locally saved dataset time range: {OldestDate} - {EarliestDate}", oldestSavedFileDate, newestSavedFile);
         
         // Parameters for retrieving the latest files
         var parametersToRetrieveNewFiles = new KnmiFilesParameters
         {
-            Begin = earliestSavedFileDate,
+            Begin = newestSavedFile,
             Sorting = "desc",
             OrderBy = "created"
         };
@@ -58,14 +53,16 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         // Parameters for retrieving files older than the currently saved files
         var parametersToRetrieveOlderFiles = new KnmiFilesParameters
         {
-            Begin = oldestSavedFileDate,
+            End = oldestSavedFileDate,
+            Begin = new DateTime(DefaultStartYear, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             Sorting = "desc",
             OrderBy = "created"
         };
 
         try
         {
-            await GetAndSaveKnmiFilesLoop(parametersToRetrieveNewFiles, cancellationToken, correlationId);
+            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken, correlationId);
+            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, correlationId);
         }
         catch (MaxRequestLimitReachedException)
         {
@@ -95,7 +92,7 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 
         try
         {
-            await GetAndSaveKnmiFilesLoop(parameters, cancellationToken, correlationId);
+            await _fileBulkRetriever.GetAndSaveKnmiFiles(parameters, cancellationToken, correlationId);
         }
         catch (MaxRequestLimitReachedException)
         {
@@ -130,82 +127,11 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 
         try
         {
-            await GetAndSaveKnmiFilesLoop(parameters, cancellationToken, correlationId);
+            await _fileBulkRetriever.GetAndSaveKnmiFiles(parameters, cancellationToken, correlationId);
         }
         catch (MaxRequestLimitReachedException)
         {
             _logger.LogWarning("Aborting sync in progress: rate limit reached");
-        }
-    }
-
-    private async Task GetAndSaveKnmiFilesLoop(KnmiFilesParameters parameters, CancellationToken cancellationToken, Guid correlationId)
-    {
-        var isTruncated = true;
-        
-        var currentSavedFileNames = await _dutchMetarContext.KnmiMetarFiles
-            .Select(x => x.FileName)
-            .ToArrayAsync(cancellationToken);
-        
-        while (isTruncated && !cancellationToken.IsCancellationRequested)
-        {
-            var data = await _knmiMetarApiClient.GetMetarFileSummaries(parameters, cancellationToken);
-
-            if (data.Files.Count == 0)
-            {
-                break;
-            }
-
-            var filteredFiles = data.Files
-                .Where(x => currentSavedFileNames.All(y => y != x.Filename))
-                .OrderBy(x => x.Created);
-            
-            // For each file, convert it into an entity and process the raw metar
-            foreach (var file in filteredFiles)
-            {
-                var fileContent = await _knmiMetarApiClient.GetKnmiMetarFileContentAsync(file.Filename, cancellationToken);
-                var entity = file.ToKnmiMetarFileEntity();
-                
-                var metarStringMatch = Regex.Match(fileContent, MetarStringRegex);
-                var nameStringMatch = Regex.Match(fileContent, AirportNameRegex);
-
-                if (metarStringMatch.Success)
-                {
-                    var airportName = nameStringMatch.Success ? nameStringMatch.Value : null;
-                    try
-                    {
-                        await _metarProcessor.ProcessRawMetarAsync(metarStringMatch.Value, airportName, cancellationToken);
-                        entity.IsFileProcessed = true;
-                    }
-                    catch (MetarParseException ex)
-                    {
-                        _logger.LogError(ex, ex.Message);
-                        entity.IsFileProcessed = false;
-                    }
-                }
-                else
-                {
-                    _logger.LogError("Failed to extract raw METAR from {FileName}", file.Filename);
-                    entity.IsFileProcessed = false;
-                }
-                
-                _dutchMetarContext.KnmiMetarFiles.Add(entity);
-                await _dutchMetarContext.SaveChangesAsync(cancellationToken);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    _logger.LogWarning("Aborting KNMI metar sync, cancellation was requested!");
-                    break;
-                }
-            }
-
-            isTruncated = data.IsTruncated;
-            parameters.NextPageToken = data.NextPageToken;
-            
-            if (cancellationToken.IsCancellationRequested)
-            {
-                _logger.LogWarning("Aborting KNMI metar sync, cancellation was requested!");
-                break;
-            }
         }
     }
 }

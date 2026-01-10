@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Metar = MetarParserCore.Objects.Metar;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList;
+namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
 
 public class MetarProcessor : IMetarProcessor
 {
@@ -57,6 +57,8 @@ public class MetarProcessor : IMetarProcessor
             _dbContext.Metars.Remove(latestSavedMetar);
             _dbContext.Metars.Add(mappedMetarEntity);
         }
+        
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
     
     private async Task<Airport> GetAirportIncludingLatestMetarAsync(string icao, CancellationToken cancellationToken)
