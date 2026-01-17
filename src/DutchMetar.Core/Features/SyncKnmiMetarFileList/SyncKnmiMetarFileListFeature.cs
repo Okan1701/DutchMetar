@@ -30,6 +30,7 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
     {
         var correlationId = Guid.NewGuid();
         _logger.LogInformation("Starting KNMI Metar file sync after oldest saved file. Correlation ID = {CorrelationId}", correlationId);
+        var hasAnyFiles = await _dutchMetarContext.KnmiMetarFiles.AnyAsync(cancellationToken);
         var oldestSavedFileDate = await _dutchMetarContext.KnmiMetarFiles
             .OrderByDescending(x => x.FileCreatedAt)
             .Select(x => x.FileCreatedAt)
@@ -45,7 +46,7 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         // Parameters for retrieving the latest files
         var parametersToRetrieveNewFiles = new KnmiFilesParameters
         {
-            Begin = newestSavedFile,
+            Begin = newestSavedFile != default ? newestSavedFile : null,
             Sorting = "desc",
             OrderBy = "created"
         };
@@ -62,72 +63,10 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         try
         {
             await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken, correlationId);
-            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, correlationId);
-        }
-        catch (MaxRequestLimitReachedException)
-        {
-            _logger.LogWarning("Aborting sync in progress: rate limit reached");
-        }
-    }
-
-    public async Task SyncKnmiFilesAfterOldestSavedFile(CancellationToken cancellationToken = default)
-    {
-        var correlationId = Guid.NewGuid();
-        _logger.LogInformation("Starting KNMI Metar file sync after oldest saved file. Correlation ID = {CorrelationId}", correlationId);
-        var oldestSavedFile = await _dutchMetarContext.KnmiMetarFiles
-            .OrderByDescending(x => x.FileCreatedAt)
-            .LastOrDefaultAsync(cancellationToken);
-        
-        var startDate = new DateTime(DefaultStartYear, 1, 1);
-        var endDate = oldestSavedFile?.FileCreatedAt;
-        
-        // Initial request, will be modified in the loop
-        var parameters = new KnmiFilesParameters
-        {
-            Begin = startDate,
-            End = endDate,
-            Sorting = "desc",
-            OrderBy = "created"
-        };
-
-        try
-        {
-            await _fileBulkRetriever.GetAndSaveKnmiFiles(parameters, cancellationToken, correlationId);
-        }
-        catch (MaxRequestLimitReachedException)
-        {
-            _logger.LogWarning("Aborting sync in progress: rate limit reached");
-        }
-    }
-    
-    public async Task SyncKnmiFilesBeforeEarliestSavedFile(CancellationToken cancellationToken = default)
-    {
-        var correlationId = Guid.NewGuid();
-        _logger.LogInformation("Starting KNMI Metar file sync before earliest saved file. Correlation ID = {CorrelationId}", correlationId);
-        var earliestSavedFileDateTime = await _dutchMetarContext.KnmiMetarFiles
-            .OrderByDescending(x => x.FileCreatedAt)
-            .Select(x => x.FileCreatedAt)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (earliestSavedFileDateTime == default)
-        {
-            // If database is still empty, then let SyncKnmiFilesAfterOldestSavedFile do the initial syncing
-            // to prevent possible conflicts
-            _logger.LogInformation("Aborting sync: database is currently empty");
-            return;
-        }
-        
-        // Initial request
-        var parameters = new KnmiFilesParameters
-        {
-            Begin = earliestSavedFileDateTime,
-            Sorting = "asc",
-            OrderBy = "created"
-        };
-
-        try
-        {
-            await _fileBulkRetriever.GetAndSaveKnmiFiles(parameters, cancellationToken, correlationId);
+            if (hasAnyFiles)
+            {
+                await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, correlationId);
+            }
         }
         catch (MaxRequestLimitReachedException)
         {

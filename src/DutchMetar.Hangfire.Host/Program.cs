@@ -19,7 +19,11 @@ builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
+#if RELEASE
     .UseSqlServerStorage(builder.Configuration.GetConnectionString(hangfireConnectionStringKey)));
+#else
+    .UseInMemoryStorage());
+#endif
 
 var app = builder.Build();
 app.UseHangfireDashboard("", new DashboardOptions
@@ -43,7 +47,5 @@ using (var scope = app.Services.CreateScope())
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(120));
 RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));
-RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiFilesAfterOldestSavedFile(CancellationToken.None),  Cron.HourInterval(2));
-RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFilesBeforeEarliestSavedFiles", feature => feature.SyncKnmiFilesBeforeEarliestSavedFile(CancellationToken.None),  Cron.HourInterval(1));
-
+RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.HourInterval(1));
 app.Run();

@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Encodings.Web;
+using System.Web;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
@@ -61,6 +63,8 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
             throw new NullReferenceException("Failed to deserialize KNMI file download response");
         }
         
+        // URL already contains auth value, additional authorization options result in HTTP 400
+        _httpClient.DefaultRequestHeaders.Authorization = null;
         var content = await _httpClient.GetStringAsync(fileDownload.TemporaryDownloadUrl, cancellationToken);
         return content;
     }

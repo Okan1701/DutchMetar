@@ -12,6 +12,7 @@ public static class Extensions
     public static void AddSyncKnmiMetarFileListFeature(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ISyncKnmiMetarFileListFeature, SyncKnmiMetarFileListFeature>();
+        services.AddScoped<IMetarMapper, MetarMapper>();
         services.AddScoped<IMetarProcessor, MetarProcessor>();
         services.AddScoped<IMetarFileBulkRetriever, MetarFileBulkRetriever>();
         services.AddHttpClient<IKnmiMetarApiClient, KnmiMetarApiClient>();
