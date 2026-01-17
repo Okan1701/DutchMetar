@@ -4,6 +4,7 @@ using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,21 +16,22 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
     private readonly DutchMetarContext _dutchMetarContext;
     private readonly IMetarFileBulkRetriever _fileBulkRetriever;
     private readonly ILogger<SyncKnmiMetarFileListFeature> _logger;
+    private readonly ICorrelationIdAccessor _correlationIdAccessor;
     
     // Will not retrieve files from older years
     private const int DefaultStartYear = 2025;
     
-    public SyncKnmiMetarFileListFeature(DutchMetarContext dutchMetarContext, ILogger<SyncKnmiMetarFileListFeature> logger, IMetarFileBulkRetriever fileBulkRetriever)
+    public SyncKnmiMetarFileListFeature(DutchMetarContext dutchMetarContext, ILogger<SyncKnmiMetarFileListFeature> logger, IMetarFileBulkRetriever fileBulkRetriever, ICorrelationIdAccessor correlationIdAccessor)
     {
         _dutchMetarContext = dutchMetarContext;
         _logger = logger;
         _fileBulkRetriever = fileBulkRetriever;
+        _correlationIdAccessor = correlationIdAccessor;
     }
     
     public async Task SyncKnmiMetarFiles(CancellationToken cancellationToken = default)
     {
-        var correlationId = Guid.NewGuid();
-        _logger.LogInformation("Starting KNMI Metar file sync after oldest saved file. Correlation ID = {CorrelationId}", correlationId);
+        _logger.LogInformation("Starting KNMI Metar file sync after oldest saved file. Correlation ID = {CorrelationId}", _correlationIdAccessor.CorrelationId);
         var hasAnyFiles = await _dutchMetarContext.KnmiMetarFiles.AnyAsync(cancellationToken);
         var oldestSavedFileDate = await _dutchMetarContext.KnmiMetarFiles
             .OrderByDescending(x => x.FileCreatedAt)
@@ -62,10 +64,10 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 
         try
         {
-            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken, correlationId);
+            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken, _correlationIdAccessor.CorrelationId);
             if (hasAnyFiles)
             {
-                await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, correlationId);
+                await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, _correlationIdAccessor.CorrelationId);
             }
         }
         catch (MaxRequestLimitReachedException)

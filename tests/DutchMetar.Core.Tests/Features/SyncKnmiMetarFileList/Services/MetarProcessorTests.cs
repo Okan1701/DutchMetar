@@ -1,6 +1,7 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+using DutchMetar.Core.Infrastructure.Accessors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -14,7 +15,7 @@ public class MetarProcessorTests : TestsWithContext
     public MetarProcessorTests()
     {
         var logger = Substitute.For<ILogger<MetarProcessor>>();
-        _metarProcessor = new MetarProcessor(new MetarMapper(), logger, Context);
+        _metarProcessor = new MetarProcessor(new MetarMapper(), logger, Context, new SimpleCorrelationIdAccessor());
     }
 
     [Fact]

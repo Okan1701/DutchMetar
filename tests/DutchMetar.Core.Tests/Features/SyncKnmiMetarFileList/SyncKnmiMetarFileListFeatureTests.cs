@@ -2,6 +2,7 @@
 using DutchMetar.Core.Features.SyncKnmiMetarFileList;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
         _mockBulkRetriever = Substitute.For<IMetarFileBulkRetriever>();
         _context = new DutchMetarContext(builder.Options);
         
-        _feature = new SyncKnmiMetarFileListFeature(_context, Substitute.For<ILogger<SyncKnmiMetarFileListFeature>>(), _mockBulkRetriever);
+        _feature = new SyncKnmiMetarFileListFeature(_context, Substitute.For<ILogger<SyncKnmiMetarFileListFeature>>(), _mockBulkRetriever, new SimpleCorrelationIdAccessor());
     }
     
     public void Dispose()

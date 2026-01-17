@@ -1,6 +1,7 @@
 using DutchMetar.Core.Features.SyncKnmiMetarFileList;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
 using DutchMetar.Core.Infrastructure;
+using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.Hangfire.Host;
 using Hangfire;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
 builder.Services.AddSyncKnmiMetarFileListFeature(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddHangfireServer();

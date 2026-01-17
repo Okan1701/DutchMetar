@@ -1,6 +1,7 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using MetarParserCore;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,15 @@ public class MetarProcessor : IMetarProcessor
     private readonly IMetarMapper _metarMapper;
     private readonly ILogger<MetarProcessor>  _logger;
     private readonly DutchMetarContext _dbContext;
+    private readonly ICorrelationIdAccessor _correlationIdAccessor;
     private readonly MetarParser _parser = new();
     
-    public MetarProcessor(IMetarMapper metarMapper, ILogger<MetarProcessor> logger, DutchMetarContext dbContext)
+    public MetarProcessor(IMetarMapper metarMapper, ILogger<MetarProcessor> logger, DutchMetarContext dbContext, ICorrelationIdAccessor correlationIdAccessor)
     {
         _metarMapper = metarMapper;
         _logger = logger;
         _dbContext = dbContext;
+        _correlationIdAccessor = correlationIdAccessor;
     }
 
     public async Task ProcessRawMetarAsync(string metar, string? airportName, CancellationToken cancellationToken)
@@ -41,7 +44,7 @@ public class MetarProcessor : IMetarProcessor
             throw new MetarParseException($"Failed to parse {metar}");
         };
         
-        var airport = await GetAirportIncludingLatestMetarAsync(decodedMetar.Airport, cancellationToken);
+        var airport = await GetAirportIncludingLatestMetarAsync(decodedMetar.Airport, cancellationToken, _correlationIdAccessor.CorrelationId);
         airport.Name = airportName ?? airport.Icao;
         var mappedMetarEntity = _metarMapper.MapDecodedMetarToEntity(decodedMetar, metar, airport);
         
@@ -61,7 +64,7 @@ public class MetarProcessor : IMetarProcessor
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
     
-    private async Task<Airport> GetAirportIncludingLatestMetarAsync(string icao, CancellationToken cancellationToken)
+    private async Task<Airport> GetAirportIncludingLatestMetarAsync(string icao, CancellationToken cancellationToken, Guid correlationId)
     {
         var airport = await _dbContext.Airports.FirstOrDefaultAsync(x => x.Icao == icao.ToUpperInvariant(), cancellationToken: cancellationToken);
 
@@ -70,7 +73,8 @@ public class MetarProcessor : IMetarProcessor
             airport = new Airport
             {
                 Icao = icao,
-                MetarReports = []
+                MetarReports = [],
+                CorrelationId = correlationId
             };
 
             _dbContext.Airports.Add(airport);
