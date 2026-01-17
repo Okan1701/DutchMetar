@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using DutchMetar.Core.Features.LoadDutchMetars.Exceptions;
+using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
 using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
