@@ -1,5 +1,5 @@
 ﻿using DutchMetar.Core.Domain.Enums;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+using DutchMetar.Core.Features.SyncKnmiMetar.Services;
 using MetarParserCore;
 
 namespace DutchMetar.Core.Tests.Features.SyncKnmiMetarFileList.Services;

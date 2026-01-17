@@ -1,6 +1,6 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
+﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+namespace DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 
 public interface IMetarFileBulkRetriever
 {

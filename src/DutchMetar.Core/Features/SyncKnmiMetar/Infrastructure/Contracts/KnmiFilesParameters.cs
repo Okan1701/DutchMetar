@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
+﻿namespace DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
 
 /// <summary>
 /// Represents supported parameters by the KNMI Data API.

@@ -1,13 +1,13 @@
 ﻿using System.Text.RegularExpressions;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+namespace DutchMetar.Core.Features.SyncKnmiMetar.Services;
 
 public class MetarFileBulkRetriever : IMetarFileBulkRetriever
 {

@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Entities;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
+using DutchMetar.Core.Features.SyncKnmiMetar.Services;
 using DutchMetar.Core.Infrastructure.Accessors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

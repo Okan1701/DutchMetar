@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Entities;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using MetarParserCore;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Metar = MetarParserCore.Objects.Metar;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+namespace DutchMetar.Core.Features.SyncKnmiMetar.Services;
 
 public class MetarProcessor : IMetarProcessor
 {

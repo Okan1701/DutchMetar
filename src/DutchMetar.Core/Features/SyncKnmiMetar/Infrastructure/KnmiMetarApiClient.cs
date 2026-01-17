@@ -2,13 +2,11 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text.Encodings.Web;
-using System.Web;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure;
+namespace DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure;
 
 public class KnmiMetarApiClient : IKnmiMetarApiClient
 {

@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+namespace DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 
 public interface IMetarMapper
 {

@@ -1,15 +1,12 @@
-﻿using System.Text.RegularExpressions;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
+﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList;
+namespace DutchMetar.Core.Features.SyncKnmiMetar;
 
 public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 {

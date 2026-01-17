@@ -1,11 +1,11 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetarFileList;
+namespace DutchMetar.Core.Features.SyncKnmiMetar;
 
 public static class Extensions
 {

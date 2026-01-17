@@ -1,7 +1,7 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Interfaces;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Services;
+﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar.Services;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
