@@ -16,7 +16,7 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
     private readonly ICorrelationIdAccessor _correlationIdAccessor;
     
     // Will not retrieve files from older years
-    private const int DefaultStartYear = 2025;
+    private const int DefaultStartYear = 2023;
     
     public SyncKnmiMetarFileListFeature(DutchMetarContext dutchMetarContext, ILogger<SyncKnmiMetarFileListFeature> logger, IMetarFileBulkRetriever fileBulkRetriever, ICorrelationIdAccessor correlationIdAccessor)
     {
