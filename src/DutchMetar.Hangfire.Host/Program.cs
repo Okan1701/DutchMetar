@@ -1,6 +1,7 @@
-using DutchMetar.Core.Features.LoadDutchMetars;
-using DutchMetar.Core.Features.LoadDutchMetars.Interfaces;
+using DutchMetar.Core.Features.SyncKnmiMetar;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure;
+using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.Hangfire.Host;
 using Hangfire;
@@ -9,14 +10,19 @@ using Microsoft.EntityFrameworkCore;
 const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddLoadDutchMetarsFeature();
+builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
+builder.Services.AddSyncKnmiMetarFileListFeature(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddHangfireServer();
 builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
+#if RELEASE
     .UseSqlServerStorage(builder.Configuration.GetConnectionString(hangfireConnectionStringKey)));
+#else
+    .UseInMemoryStorage());
+#endif
 
 var app = builder.Build();
 app.UseHangfireDashboard("", new DashboardOptions
@@ -37,7 +43,7 @@ using (var scope = app.Services.CreateScope())
 
 
 // Register recurring jobs
-GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
-RecurringJob.AddOrUpdate<ILoadDutchMetarsFeature>("loadMetar", feature => feature.LoadAsync(CancellationToken.None),  Cron.MinuteInterval(10));
-
+GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
+GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(120));
+RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.HourInterval(1));
 app.Run();

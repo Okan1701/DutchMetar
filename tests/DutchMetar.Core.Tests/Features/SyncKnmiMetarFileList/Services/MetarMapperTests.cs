@@ -1,8 +1,8 @@
 ﻿using DutchMetar.Core.Domain.Enums;
-using DutchMetar.Core.Features.LoadDutchMetars;
+using DutchMetar.Core.Features.SyncKnmiMetar.Services;
 using MetarParserCore;
 
-namespace DutchMetar.Core.Tests.Features.LoadDutchMetars;
+namespace DutchMetar.Core.Tests.Features.SyncKnmiMetarFileList.Services;
 
 public class MetarMapperTests
 {
