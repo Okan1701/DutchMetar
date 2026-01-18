@@ -35,12 +35,16 @@ public class MetarFileBulkRetriever : IMetarFileBulkRetriever
             .Select(x => x.FileName)
             .ToArrayAsync(cancellationToken);
         
+        _logger.LogDebug("There are already {SavedFilesCount} existing saved files", currentSavedFileNames.Length);
+        
         while (isTruncated && !cancellationToken.IsCancellationRequested)
         {
+            _logger.LogTrace("Retrieving next batch of metar files");
             var data = await _knmiMetarApiClient.GetMetarFileSummaries(parameters, cancellationToken);
 
             if (data.Files.Count == 0)
             {
+                _logger.LogTrace("Empty file array returned from API. Aborting loop.");
                 break;
             }
 
@@ -51,6 +55,7 @@ public class MetarFileBulkRetriever : IMetarFileBulkRetriever
             // For each file, convert it into an entity and process the raw metar
             foreach (var file in filteredFiles)
             {
+                _logger.LogDebug("Retrieving file {FileName}.", file.Filename);
                 var fileContent = await _knmiMetarApiClient.GetKnmiMetarFileContentAsync(file.Filename, cancellationToken);
                 var entity = file.ToKnmiMetarFileEntity();
                 

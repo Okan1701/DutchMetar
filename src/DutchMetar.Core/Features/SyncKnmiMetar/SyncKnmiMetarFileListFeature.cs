@@ -28,7 +28,13 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
     
     public async Task SyncKnmiMetarFiles(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Starting KNMI Metar file sync after oldest saved file. Correlation ID = {CorrelationId}", _correlationIdAccessor.CorrelationId);
+        var scope = _logger.BeginScope(new KeyValuePair<string, object?>[]
+        {
+            new("CorrelationId", _correlationIdAccessor.CorrelationId),
+            new("SyncStartDateTimeUtc", DateTime.UtcNow),
+        });
+        _logger.LogInformation("Starting KNMI Metar file sync.");
+        
         var hasAnyFiles = await _dutchMetarContext.KnmiMetarFiles.AnyAsync(cancellationToken);
         var oldestSavedFileDate = await _dutchMetarContext.KnmiMetarFiles
             .OrderByDescending(x => x.FileCreatedAt)
@@ -61,9 +67,11 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 
         try
         {
+            _logger.LogInformation("Retrieving and processing new KNMI metar files");
             await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken, _correlationIdAccessor.CorrelationId);
             if (hasAnyFiles)
             {
+                _logger.LogInformation("Retrieving and processing older KNMI files");
                 await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, _correlationIdAccessor.CorrelationId);
             }
         }
@@ -71,5 +79,7 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         {
             _logger.LogWarning("Aborting sync in progress: rate limit reached");
         }
+        
+        scope?.Dispose();
     }
 }
