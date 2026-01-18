@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Exceptions;
 using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
 
@@ -31,10 +32,10 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         // KNMI API returns 429 code on rate limit reached
         if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
-            throw new MaxRequestLimitReachedException();
+            throw new KnmiRateLimitReachedException();
         }
         
-        response.EnsureSuccessStatusCode();
+        await HandleStatusCodeAsync(response);
         
         var data =  await response.Content.ReadFromJsonAsync<KnmiListFilesResponse>(cancellationToken);
         
@@ -50,9 +51,9 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         // Assumption: KNMI API returns 429 code on rate limit reached
         if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
-            throw new MaxRequestLimitReachedException();
+            throw new KnmiRateLimitReachedException();
         }
-        response.EnsureSuccessStatusCode();
+        await HandleStatusCodeAsync(response);
         
         var fileDownload = await  response.Content.ReadFromJsonAsync<KnmiFileDownload>(cancellationToken);
 
@@ -63,7 +64,9 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         
         // URL already contains auth value, additional authorization options result in HTTP 400
         _httpClient.DefaultRequestHeaders.Authorization = null;
-        var content = await _httpClient.GetStringAsync(fileDownload.TemporaryDownloadUrl, cancellationToken);
+        var fileDownloadResponse = await _httpClient.GetAsync(fileDownload.TemporaryDownloadUrl, cancellationToken);
+        await HandleStatusCodeAsync(fileDownloadResponse);
+        var content = await fileDownloadResponse.Content.ReadAsStringAsync(cancellationToken);
         return content;
     }
 
@@ -107,5 +110,32 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         }
         
         return url;
+    }
+    
+    /// <summary>
+    /// Check the response status and throw an appropriate exception
+    /// </summary>
+    private async Task HandleStatusCodeAsync(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode) return;
+        
+        // Error responses are not documented, so it's trial and error...
+        var responseContent = await response.Content.ReadAsStringAsync();
+        KnmiError? errorResponse = await response.Content.ReadFromJsonAsync<KnmiError>();
+
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            throw new KnmiRateLimitReachedException();
+        }
+        
+        // Their documentation states that they return 429 when rate limit is reached
+        // But in practice their seem to also use 403 error when the quote is exceeded...
+        if (response.StatusCode == HttpStatusCode.Forbidden && errorResponse?.Error == "Quota exceeded")
+        {
+            throw new KnmiRateLimitReachedException(response.StatusCode, errorResponse.Error);
+        }
+        
+        // General HTTP errors are wrapped in this exception
+        throw new KnmiApiException(response.StatusCode, errorResponse?.Error ?? responseContent);
     }
 }

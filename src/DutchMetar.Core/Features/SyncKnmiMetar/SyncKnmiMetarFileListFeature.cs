@@ -1,5 +1,6 @@
 ﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure;
 using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Exceptions;
 using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
@@ -68,16 +69,22 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         try
         {
             _logger.LogInformation("Retrieving and processing new KNMI metar files");
-            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken, _correlationIdAccessor.CorrelationId);
+            await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveNewFiles, cancellationToken,
+                _correlationIdAccessor.CorrelationId);
             if (hasAnyFiles)
             {
                 _logger.LogInformation("Retrieving and processing older KNMI files");
-                await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken, _correlationIdAccessor.CorrelationId);
+                await _fileBulkRetriever.GetAndSaveKnmiFiles(parametersToRetrieveOlderFiles, cancellationToken,
+                    _correlationIdAccessor.CorrelationId);
             }
         }
-        catch (MaxRequestLimitReachedException)
+        catch (KnmiRateLimitReachedException)
         {
             _logger.LogWarning("Aborting sync in progress: rate limit reached");
+        }
+        catch (KnmiApiException ex)
+        {
+            _logger.LogError(ex, "Aborting sync: the following {StatusCode} API error occured: {ApiError}", ex.StatusCode, ex.Message);
         }
         
         scope?.Dispose();
