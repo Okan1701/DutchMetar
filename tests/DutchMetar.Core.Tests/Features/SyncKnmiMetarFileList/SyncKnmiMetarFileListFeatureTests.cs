@@ -1,10 +1,13 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetarFileList;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetarFileList.Infrastructure.Interfaces;
+﻿using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Features.SyncKnmiMetar;
+using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace DutchMetar.Core.Tests.Features.SyncKnmiMetarFileList;
 
@@ -12,18 +15,17 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
 {
     private readonly SyncKnmiMetarFileListFeature _feature;
     private readonly DutchMetarContext _context;
-    private readonly IKnmiMetarApiClient _mockedApiClient;
-    private const string SampleFileName = "A_LANL80EHRD021209_C_EHRD_020126120929";
+    private readonly IMetarFileBulkRetriever _mockBulkRetriever;
     
     public SyncKnmiMetarFileListFeatureTests()
     {
         var builder = new DbContextOptionsBuilder<DutchMetarContext>();
         builder.UseInMemoryDatabase(Guid.NewGuid().ToString());
 
-        _mockedApiClient = Substitute.For<IKnmiMetarApiClient>();
+        _mockBulkRetriever = Substitute.For<IMetarFileBulkRetriever>();
         _context = new DutchMetarContext(builder.Options);
         
-        _feature = new SyncKnmiMetarFileListFeature(_mockedApiClient, _context, Substitute.For<ILogger<SyncKnmiMetarFileListFeature>>());
+        _feature = new SyncKnmiMetarFileListFeature(_context, Substitute.For<ILogger<SyncKnmiMetarFileListFeature>>(), _mockBulkRetriever, new SimpleCorrelationIdAccessor());
     }
     
     public void Dispose()
@@ -32,85 +34,50 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
         _context.SaveChanges();
         _context.Dispose();
     }
-    
-    [Fact]
-    public async Task SyncKnmiFiles_ApiReturnsSInglePage_ApiFilesSavedToDb()
-    {
-        _mockedApiClient.GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>(), Arg.Any<CancellationToken>())
-            .Returns(new KnmiListFilesResponse
-            {
-                IsTruncated = false,
-                Files =
-                [
-                    new KnmiFileSummary
-                    {
-                        Filename = SampleFileName,
-                        Created = DateTime.Today.AddDays(-1),
-                    }
-                ],
-                StartAfterFilename = "",
-                MaxResults = 10,
-                ResultCount = 1
-            });
-        
-        await _feature.SyncKnmiFilesAfterOldestSavedFile();
 
-        var allSavedFiles = await _context.KnmiMetarFiles.ToArrayAsync();
-        Assert.Single(allSavedFiles);
-        await _mockedApiClient.ReceivedWithAnyArgs(1).GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>());
-    }
-    
     [Fact]
-    public async Task SyncKnmiFiles_ApiReturnsMultiplePages_FilesSavedToDb()
+    public async Task SyncKnmiMetarFiles_ExistingSavedFiles_CorrectRequestParamsUsed()
     {
-        var page1ApiResponse = new KnmiListFilesResponse
+        // Arrange
+        var savedMetarFiles = new List<KnmiMetarFile>();
+        for (var i = 0; i < 10; i++)
         {
-            Files = new List<KnmiFileSummary>(),
-            IsTruncated = true,
-            MaxResults = 10,
-            NextPageToken = Guid.NewGuid().ToString(),
-            ResultCount = 10,
-            StartAfterFilename = ""
-        };
-        for (int i = 0; i <= 10; i++)
-        {
-            page1ApiResponse.Files.Add(new()
+            savedMetarFiles.Add(new()
             {
-                Filename = Guid.NewGuid().ToString(),
-                Created = DateTime.Today.AddDays(i * -1),
-                LastModified = DateTime.Today.AddDays(i * -1)
+                FileCreatedAt = DateTime.UtcNow.AddYears(-i).AddDays(0 * -1),
+                FileLastModifiedAt = DateTime.UtcNow.AddYears(-i).AddDays(-1),
+                FileName = Guid.NewGuid().ToString(),
+                CreatedAt = DateTime.UtcNow.AddYears(-i).AddDays(-1)
             });
         }
+        await _context.KnmiMetarFiles.AddRangeAsync(savedMetarFiles);
+        await _context.SaveChangesAsync();
         
-        var page2ApiResponse = new KnmiListFilesResponse
-        {
-            Files = new List<KnmiFileSummary>(),
-            IsTruncated = false,
-            MaxResults = 10,
-            NextPageToken = Guid.NewGuid().ToString(),
-            ResultCount = 5,
-            StartAfterFilename = ""
-        };
-        for (int i = 0; i <= 5; i++)
-        {
-            page2ApiResponse.Files.Add(new()
-            {
-                Filename = Guid.NewGuid().ToString(),
-                Created = DateTime.Today.AddDays(i * -1 - 5),
-                LastModified = DateTime.Today.AddDays(i * -1 - 5)
-            });
-        }
         
-        _mockedApiClient.GetMetarFileSummaries(Arg.Is<KnmiFilesParameters>(x => x.NextPageToken == null), Arg.Any<CancellationToken>())
-            .Returns(page1ApiResponse);
+        _mockBulkRetriever.GetAndSaveKnmiFiles(Arg.Any<KnmiFilesParameters>(), CancellationToken.None, Guid.NewGuid()).Throws<ArgumentException>();
+        _mockBulkRetriever.GetAndSaveKnmiFiles(
+            Arg.Is<KnmiFilesParameters>(x => 
+                x.Begin == savedMetarFiles.First().FileCreatedAt &&
+                x.Sorting == "desc" &&
+                x.OrderBy == "created" &&
+                x.End == null),
+            CancellationToken.None, 
+            Guid.NewGuid()).Returns(Task.CompletedTask);
+        _mockBulkRetriever.GetAndSaveKnmiFiles(
+            Arg.Is<KnmiFilesParameters>(x => 
+                x.Begin == new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) &&
+                x.End == savedMetarFiles.Last().FileLastModifiedAt &&
+                x.Sorting == "desc" &&
+                x.OrderBy == "created"),
+            CancellationToken.None, 
+            Guid.NewGuid()).Returns(Task.CompletedTask);
         
-        _mockedApiClient.GetMetarFileSummaries(Arg.Is<KnmiFilesParameters>(x => x.NextPageToken != null), Arg.Any<CancellationToken>())
-            .Returns(page2ApiResponse);
+        // Act
+        await _feature.SyncKnmiMetarFiles();
         
-        await _feature.SyncKnmiFilesAfterOldestSavedFile();
-
-        var allSavedFiles = await _context.KnmiMetarFiles.ToArrayAsync();
-        Assert.Equal(page1ApiResponse.Files.Count + page2ApiResponse.Files.Count, allSavedFiles.Length);
-        await _mockedApiClient.ReceivedWithAnyArgs(2).GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>());
+        // Assert
+        await _mockBulkRetriever
+            .Received(2)
+            .GetAndSaveKnmiFiles(Arg.Any<KnmiFilesParameters>(), Arg.Any<CancellationToken>(), Arg.Any<Guid>());
     }
 }
