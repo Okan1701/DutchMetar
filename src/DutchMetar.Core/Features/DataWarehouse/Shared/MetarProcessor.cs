@@ -49,11 +49,11 @@ public class MetarProcessor : IMetarProcessor
         var mappedMetarEntity = _metarMapper.MapDecodedMetarToEntity(decodedMetar, metar, createdAt, airport);
         
         var latestSavedMetar = airport.MetarReports.FirstOrDefault();
-        if (latestSavedMetar == null || latestSavedMetar?.IssuedAt < mappedMetarEntity.IssuedAt)
-        {
+        if (latestSavedMetar == null || latestSavedMetar?.IssuedAt != mappedMetarEntity.IssuedAt)
+        { // If we try to add a metar with identical issue date, then it is most likely a duplicate
             _dbContext.Metars.Add(mappedMetarEntity);
         }
-        else if (latestSavedMetar != null && latestSavedMetar.IssuedAt.Date == mappedMetarEntity.IssuedAt.Date &&
+        else if (latestSavedMetar?.IssuedAt.Date == mappedMetarEntity.IssuedAt.Date &&
                  mappedMetarEntity.IsCorrected)
         {
             // METAR is a correction to previous issued one, so we update existing record 
