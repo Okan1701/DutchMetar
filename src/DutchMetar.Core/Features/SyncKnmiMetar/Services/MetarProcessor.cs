@@ -60,6 +60,7 @@ public class MetarProcessor : IMetarProcessor
             _dbContext.Metars.Remove(latestSavedMetar);
             _dbContext.Metars.Add(mappedMetarEntity);
         }
+        else _logger.LogDebug("Value {Metar} not saved. It is not newer than the latest saved METAR and is not a correction.", metar);
         
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
