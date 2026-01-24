@@ -1,5 +1,5 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetar.Services;
+﻿using DutchMetar.Core.Features.DataWarehouse.Shared;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
 using DutchMetar.Core.Infrastructure.Accessors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

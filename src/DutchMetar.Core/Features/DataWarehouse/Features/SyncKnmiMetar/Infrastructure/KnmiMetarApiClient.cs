@@ -2,12 +2,12 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Exceptions;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure;
+namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure;
 
 public class KnmiMetarApiClient : IKnmiMetarApiClient
 {

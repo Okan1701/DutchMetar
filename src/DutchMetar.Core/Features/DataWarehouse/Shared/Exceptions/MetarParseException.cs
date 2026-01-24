@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Exceptions;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
 
 public class MetarParseException : DutchMetarException
 {

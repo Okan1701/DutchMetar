@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Exceptions;
+namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Exceptions;
 
 public class KnmiRateLimitReachedException : KnmiApiException
 {

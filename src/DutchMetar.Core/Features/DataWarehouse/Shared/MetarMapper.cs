@@ -1,9 +1,9 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Domain.Enums;
-using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 using MetarParserCore.Enums;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar.Services;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared;
 
 public class MetarMapper : IMetarMapper
 {

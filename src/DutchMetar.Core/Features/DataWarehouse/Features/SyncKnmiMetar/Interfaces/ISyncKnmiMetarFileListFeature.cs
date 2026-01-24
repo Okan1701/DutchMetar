@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+﻿namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
 
 /// <summary>
 /// Feature for synching filenames from the KNMI Dataplatform

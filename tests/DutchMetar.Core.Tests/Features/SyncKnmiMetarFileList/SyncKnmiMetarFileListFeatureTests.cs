@@ -1,7 +1,7 @@
 ﻿using DutchMetar.Core.Domain.Entities;
-using DutchMetar.Core.Features.SyncKnmiMetar;
-using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

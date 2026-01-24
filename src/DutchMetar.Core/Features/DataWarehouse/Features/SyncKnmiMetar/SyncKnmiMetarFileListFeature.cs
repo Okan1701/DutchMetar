@@ -1,13 +1,12 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure;
-using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
-using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Exceptions;
-using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+﻿using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Exceptions;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar;
+namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar;
 
 public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
 {
@@ -85,8 +84,9 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         catch (KnmiApiException ex)
         {
             _logger.LogError(ex, "Aborting sync: the following {StatusCode} API error occured: {ApiError}", ex.StatusCode, ex.Message);
-        }
+        }   
         
+        _logger.LogInformation("Finished KNMI Metar file sync.");
         scope?.Dispose();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using DutchMetar.Core.Domain.Entities;
-using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 
 /// <summary>
 /// Processes raw METAR into <see cref="Metar"/> and <see cref="Airport"/> entities.

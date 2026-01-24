@@ -1,6 +1,6 @@
-﻿using DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Contracts;
+﻿using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
 
-namespace DutchMetar.Core.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Interfaces;
 
 /// <summary>
 /// Client for interacting with the KNMI Data Platform.
