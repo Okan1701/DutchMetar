@@ -1,5 +1,5 @@
-using DutchMetar.Core.Features.SyncKnmiMetar;
-using DutchMetar.Core.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
