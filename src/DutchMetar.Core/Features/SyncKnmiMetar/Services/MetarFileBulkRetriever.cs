@@ -24,7 +24,7 @@ public class MetarFileBulkRetriever : IMetarFileBulkRetriever
         _metarProcessor = metarProcessor;
     }
     
-    private const string MetarStringRegex = @"<!--\s*(METAR.*?)\s*-->";
+    private const string MetarStringRegex = @"<!--(\s*(?:METAR|SPECI).*?\s*)-->";
     private const string AirportNameRegex = @"<aixm:name>(.*?)<\/aixm:name>";
     
     public async Task GetAndSaveKnmiFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken, Guid correlationId)
@@ -65,7 +65,7 @@ public class MetarFileBulkRetriever : IMetarFileBulkRetriever
                 if (metarStringMatch.Success)
                 {
                     var airportName = nameStringMatch.Success ? nameStringMatch.Groups[1].Value : null;
-                    entity.ExtractedRawMetar = metarStringMatch.Groups[1].Value;
+                    entity.ExtractedRawMetar = metarStringMatch.Groups[1].Value.Trim();
                     try
                     {
                         await _metarProcessor.ProcessRawMetarAsync(entity.ExtractedRawMetar, airportName, cancellationToken);

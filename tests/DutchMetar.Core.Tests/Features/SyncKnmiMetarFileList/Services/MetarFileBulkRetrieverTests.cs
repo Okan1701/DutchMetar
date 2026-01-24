@@ -35,6 +35,42 @@ public class MetarFileBulkRetrieverTests : IDisposable
     }
 
     [Fact]
+    public async Task GetAndSaveKnmiFiles_EhggMetarSample_NoParseExceptionsThrown()
+    {
+        const string fileContent =
+            "<?xml version=\"1.0\" ?>\n<iwxxm:SPECI automatedStation=\"false\" gml:id=\"uuid.d68ee3a3-3bb9-4ddc-8420-cca74d47c173\" permissibleUsage=\"OPERATIONAL\" reportStatus=\"NORMAL\" translatedBulletinID=\"\" translatedBulletinReceptionTime=\"2023-01-01T22:13:19Z\" translationCentreDesignator=\"EHGG\" translationCentreName=\"MetConsole\" translationTime=\"2023-01-01T22:13:19Z\" xmlns:aixm=\"http://www.aixm.aero/schema/5.1.1\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:iwxxm=\"http://icao.int/iwxxm/3.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://icao.int/iwxxm/3.0 http://schemas.wmo.int/iwxxm/3.0/iwxxm.xsd\nhttp://def.wmo.int/metce/2013 http://schemas.wmo.int/metce/1.2/metce.xsd\">\n    <!-- SPECI EHGG 012214Z AUTO 14004KT 9999 DZ BKN023 OVC026 09/08 Q1011= -->\n    <iwxxm:issueTime>\n        <gml:TimeInstant gml:id=\"uuid.837bea47-899e-4a89-8cc0-09dcaedba2c8\">\n            <gml:timePosition>2023-01-01T22:14:00Z</gml:timePosition>\n        </gml:TimeInstant>\n    </iwxxm:issueTime>\n    <iwxxm:aerodrome>\n        <aixm:AirportHeliport ";
+        _knmiMetarApiClient.GetKnmiMetarFileContentAsync(Arg.Any<string>()).ReturnsForAnyArgs(fileContent);
+        _knmiMetarApiClient
+            .GetMetarFileSummaries(Arg.Is<KnmiFilesParameters>(x => string.IsNullOrEmpty(x.NextPageToken)))
+            .Returns(new KnmiListFilesResponse
+            {
+                StartAfterFilename = "",
+                Files = [
+                    CreateSampleKnmiFileSummary(),
+                    CreateSampleKnmiFileSummary(),
+                    CreateSampleKnmiFileSummary()
+                ],
+                NextPageToken = Guid.NewGuid().ToString(),
+                IsTruncated = true
+            });
+        
+        _knmiMetarApiClient
+            .GetMetarFileSummaries(Arg.Is<KnmiFilesParameters>(x => !string.IsNullOrEmpty(x.NextPageToken)))
+            .Returns(new KnmiListFilesResponse
+            {
+                StartAfterFilename = "",
+                Files = [CreateSampleKnmiFileSummary()]
+            });
+        
+        // Act
+        await _retriever.GetAndSaveKnmiFiles(new KnmiFilesParameters(), CancellationToken.None, Guid.Empty);
+        
+        // Assert
+        var savedFiles = await _context.KnmiMetarFiles.ToArrayAsync();
+        Assert.True(savedFiles.All(x => x.IsFileProcessed));
+    }
+
+    [Fact]
     public async Task GetAndSaveKnmiFiles_ApiReturnsMultiPageDataValidMetar_BothPagesSaved()
     {
         const string sampleFileContent =
@@ -74,7 +110,6 @@ public class MetarFileBulkRetrieverTests : IDisposable
         await _knmiMetarApiClient.Received(2).GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>());
         await _knmiMetarApiClient.Received(4).GetKnmiMetarFileContentAsync(Arg.Any<string>());
         await _metarProcessor.Received(4).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        
     }
     
     [Fact]
