@@ -30,4 +30,8 @@
       <ProjectReference Include="..\..\src\DutchMetar.Core\DutchMetar.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\DataWarehouse\Features\ReprocessFailedFiles\" />
+    </ItemGroup>
+
 </Project>

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
-namespace DutchMetar.Core.Tests.Features.SyncKnmiMetarFileList.Services;
+namespace DutchMetar.Core.Tests.Features.DataWarehouse.Features.SyncKnmiMetar;
 
 public class MetarFileBulkRetrieverTests : IDisposable
 {

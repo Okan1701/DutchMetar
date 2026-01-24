@@ -2,7 +2,7 @@
 using DutchMetar.Core.Features.DataWarehouse.Shared;
 using MetarParserCore;
 
-namespace DutchMetar.Core.Tests.Features.SyncKnmiMetarFileList.Services;
+namespace DutchMetar.Core.Tests.Features.DataWarehouse.Shared;
 
 public class MetarMapperTests
 {

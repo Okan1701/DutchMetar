@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
-namespace DutchMetar.Core.Tests.Features.SyncKnmiMetarFileList;
+namespace DutchMetar.Core.Tests.Features.DataWarehouse.Features.SyncKnmiMetar;
 
 public class SyncKnmiMetarFileListFeatureTests : IDisposable
 {
