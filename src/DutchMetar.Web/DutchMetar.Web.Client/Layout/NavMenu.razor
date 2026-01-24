@@ -1,0 +1,18 @@
+﻿@using DutchMetar.Web.Client.Components
+
+@if (IsLoading)
+{
+    <p>Loading airports...</p>
+}
+else
+{
+    <div class="airports">
+        
+        @foreach (var summary in @AirportSummaries.OrderBy(x => x.Icao))
+        {
+            <div class="airport" @onclick="() => OnAirportSelected(summary.Icao)">
+                <AirportNavCard AirportSummary="summary"></AirportNavCard>
+            </div>
+        }
+    </div>
+}
