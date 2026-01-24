@@ -13,7 +13,7 @@ public class MetarMapperTests
     {
         var invalidDecodedMetar = new MetarParserCore.Objects.Metar();
         
-        Assert.Throws<NullReferenceException>(() =>  _metarMapper.MapDecodedMetarToEntity(invalidDecodedMetar, ""));
+        Assert.Throws<NullReferenceException>(() =>  _metarMapper.MapDecodedMetarToEntity(invalidDecodedMetar, "", DateTimeOffset.Now));
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public class MetarMapperTests
             "METAR EHJR 091225Z NIL=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
         
         Assert.NotNull(mappedEntity);
         Assert.Null(mappedEntity.AltimeterValue);
@@ -41,7 +41,7 @@ public class MetarMapperTests
             "METAR EHKD 271355Z AUTO COR 09007KT 060V120 9999 15/11 Q1021 BLU NOSIG=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
         
         Assert.NotNull(mappedEntity);
         Assert.True(mappedEntity.IsCorrected);
@@ -54,7 +54,7 @@ public class MetarMapperTests
             "METAR EHKD 271355Z AUTO 09007KT 060V120 9999 15/11 Q1021 BLU NOSIG=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
 
         var expectedIssuedAtDateTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 27, 13, 55, 0);
         Assert.NotNull(mappedEntity);
@@ -77,7 +77,7 @@ public class MetarMapperTests
             "METAR EHKD 271355Z AUTO 09015G30KT 060V120 9999 15/11 Q1021 BLU NOSIG=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
 
         var expectedIssuedAtDateTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 27, 13, 55, 0);
         Assert.NotNull(mappedEntity);
@@ -96,7 +96,7 @@ public class MetarMapperTests
             "METAR EHKD 271355Z AUTO 09007KT 060V120 9999 FEW010 SCT015 SCT020 BKN025 OVC090 15/11 Q1021 BLU NOSIG=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
         
         Assert.NotNull(mappedEntity);
         Assert.NotNull(mappedEntity.Ceilings);
@@ -115,7 +115,7 @@ public class MetarMapperTests
             "METAR EHAM 051050Z 28010KT CAVOK 18/M02 Q1012=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
         
         Assert.NotNull(mappedEntity);
         Assert.True(mappedEntity.IsCavok);
@@ -128,7 +128,7 @@ public class MetarMapperTests
             "METAR EHAM 051050Z 28010KT NCD 18/M02 Q1012=";
         var metarObject = new MetarParser().Parse(rawMetar);
 
-        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar);
+        var mappedEntity = _metarMapper.MapDecodedMetarToEntity(metarObject, rawMetar, DateTimeOffset.Now);
         
         Assert.NotNull(mappedEntity);
         Assert.True(mappedEntity.NoCloudsDetected);

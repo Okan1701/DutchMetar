@@ -14,7 +14,8 @@ public interface IMetarProcessor
     /// </summary>
     /// <param name="metar">The raw megtar string to process.</param>
     /// <param name="airportName">(Optional) name of the associated airport</param>
+    /// <param name="createdAt">The date that the METAR was created.</param>
     /// <param name="cancellationToken">(Optional) cancellation token</param>
     /// <exception cref="MetarParseException"></exception>
-    Task ProcessRawMetarAsync(string metar, string? airportName, CancellationToken cancellationToken);
+    Task ProcessRawMetarAsync(string metar, string? airportName, DateTimeOffset createdAt, CancellationToken cancellationToken);
 }

@@ -68,7 +68,7 @@ public class MetarFileBulkRetriever : IMetarFileBulkRetriever
                     entity.ExtractedRawMetar = metarStringMatch.Groups[1].Value.Trim();
                     try
                     {
-                        await _metarProcessor.ProcessRawMetarAsync(entity.ExtractedRawMetar, airportName, cancellationToken);
+                        await _metarProcessor.ProcessRawMetarAsync(entity.ExtractedRawMetar, airportName, file.Created, cancellationToken);
                         entity.IsFileProcessed = true;
                     }
                     catch (MetarParseException ex)

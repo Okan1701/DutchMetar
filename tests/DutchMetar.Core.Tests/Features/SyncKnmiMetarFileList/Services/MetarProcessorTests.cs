@@ -1,5 +1,4 @@
-﻿using DutchMetar.Core.Domain.Entities;
-using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
+﻿using DutchMetar.Core.Features.SyncKnmiMetar.Exceptions;
 using DutchMetar.Core.Features.SyncKnmiMetar.Services;
 using DutchMetar.Core.Infrastructure.Accessors;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ public class MetarProcessorTests : TestsWithContext
         const string airportName = "ROTTERDAM/THE HAGUE AIRPORT";
         
         // Act
-        await _metarProcessor.ProcessRawMetarAsync(rawMetar, airportName, CancellationToken.None);
+        await _metarProcessor.ProcessRawMetarAsync(rawMetar, airportName, DateTimeOffset.Now, CancellationToken.None);
         
         // Assert
         var airportWithMetars = await Context.Airports
@@ -51,7 +50,7 @@ public class MetarProcessorTests : TestsWithContext
         await Context.SaveChangesAsync();
         
         // Act
-        await _metarProcessor.ProcessRawMetarAsync(rawMetar, airportName, CancellationToken.None);
+        await _metarProcessor.ProcessRawMetarAsync(rawMetar, airportName, DateTimeOffset.Now, CancellationToken.None);
         
         // Assert
         Assert.Single(Context.Airports);
@@ -64,8 +63,8 @@ public class MetarProcessorTests : TestsWithContext
         const string rawMetar = "METAR EHRD 171355Z AUTO 11003KT 9999 SCT015/// 11/08 Q1018 NOSIG=";
         
         // Act
-        await _metarProcessor.ProcessRawMetarAsync(rawMetar, null, CancellationToken.None);
-        await _metarProcessor.ProcessRawMetarAsync(rawMetar, null, CancellationToken.None);
+        await _metarProcessor.ProcessRawMetarAsync(rawMetar, null, DateTimeOffset.Now, CancellationToken.None);
+        await _metarProcessor.ProcessRawMetarAsync(rawMetar, null, DateTimeOffset.Now, CancellationToken.None);
         
         // Assert
         Assert.Single(Context.Airports);
@@ -80,8 +79,8 @@ public class MetarProcessorTests : TestsWithContext
         const string rawMetarCor = "METAR EHRD COR 171355Z AUTO 11003KT 9999 SCT015/// 20/08 Q1018 NOSIG=";
         
         // Act
-        await _metarProcessor.ProcessRawMetarAsync(rawMetar, null, CancellationToken.None);
-        await _metarProcessor.ProcessRawMetarAsync(rawMetarCor, null, CancellationToken.None);
+        await _metarProcessor.ProcessRawMetarAsync(rawMetar, null, DateTimeOffset.Now, CancellationToken.None);
+        await _metarProcessor.ProcessRawMetarAsync(rawMetarCor, null, DateTimeOffset.Now, CancellationToken.None);
         
         // Assert
         Assert.Single(Context.Airports);
@@ -95,7 +94,7 @@ public class MetarProcessorTests : TestsWithContext
     public async Task ProcessRawMetarAsync_InvalidMetar_MetarParseExceptionThrown()
     {
         await Assert.ThrowsAsync<MetarParseException>(
-            async () => await _metarProcessor.ProcessRawMetarAsync(Guid.NewGuid().ToString(), null, CancellationToken.None));
+            async () => await _metarProcessor.ProcessRawMetarAsync(Guid.NewGuid().ToString(), null, DateTimeOffset.Now, CancellationToken.None));
         
         Assert.Empty(Context.Airports);
         Assert.Empty(Context.Metars);
@@ -106,7 +105,7 @@ public class MetarProcessorTests : TestsWithContext
     {
         var metar = "METAR 171355Z 11003KT 9999 SCT015/// 11/08 Q1018 NOSIG=";
         await Assert.ThrowsAsync<MetarParseException>(
-            async () => await _metarProcessor.ProcessRawMetarAsync(metar, null, CancellationToken.None));
+            async () => await _metarProcessor.ProcessRawMetarAsync(metar, null, DateTimeOffset.Now, CancellationToken.None));
         
         Assert.Empty(Context.Airports);
         Assert.Empty(Context.Metars);

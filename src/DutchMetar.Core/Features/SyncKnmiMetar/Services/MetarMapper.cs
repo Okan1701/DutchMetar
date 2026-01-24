@@ -15,7 +15,10 @@ public class MetarMapper : IMetarMapper
         CloudType.Overcast
     ];
 
-    public Metar MapDecodedMetarToEntity(MetarParserCore.Objects.Metar decodedMetar, string rawMetar,
+    public Metar MapDecodedMetarToEntity(
+        MetarParserCore.Objects.Metar decodedMetar, 
+        string rawMetar,
+        DateTimeOffset createdAt,
         Airport? airport = null,
         Guid correlationId = default)
     {
@@ -52,7 +55,7 @@ public class MetarMapper : IMetarMapper
             VisibilityMeters = decodedMetar?.PrevailingVisibility?.VisibilityInMeters?.VisibilityValue,
             Remarks = decodedMetar?.Remarks,
             Ceilings = ceilings.ToArray(),
-            IssuedAt = new DateTime(DateTime.Today.Year, DateTime.Today.Month, decodedMetar!.ObservationDayTime.Day,
+            IssuedAt = new DateTime(createdAt.Year, createdAt.Month, decodedMetar!.ObservationDayTime.Day,
                 decodedMetar.ObservationDayTime.Time.Hours, decodedMetar.ObservationDayTime.Time.Minutes, 0,
                 DateTimeKind.Utc)
         };

@@ -109,7 +109,7 @@ public class MetarFileBulkRetrieverTests : IDisposable
         Assert.True(savedFiles.All(x => !string.IsNullOrWhiteSpace(x.FileName)));
         await _knmiMetarApiClient.Received(2).GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>());
         await _knmiMetarApiClient.Received(4).GetKnmiMetarFileContentAsync(Arg.Any<string>());
-        await _metarProcessor.Received(4).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _metarProcessor.Received(4).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>());
     }
     
     [Fact]
@@ -138,7 +138,7 @@ public class MetarFileBulkRetrieverTests : IDisposable
         Assert.True(savedFiles.All(x => !string.IsNullOrWhiteSpace(x.FileName)));
         await _knmiMetarApiClient.Received(1).GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>());
         await _knmiMetarApiClient.Received(1).GetKnmiMetarFileContentAsync(Arg.Any<string>());
-        await _metarProcessor.Received(0).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _metarProcessor.Received(0).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>());
     }
     
     [Fact]
@@ -161,7 +161,7 @@ public class MetarFileBulkRetrieverTests : IDisposable
         var savedFiles = await _context.KnmiMetarFiles.ToArrayAsync();
         Assert.Empty(savedFiles);
         await _knmiMetarApiClient.Received(1).GetMetarFileSummaries(Arg.Any<KnmiFilesParameters>());
-        await _metarProcessor.Received(0).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _metarProcessor.Received(0).ProcessRawMetarAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>());
     }
 
     private KnmiFileSummary CreateSampleKnmiFileSummary() => new()

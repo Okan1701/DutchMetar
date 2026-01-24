@@ -26,7 +26,7 @@ public class MetarProcessor : IMetarProcessor
         _correlationIdAccessor = correlationIdAccessor;
     }
 
-    public async Task ProcessRawMetarAsync(string metar, string? airportName, CancellationToken cancellationToken)
+    public async Task ProcessRawMetarAsync(string metar, string? airportName, DateTimeOffset createdAt, CancellationToken cancellationToken)
     {
         Metar decodedMetar;
         try
@@ -46,7 +46,7 @@ public class MetarProcessor : IMetarProcessor
         
         var airport = await GetAirportIncludingLatestMetarAsync(decodedMetar.Airport, cancellationToken, _correlationIdAccessor.CorrelationId);
         airport.Name = airportName ?? airport.Icao;
-        var mappedMetarEntity = _metarMapper.MapDecodedMetarToEntity(decodedMetar, metar, airport);
+        var mappedMetarEntity = _metarMapper.MapDecodedMetarToEntity(decodedMetar, metar, createdAt, airport);
         
         var latestSavedMetar = airport.MetarReports.FirstOrDefault();
         if (latestSavedMetar == null || latestSavedMetar?.IssuedAt < mappedMetarEntity.IssuedAt)
