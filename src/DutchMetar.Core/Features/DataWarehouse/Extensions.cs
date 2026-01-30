@@ -1,4 +1,6 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar;
+﻿using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles;
+using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar;
 using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure;
 using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
@@ -26,7 +28,7 @@ public static class Extensions
         public void AddReprocessFailedFilesFeature()
         {
             services.TryAddSharedServices();
-            services.AddScoped<ISyncKnmiMetarFileListFeature, SyncKnmiMetarFileListFeature>();
+            services.AddScoped<IReprocessFailedFilesFeature, ReprocessFailedFilesFeature>();
         }
 
         private void TryAddSharedServices()

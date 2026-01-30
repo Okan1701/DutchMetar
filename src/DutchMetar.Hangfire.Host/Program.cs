@@ -1,4 +1,5 @@
 using DutchMetar.Core.Features.DataWarehouse;
+using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
@@ -12,6 +13,7 @@ const string hangfireConnectionStringKey = "HangfireMssql";
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
 builder.Services.AddSyncKnmiMetarFileListFeature(builder.Configuration);
+builder.Services.AddReprocessFailedFilesFeature();
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddHangfireServer();
 builder.Services.AddHangfire(configuration => configuration
@@ -44,6 +46,8 @@ using (var scope = app.Services.CreateScope())
 
 // Register recurring jobs
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
-GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(120));
+GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(3600));
 RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.HourInterval(1));
+//RecurringJob.AddOrUpdate<IReprocessFailedFilesFeature>("reprocessFailedFiles", feature => feature.ReprocessFailedFilesAsync(CancellationToken.None),  Cron.Daily);
+
 app.Run();
