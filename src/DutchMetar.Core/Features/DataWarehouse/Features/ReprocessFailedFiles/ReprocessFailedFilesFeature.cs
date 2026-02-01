@@ -1,4 +1,5 @@
-﻿using DutchMetar.Core.Domain.Entities;
+﻿using System.Diagnostics;
+using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
@@ -41,14 +42,25 @@ public class ReprocessFailedFilesFeature : IReprocessFailedFilesFeature
         
         // Process files in batches
         var knmiFiles = await GetBatchAsync(checkedFileIds, cancellationToken);
-        var processedFiles = 0;
+        var totalProcessedFiles = 0;
+        var totalFailedFiles = 0;
+        var totalIgnoredFiles = 0;
+
+        var stopwatch = new Stopwatch();
 
         while (knmiFiles.Any() && !cancellationToken.IsCancellationRequested)
         {
+            var processedFiles = 0;
+            var failedFiles = 0;
+            var ignoredFiles = 0;
+            stopwatch.Restart();
             foreach (var knmiFile in knmiFiles)
             {
                 checkedFileIds.Add(knmiFile.Id);
                 
+                _context.ChangeTracker.Clear();
+                _context.KnmiMetarFiles.Update(knmiFile);
+
                 if (!string.IsNullOrEmpty(knmiFile.ExtractedRawMetar))
                 {
                     try
@@ -58,24 +70,32 @@ public class ReprocessFailedFilesFeature : IReprocessFailedFilesFeature
                             cancellationToken);
                         knmiFile.IsFileProcessed = true;
                         processedFiles++;
+                        
+                        // Save IsFileProcessed value
+                        await _context.SaveChangesAsync(cancellationToken);
                     }
                     catch (MetarParseException ex)
                     {
                         _logger.LogError(ex, "Failed to re-process KNMI file {FileName}", knmiFile.FileName);
-                        knmiFile.IsFileProcessed = false;
+                        failedFiles++;
                     }
                 }
+                else ignoredFiles++;
             }
             
-            await _context.SaveChangesAsync(cancellationToken);
+            totalProcessedFiles += processedFiles;
+            totalIgnoredFiles += ignoredFiles;
+            totalFailedFiles += failedFiles;
+            _logger.LogDebug("Finished re-processing of current batch in {BatchProcessTime}s. {ProcessedFiles} / {FailedFiles} / {IgnoredFiles} files processed/failed/ignored.", stopwatch.Elapsed.Seconds, processedFiles, failedFiles, ignoredFiles);
             knmiFiles = await GetBatchAsync(checkedFileIds, cancellationToken);
         }
         
-        _logger.LogInformation("Finished re-processing of failed files. {ProcessedCount} files have been processed.", processedFiles);
+        _logger.LogDebug("Finished re-processing of failed METAR files. {ProcessedFiles} / {FailedFiles} / {IgnoredFiles} files processed/failed/ignored.", totalProcessedFiles, totalFailedFiles, totalIgnoredFiles);
         scope?.Dispose();
     }
 
     private async Task<KnmiMetarFile[]> GetBatchAsync(ICollection<int> excludedIds, CancellationToken cancellationToken) => await _context.KnmiMetarFiles
+        .AsNoTracking()
         .OrderByDescending(file => file.CreatedAt)
         .Where(file => !file.IsFileProcessed)
         .Where(file => !excludedIds.Contains(file.Id))

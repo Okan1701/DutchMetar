@@ -48,6 +48,6 @@ using (var scope = app.Services.CreateScope())
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(3600));
 RecurringJob.AddOrUpdate<ISyncKnmiMetarFileListFeature>("syncKnmiMetarFiles", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.HourInterval(1));
-//RecurringJob.AddOrUpdate<IReprocessFailedFilesFeature>("reprocessFailedFiles", feature => feature.ReprocessFailedFilesAsync(CancellationToken.None),  Cron.Daily);
+RecurringJob.AddOrUpdate<IReprocessFailedFilesFeature>("reprocessFailedFiles", feature => feature.ReprocessFailedFilesAsync(CancellationToken.None),  Cron.Daily);
 
 app.Run();
