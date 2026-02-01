@@ -37,11 +37,13 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         
         var hasAnyFiles = await _dutchMetarContext.KnmiMetarFiles.AnyAsync(cancellationToken);
         var oldestSavedFileDate = await _dutchMetarContext.KnmiMetarFiles
+            .AsNoTracking()
             .OrderByDescending(x => x.FileCreatedAt)
             .Select(x => x.FileCreatedAt)
             .LastOrDefaultAsync(cancellationToken);
         
         var newestSavedFile = await _dutchMetarContext.KnmiMetarFiles
+            .AsNoTracking()
             .OrderByDescending(x => x.FileCreatedAt)
             .Select(x => x.FileCreatedAt)
             .FirstOrDefaultAsync(cancellationToken);

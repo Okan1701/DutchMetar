@@ -63,6 +63,10 @@ public class MetarProcessor : IMetarProcessor
         else _logger.LogDebug("Value {Metar} not saved. It is not newer than the latest saved METAR and is not a correction.", metar);
         
         await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        // For reasons unknown, calling SaveChangesAsync() continuously in a loop causes weird behavior where new entity insert overwrites previous inserted entity,
+        // Clearing the change tracker is currently the workaround for that.
+        _dbContext.ChangeTracker.Clear();
     }
     
     private async Task<Airport> GetAirportIncludingLatestMetarAsync(string icao, CancellationToken cancellationToken, Guid correlationId)
