@@ -35,6 +35,7 @@ stages:
 
       - job: publishHangfireImage
         displayName: Publish DutchMetar Hangfire image
+        condition: ne(variables['Build.Reason'], 'PullRequest')
         dependsOn: buildSolution
         variables:
         - group: GithubPackages
