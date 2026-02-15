@@ -18,12 +18,10 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
 
     public async Task<Models.AirportDetails> GetAirportDetailsAsync(string airportCode, CancellationToken cancellationToken = default)
     {
-        var last24Hours = DateTime.UtcNow.AddHours(-24);
         
         var airport = await _dbContext.Airports
             .Include(x => x.MetarReports
                 .OrderByDescending(m => m.IssuedAt)
-                .Where(m => m.IssuedAt >=  last24Hours)
                 .Take(1))
             .FirstOrDefaultAsync(x => x.Icao.ToUpper() == airportCode.ToUpper(), cancellationToken: cancellationToken);
 
@@ -40,13 +38,9 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
         var latestMetar = airport.MetarReports.FirstOrDefault();
         if (latestMetar != null)
         {
-            airportDetails.CurrentWeather = MapMetarEntityToModel(latestMetar);
+            airportDetails.LatestWeather = MapMetarEntityToModel(latestMetar);
             airportDetails.LastUpdated = latestMetar.LastUpdatedAt;
         }
-        
-        airportDetails.HistoricalWeather = airport.MetarReports
-            .Select(MapMetarEntityToModel)
-            .ToArray();
 
         return airportDetails;
     }
