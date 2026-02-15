@@ -29,9 +29,9 @@ public partial class Airport : ComponentBase
 
     private string FormatWindDirection()
     {
-        if (AirportDetails?.CurrentWeather is { WindSpeedKnots: not null, WindDirection: not null })
+        if (AirportDetails?.LatestWeather is { WindSpeedKnots: not null, WindDirection: not null })
         {
-            return $"{AirportDetails.CurrentWeather.WindDirection} / {AirportDetails.CurrentWeather.WindSpeedKnots} kt";
+            return $"{AirportDetails.LatestWeather.WindDirection} / {AirportDetails.LatestWeather.WindSpeedKnots} kt";
         }
 
         return "N/A";

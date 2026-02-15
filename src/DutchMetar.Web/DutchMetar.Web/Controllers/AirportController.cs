@@ -38,8 +38,7 @@ public class AirportController : ControllerBase
         {
             Icao =  airportDetails.Icao,
             LastUpdated =  airportDetails.LastUpdated,
-            CurrentWeather = airportDetails.CurrentWeather != null ? AirportCurrentMetarMapping.Map(airportDetails.CurrentWeather) : null,
-            HistoricalWeather = airportDetails.HistoricalWeather.Select(AirportCurrentMetarMapping.Map).ToArray()
+            LatestWeather = airportDetails.LatestWeather != null ? AirportCurrentMetarMapping.Map(airportDetails.LatestWeather) : null,
         });
     }
 

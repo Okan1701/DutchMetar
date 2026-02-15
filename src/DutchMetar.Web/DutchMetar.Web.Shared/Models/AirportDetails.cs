@@ -6,7 +6,5 @@ public class AirportDetails
 
     public DateTime LastUpdated { get; set; } = DateTime.MinValue;
     
-    public AirportCurrentMetar? CurrentWeather { get; set; }
-    
-    public ICollection<AirportCurrentMetar> HistoricalWeather { get; set; } = Array.Empty<AirportCurrentMetar>();
+    public AirportCurrentMetar? LatestWeather { get; set; }
 }
