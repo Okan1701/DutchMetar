@@ -1,0 +1,76 @@
+﻿@page "/Airport/{AirportIcao}"
+@using DutchMetar.Web.Client.Components.Card
+<h1>@AirportIcao.ToUpperInvariant()</h1>
+@if (!IsLoading && AirportDetails?.LastUpdated != null)
+{
+    <span>Last update: @AirportDetails?.LastUpdated.ToShortTimeString()</span>
+}
+
+@if (IsLoading)
+{
+    <p>Loading data...</p>
+}
+else if (!IsLoading && AirportDetails != null)
+{
+    <section class="page-section">
+        <section class="page-section">
+            <h3>Latest Weather</h3>
+            @if (AirportDetails.LatestWeather != null)
+            {
+                <div>
+                    <Card Stretch="true">
+                        <CardTitle>Raw METAR</CardTitle>
+                        <CardBody>@AirportDetails.LatestWeather.RawMetar</CardBody>
+                    </Card>
+                </div>
+                <div class="latest-weather-items">
+                    <div>
+                        <Card Stretch="true">
+                            <CardBigValue
+                                Value="@(AirportDetails.LatestWeather.TemperatureCelsius.HasValue ? AirportDetails.LatestWeather.TemperatureCelsius.Value + " °C" : "N/A")"
+                                Label="Temperature">
+                            </CardBigValue>
+                        </Card>
+                    </div>
+                    <div>
+                        <Card Stretch="true">
+                            <CardBigValue
+                                Value="@(AirportDetails.LatestWeather.DewpointCelsius.HasValue ? AirportDetails.LatestWeather.DewpointCelsius.Value + " °C" : "N/A")"
+                                Label="Dewpoint">
+                            </CardBigValue>
+                        </Card>
+                    </div>
+                    <div>
+                        <Card Stretch="true">
+                            @if (AirportDetails.LatestWeather.WindSpeedKnots.HasValue && AirportDetails.LatestWeather.WindDirection.HasValue)
+                            {
+                                <CardBigValue
+                                    Value="@FormatWindDirection()"
+                                    Label="Wind">
+                                </CardBigValue>
+                            }
+                        </Card>
+                    </div>
+                    <div>
+                        <Card Stretch="true">
+                            <CardBigValue Value="@(AirportDetails.LatestWeather.VisibilityMeters.HasValue ? AirportDetails.LatestWeather.VisibilityMeters.Value + " m" : "N/A")" Label="Visibility"></CardBigValue>
+                        </Card>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>No information about current weather available.</p>
+            }
+        </section>
+
+        <section class="page-section">
+            <h3>Historical Graphs</h3>
+            <p>No historical data available.</p>
+        </section>
+    </section>
+}
+else
+{
+    <p>Something went wrong.</p>
+}
