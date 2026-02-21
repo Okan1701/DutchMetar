@@ -1,3 +1,5 @@
-﻿<div class="card @(Stretch ? "card-full-width" : "")">
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+
+<FluentCard MinimalStyle="true" Style="padding: 0" Class="@(Stretch ? "card-full-width" : "")">
     @ChildContent
-</div>
+</FluentCard>

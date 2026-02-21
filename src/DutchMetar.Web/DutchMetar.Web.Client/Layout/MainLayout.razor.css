@@ -49,3 +49,7 @@
 .navmenu-container {
     overflow: scroll;
 }
+
+.padded-element {
+    padding: 10px;
+}

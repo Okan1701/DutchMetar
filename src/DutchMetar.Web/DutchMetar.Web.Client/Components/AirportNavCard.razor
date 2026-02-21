@@ -1,14 +1,15 @@
-﻿<div>
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+<div class="airportnavcard">
     <div class="title-region">
         <div class="icao">@AirportSummary.Icao</div>
         <div>
             @if (AirportSummary.IsAuto)
             {
-                <div class="badge auto">AUTO</div>
+                <FluentBadge Appearance="Appearance.Neutral">AUTO</FluentBadge>
             }
             @if (AirportSummary.IsCavok)
             {
-                <div class="badge cavok">CAVOK</div>
+                <FluentBadge Appearance="Appearance.Accent">CAVOK</FluentBadge>
             }
         </div>
     </div>
