@@ -1,0 +1,20 @@
+﻿@using DutchMetar.Web.Client.Components
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Icons.Color
+
+@if (IsLoading)
+{
+    <p>Loading airports...</p>
+}
+else
+{
+    <FluentNavMenu Width="250">
+        <FluentNavLink Href="/" Icon="@(new Size24.Home())">Home</FluentNavLink>
+        @foreach (var summary in @AirportSummaries.OrderBy(x => x.Icao))
+        {
+            <FluentNavLink Href="@($"/airport/{summary.Icao}")" Icon="new Microsoft.FluentUI.AspNetCore.Components.Icons.Filled.Size24.Airplane()">
+                <AirportNavCard AirportSummary="summary"></AirportNavCard>
+            </FluentNavLink>
+        }
+    </FluentNavMenu>
+}
