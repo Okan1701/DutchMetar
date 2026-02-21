@@ -1,7 +1,5 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components
-@using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
-@using Size16 = Microsoft.FluentUI.AspNetCore.Components.Icons.Filled.Size16
-@using Size24 = Microsoft.FluentUI.AspNetCore.Components.Icons.Color.Size24
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
 @inherits LayoutComponentBase
 
 <FluentToastProvider />
@@ -11,12 +9,12 @@
 <FluentMenuProvider />
 
 <div>
-    <FluentLayout >
+    <FluentLayout>
         <FluentHeader>
             DutchMetar
         </FluentHeader>
     
-        <FluentStack Orientation="Orientation.Horizontal" Width="100%">
+        <FluentStack Orientation="Orientation.Horizontal" Style="height: calc(100vh - 80px);" Width="100%">
             <div class="padded-element">
                 <NavMenu></NavMenu>
             </div>
@@ -28,8 +26,12 @@
             </div>
         </FluentStack>
 
-        <FluentFooter Style="@("height: 40px; color: white; text-align: center;")">
-            Footer Text
+        <FluentFooter Style="height: 30px;background-color: black;display:flex;align-items: center;padding: 0 10px;">
+            <FluentIcon Value="@(new Icons.Color.Size20.Warning())" />
+            <span style="margin-left:5px;">Work in progress</span>
+            <FluentSpacer></FluentSpacer>
+            <FluentIcon Value="@(new Icons.Regular.Size20.Code())"/>
+            <a style="margin-left:5px;" href="https://github.com/Okan1701/DutchMetar">Okan1701/DutchMetar</a>
         </FluentFooter>
     </FluentLayout>
 </div>

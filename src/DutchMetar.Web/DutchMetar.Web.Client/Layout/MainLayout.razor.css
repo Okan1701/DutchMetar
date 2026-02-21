@@ -53,3 +53,12 @@
 .padded-element {
     padding: 10px;
 }
+
+.main-stack {
+    height: calc(100vh - 80px);
+}
+
+.footer-container {
+    height: 30px;
+    background-color: black;
+}
