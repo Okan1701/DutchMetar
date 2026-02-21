@@ -1,4 +1,6 @@
 ﻿@using DutchMetar.Web.Client.Components
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Icons.Color
 
 @if (IsLoading)
 {
@@ -6,13 +8,13 @@
 }
 else
 {
-    <div class="airports">
-        
+    <FluentNavMenu Width="250">
+        <FluentNavLink Href="/" Icon="@(new Size24.Home())">Home</FluentNavLink>
         @foreach (var summary in @AirportSummaries.OrderBy(x => x.Icao))
         {
-            <div class="airport" @onclick="() => OnAirportSelected(summary.Icao)">
+            <FluentNavLink Href="@($"/airport/{summary.Icao}")" Icon="new Microsoft.FluentUI.AspNetCore.Components.Icons.Filled.Size24.Airplane()">
                 <AirportNavCard AirportSummary="summary"></AirportNavCard>
-            </div>
+            </FluentNavLink>
         }
-    </div>
+    </FluentNavMenu>
 }
