@@ -1,22 +1,31 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
+@using Size16 = Microsoft.FluentUI.AspNetCore.Components.Icons.Filled.Size16
+@using Size24 = Microsoft.FluentUI.AspNetCore.Components.Icons.Color.Size24
+@inherits LayoutComponentBase
 
+<FluentToastProvider />
+<FluentDialogProvider />
+<FluentTooltipProvider />
+<FluentMessageBarProvider />
+<FluentMenuProvider />
 
-<div class="app">
-    <AppBar></AppBar>
-    <div class="app-layout">
-        <div class="navmenu">
-            <div class="navmenu-container">
-                <NavMenu></NavMenu>
-            </div>
-        </div>
-        <div class="content">
-            @Body
-        </div>
-    </div>
-</div>
+<div>
+    <FluentLayout >
+        <FluentHeader>
+            DutchMetar
+        </FluentHeader>
+    
+        <FluentStack Orientation="Orientation.Horizontal" Width="100%">
+            <NavMenu></NavMenu>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+            <FluentBodyContent>
+                @Body
+            </FluentBodyContent>
+        </FluentStack>
+
+        <FluentFooter Style="@("height: 40px; color: white; text-align: center;")">
+            Footer Text
+        </FluentFooter>
+    </FluentLayout>
 </div>

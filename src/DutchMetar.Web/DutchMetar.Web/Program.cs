@@ -5,6 +5,7 @@ using DutchMetar.Core.Infrastructure;
 using DutchMetar.Web.Components;
 using DutchMetar.Web.Shared.Services;
 using DutchMetar.Web.Shared.Services.Interfaces;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddAirportSummaryFeature();
 builder.Services.AddAirportDetailsFeature();
 builder.Services.AddAirportDayHistoryFeature();
+builder.Services.AddFluentUIComponents();
 
 // Shared services
 builder.Services.AddScoped<IAirportService, AirportService>();
