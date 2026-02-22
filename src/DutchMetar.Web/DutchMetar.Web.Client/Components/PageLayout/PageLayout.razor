@@ -1,5 +1,6 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components
 @using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+<PageTitle>DutchMetar - @TitleContent</PageTitle>
 @if (Status == PageStatus.Loading)
 {
     <div class="center-flex">
@@ -21,5 +22,15 @@
     </div>
 } else if (Status == PageStatus.Displaying)
 {
-    @PageContent
+    <FluentStack Width="100%" Orientation="Orientation.Vertical">
+        <div class="header">
+            <h1 class="title">@TitleContent</h1>
+            @if (SubtitleContent != null)
+            {
+                <div>@SubtitleContent</div>
+            }
+        </div>
+        <br />
+        @PageContent
+    </FluentStack>
 }

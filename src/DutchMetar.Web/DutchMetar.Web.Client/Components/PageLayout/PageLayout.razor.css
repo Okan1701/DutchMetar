@@ -22,3 +22,14 @@
     align-items: center;
     justify-content: center;
 }
+
+.title {
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}

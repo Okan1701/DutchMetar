@@ -2,8 +2,14 @@
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .latest-weather-items > * {
     flex: 1;
+}
+
+.badge-container {
+    display: flex;
+    gap: 10px;
 }
