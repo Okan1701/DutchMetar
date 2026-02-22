@@ -16,3 +16,14 @@
     display: flex;
     justify-content: center;
 }
+
+.bigvalue-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-container {
+    position: absolute;
+    left: 25%;
+}

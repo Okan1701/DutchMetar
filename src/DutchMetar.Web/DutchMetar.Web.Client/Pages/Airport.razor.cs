@@ -1,4 +1,5 @@
-﻿using DutchMetar.Web.Shared.Models;
+﻿using DutchMetar.Web.Client.Components.PageLayout;
+using DutchMetar.Web.Shared.Models;
 using DutchMetar.Web.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 
@@ -7,24 +8,34 @@ namespace DutchMetar.Web.Client.Pages;
 public partial class Airport : ComponentBase
 {
     private readonly IAirportService _airportService;
+    private readonly ILogger<Airport> _logger;
 
     [Parameter]
     public required string AirportIcao { get; set; }
     
     private AirportDetails? AirportDetails { get; set; }
-
-    private bool IsLoading { get; set; } = true;
     
-    public Airport(IAirportService airportService)
+    private PageStatus PageStatus { get; set; }
+    
+    public Airport(IAirportService airportService, ILogger<Airport> logger)
     {
         _airportService = airportService;
+        _logger = logger;
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        IsLoading = true;
-        AirportDetails = await _airportService.GetAirportDetailsAsync(AirportIcao);
-        IsLoading = false;
+        try
+        {
+            PageStatus = PageStatus.Loading;
+            AirportDetails = await _airportService.GetAirportDetailsAsync(AirportIcao);
+            PageStatus = PageStatus.Displaying;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Something went wrong when loading the page!");
+            PageStatus = PageStatus.Error;
+        }
     }
 
     private string FormatWindDirection()
