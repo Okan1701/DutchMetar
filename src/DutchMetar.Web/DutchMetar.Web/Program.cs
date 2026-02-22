@@ -1,6 +1,6 @@
-using DutchMetar.Core.Features.AirportDetails;
-using DutchMetar.Core.Features.AirportPerDayHistory;
-using DutchMetar.Core.Features.AirportSummary;
+using DutchMetar.Core.Features.Web.AirportDetails;
+using DutchMetar.Core.Features.Web.AirportPerDayHistory;
+using DutchMetar.Core.Features.Web.AirportSummary;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Web.Components;
 using DutchMetar.Web.Shared.Services;

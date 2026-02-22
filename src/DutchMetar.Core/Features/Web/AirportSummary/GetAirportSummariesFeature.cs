@@ -1,9 +1,9 @@
-﻿using DutchMetar.Core.Features.AirportSummary.Interfaces;
-using DutchMetar.Core.Features.AirportSummary.Models;
+﻿using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
+using DutchMetar.Core.Features.Web.AirportSummary.Models;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace DutchMetar.Core.Features.AirportSummary;
+namespace DutchMetar.Core.Features.Web.AirportSummary;
 
 public class GetAirportSummariesFeature : IGetAirportSummariesFeature
 {

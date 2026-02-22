@@ -1,11 +1,11 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Domain.Exceptions;
-using DutchMetar.Core.Features.AirportPerDayHistory.Interfaces;
-using DutchMetar.Core.Features.AirportPerDayHistory.Models;
+using DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
+using DutchMetar.Core.Features.Web.AirportPerDayHistory.Models;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace DutchMetar.Core.Features.AirportPerDayHistory;
+namespace DutchMetar.Core.Features.Web.AirportPerDayHistory;
 
 public class GetAirportDayHistoryFeature : IGetAirportDayHistoryFeature
 {

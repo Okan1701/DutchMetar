@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.AirportPerDayHistory.Models;
+﻿namespace DutchMetar.Core.Features.Web.AirportPerDayHistory.Models;
 
 public class AirportDayHistory
 {

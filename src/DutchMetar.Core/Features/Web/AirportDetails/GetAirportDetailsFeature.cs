@@ -1,11 +1,11 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Domain.Exceptions;
-using DutchMetar.Core.Features.AIrportDetails.Interfaces;
-using DutchMetar.Core.Features.AirportDetails.Models;
+using DutchMetar.Core.Features.Web.AirportDetails.Interfaces;
+using DutchMetar.Core.Features.Web.AirportDetails.Models;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace DutchMetar.Core.Features.AirportDetails;
+namespace DutchMetar.Core.Features.Web.AirportDetails;
 
 public class GetAirportDetailsFeature : IGetAirportDetailsFeature
 {

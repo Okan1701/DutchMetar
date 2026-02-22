@@ -1,4 +1,4 @@
-﻿using DutchMetar.Core.Features.AirportSummary.Models;
+﻿using DutchMetar.Core.Features.Web.AirportSummary.Models;
 using DutchMetar.Web.Shared.Models;
 
 namespace DutchMetar.Web.Mapping;

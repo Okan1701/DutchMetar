@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.AirportSummary.Interfaces;
+﻿namespace DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 
 public interface IGetAirportSummariesFeature
 {

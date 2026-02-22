@@ -1,7 +1,7 @@
-﻿using DutchMetar.Core.Features.AirportPerDayHistory.Interfaces;
+﻿using DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DutchMetar.Core.Features.AirportPerDayHistory;
+namespace DutchMetar.Core.Features.Web.AirportPerDayHistory;
 
 public static class Extensions
 {

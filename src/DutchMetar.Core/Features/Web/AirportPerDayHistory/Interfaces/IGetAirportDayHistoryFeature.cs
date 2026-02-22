@@ -1,6 +1,6 @@
-﻿using DutchMetar.Core.Features.AirportPerDayHistory.Models;
+﻿using DutchMetar.Core.Features.Web.AirportPerDayHistory.Models;
 
-namespace DutchMetar.Core.Features.AirportPerDayHistory.Interfaces;
+namespace DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
 
 public interface IGetAirportDayHistoryFeature
 {

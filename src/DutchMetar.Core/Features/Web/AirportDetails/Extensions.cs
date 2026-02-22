@@ -1,7 +1,7 @@
-﻿using DutchMetar.Core.Features.AIrportDetails.Interfaces;
+﻿using DutchMetar.Core.Features.Web.AirportDetails.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DutchMetar.Core.Features.AirportDetails;
+namespace DutchMetar.Core.Features.Web.AirportDetails;
 
 public static class Extensions
 {

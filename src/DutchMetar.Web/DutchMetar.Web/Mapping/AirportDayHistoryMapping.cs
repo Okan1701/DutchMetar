@@ -5,7 +5,7 @@ namespace DutchMetar.Web.Mapping;
 public static class AirportDayHistoryMappingExtensions
 {
     public static AirportDayHistory MapToWebModel(
-        this Core.Features.AirportPerDayHistory.Models.AirportDayHistory source)
+        this Core.Features.Web.AirportPerDayHistory.Models.AirportDayHistory source)
     {
         return new AirportDayHistory
         {

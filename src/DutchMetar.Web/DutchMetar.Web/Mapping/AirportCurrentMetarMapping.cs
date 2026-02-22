@@ -4,7 +4,7 @@ namespace DutchMetar.Web.Mapping;
 
 public static class AirportCurrentMetarMapping
 {
-    public static AirportCurrentMetar Map(Core.Features.AirportDetails.Models.AirportCurrentMetar source) => new()
+    public static AirportCurrentMetar Map(Core.Features.Web.AirportDetails.Models.AirportCurrentMetar source) => new()
     {
         RawMetar = source.RawMetar,
         IsAuto = source.IsAuto,

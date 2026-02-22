@@ -1,6 +1,6 @@
-﻿using DutchMetar.Core.Features.AIrportDetails.Interfaces;
-using DutchMetar.Core.Features.AirportPerDayHistory.Interfaces;
-using DutchMetar.Core.Features.AirportSummary.Interfaces;
+﻿using DutchMetar.Core.Features.Web.AirportDetails.Interfaces;
+using DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
+using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 using DutchMetar.Web.Mapping;
 using DutchMetar.Web.Shared.Constants;
 using DutchMetar.Web.Shared.Models;
