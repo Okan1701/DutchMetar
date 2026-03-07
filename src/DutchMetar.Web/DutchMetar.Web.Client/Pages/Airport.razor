@@ -29,7 +29,7 @@
             @if (AirportDetails?.LastUpdated != null)
             {
                 <FluentBadge Appearance="Appearance.Accent">
-                    Last update: @AirportDetails?.LastUpdated.ToShortTimeString()
+                    Last update: @AirportDetails?.LastUpdated.ToString("g")
                 </FluentBadge>
             }
         </div>
@@ -79,6 +79,15 @@
                             Value="@(AirportDetails.LatestWeather.VisibilityMeters.HasValue ? AirportDetails.LatestWeather.VisibilityMeters.Value + " m" : "N/A")"
                             Label="Visibility"
                             CardIcon="@(new Size32.Eye())">
+                        </CardBigValue>
+                    </Card>
+                </div>
+                <div>
+                    <Card Stretch="true">
+                        <CardBigValue
+                            Value="@(AirportDetails.LatestWeather.VisibilityMeters.HasValue ? AirportDetails.LatestWeather.AltimeterValue + " hPA" : "N/A")"
+                            Label="Pressure"
+                            CardIcon="@(new Size32.Gauge())">
                         </CardBigValue>
                     </Card>
                 </div>
