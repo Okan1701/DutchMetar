@@ -1,0 +1,17 @@
+﻿<div class="airportnavcard">
+    <div class="title-region">
+        <div class="icao">@AirportSummary.Icao</div>
+        <div>
+            @if (AirportSummary.IsAuto)
+            {
+                <FluentBadge Appearance="Appearance.Neutral">AUTO</FluentBadge>
+            }
+            @if (AirportSummary.IsCavok)
+            {
+                <FluentBadge Appearance="Appearance.Accent">CAVOK</FluentBadge>
+            }
+        </div>
+    </div>
+    <div class="text margin-up">@FormatWindData(AirportSummary.WindDirection, AirportSummary.WindSpeedKnots)</div>
+    <div class="text">Issued at @AirportSummary.LastIssuedMetarDate.ToString("HH:mm") Z</div>
+</div>
