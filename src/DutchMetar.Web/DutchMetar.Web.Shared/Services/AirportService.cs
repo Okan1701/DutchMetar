@@ -42,4 +42,18 @@ public class AirportService : IAirportService
 
         return airportDetails ?? throw new NullReferenceException("Failed to deserialize JSON");
     }
+    
+    public async Task<AirportDayHistory> GetAirportHistoryAsync(string airportIcaoCode, DateOnly date)
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.BaseAddress = new Uri(_navigationManager.BaseUri);
+
+        var url = $"{EndpointConstants.AirportEndpoint}{airportIcaoCode}/history?targetDate={date:yyyy-MM-dd}";
+        var httpResult = await client.GetAsync(url);
+        httpResult.EnsureSuccessStatusCode();
+        
+        var airportDayHistory= await httpResult.Content.ReadFromJsonAsync<AirportDayHistory>();
+
+        return airportDayHistory ?? throw new NullReferenceException("Failed to deserialize JSON");
+    }
 }

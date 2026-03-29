@@ -1,0 +1,24 @@
+@using System.Text.Json
+@using Microsoft.FluentUI.AspNetCore.Components.Icons.Filled
+<h3>Historical Graphs</h3>
+
+<FluentToolbar Style="width: 100%">
+    <FluentDatePicker Label="Date" Embedded="true" AriaLabel="Selected Date" @bind-Value="@SelectedDate"/>
+    <FluentButton IconStart="@(new Size16.Search())" @onclick="@RetrieveDataAsync" Appearance="Appearance.Accent" Disabled="@IsLoading">Search</FluentButton>
+    <FluentSpacer></FluentSpacer>
+    <span>@History?.History.Count METARs found</span>
+</FluentToolbar>
+
+@if (IsLoading)
+{
+    <div class="loading">
+        <FluentProgressRing Value="@null"
+                            Width="32px"
+                            Stroke="@ProgressStroke.Normal"/>
+        <p>Retrieving historical data...</p>
+    </div>
+}
+else
+{
+    <pre style="white-space: pre-wrap">@JsonSerializer.Serialize(History)</pre>
+}

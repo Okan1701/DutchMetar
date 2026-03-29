@@ -1,0 +1,38 @@
+﻿@page "/airport/{AirportIcao}"
+@using DutchMetar.Web.Shared.Pages.Airport.Components
+
+<PageLayout Status="@PageStatus">
+    <TitleContent>@AirportDetails?.Icao</TitleContent>
+    <SubtitleContent>
+        <div class="badge-container">
+            @if (AirportDetails?.LatestWeather?.IsAuto == true)
+            {
+                <FluentBadge Appearance="Appearance.Neutral">
+                    AUTO
+                </FluentBadge>
+            }
+            @if (AirportDetails?.LatestWeather?.IsCavok == true)
+            {
+                <FluentBadge Fill="red" BackgroundColor="green" Color="white">
+                    CAVOK
+                </FluentBadge>
+            }
+            @if (AirportDetails?.LatestWeather?.IsCorrected == true)
+            {
+                <FluentBadge Appearance="Appearance.Neutral">
+                    COR
+                </FluentBadge>
+            }
+            @if (AirportDetails?.LastUpdated != null)
+            {
+                <FluentBadge Appearance="Appearance.Accent">
+                    Last update: @AirportDetails?.LastUpdated.ToString("g")
+                </FluentBadge>
+            }
+        </div>
+    </SubtitleContent>
+    <PageContent>
+        <AirportLatestWeather AirportDetails="@AirportDetails"></AirportLatestWeather>
+        <AirportHistoricalData Icao="@AirportDetails.Icao"></AirportHistoricalData>
+    </PageContent>
+</PageLayout>

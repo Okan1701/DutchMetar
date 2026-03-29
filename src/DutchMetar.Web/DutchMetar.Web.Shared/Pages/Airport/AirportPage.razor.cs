@@ -4,12 +4,12 @@ using DutchMetar.Web.Shared.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-namespace DutchMetar.Web.Shared.Pages;
+namespace DutchMetar.Web.Shared.Pages.Airport;
 
-public partial class Airport : ComponentBase
+public partial class AirportPage : ComponentBase
 {
     private readonly IAirportService _airportService;
-    private readonly ILogger<Airport> _logger;
+    private readonly ILogger<AirportPage> _logger;
 
     [Parameter]
     public required string AirportIcao { get; set; }
@@ -18,7 +18,7 @@ public partial class Airport : ComponentBase
     
     private PageStatus PageStatus { get; set; }
     
-    public Airport(IAirportService airportService, ILogger<Airport> logger)
+    public AirportPage(IAirportService airportService, ILogger<AirportPage> logger)
     {
         _airportService = airportService;
         _logger = logger;
@@ -37,15 +37,5 @@ public partial class Airport : ComponentBase
             _logger.LogError(ex, "Something went wrong when loading the page!");
             PageStatus = PageStatus.Error;
         }
-    }
-
-    private string FormatWindDirection()
-    {
-        if (AirportDetails?.LatestWeather is { WindSpeedKnots: not null, WindDirection: not null })
-        {
-            return $"{AirportDetails.LatestWeather.WindDirection} / {AirportDetails.LatestWeather.WindSpeedKnots} kt";
-        }
-
-        return "N/A";
     }
 }

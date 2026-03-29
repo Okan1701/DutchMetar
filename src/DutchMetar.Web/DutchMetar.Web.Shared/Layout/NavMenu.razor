@@ -7,7 +7,7 @@
 else
 {
     <FluentNavMenu Width="250">
-        <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Size20.Home())">Home</FluentNavLink>
+        <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Size20.Home())">HomePage</FluentNavLink>
         @foreach (var summary in @AirportSummaries.OrderBy(x => x.Icao))
         {
             <FluentNavLink Href="@($"/airport/{summary.Icao}")">

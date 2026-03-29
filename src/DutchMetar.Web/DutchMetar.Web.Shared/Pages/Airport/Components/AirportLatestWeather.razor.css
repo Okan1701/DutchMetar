@@ -1,4 +1,4 @@
-﻿.latest-weather-items {
+.latest-weather-items {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -7,9 +7,4 @@
 
 .latest-weather-items > * {
     flex: 1;
-}
-
-.badge-container {
-    display: flex;
-    gap: 10px;
 }
