@@ -11,6 +11,8 @@ public class DutchMetarContext : DbContext
     
     public DbSet<Metar> Metars { get; set; }
     
+    public DbSet<MetarCeiling> MetarCeilings { get; set; }
+    
     public DbSet<MetarImportResult> MetarImportResults { get; set; }
     
     public DbSet<KnmiMetarFile> KnmiMetarFiles { get; set; }
@@ -28,6 +30,13 @@ public class DutchMetarContext : DbContext
         builder.Entity<KnmiMetarFile>()
             .HasIndex(u => u.FileName)
             .IsUnique();
+        
+        // When deleting a Metar entity, it is safe to auto-delete related MetarCeiling entities
+        builder.Entity<Metar>()
+            .HasMany(m => m.Ceilings)
+            .WithOne(c => c.Metar)
+            .HasForeignKey(c => c.MetarId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public override int SaveChanges()

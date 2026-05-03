@@ -4,16 +4,19 @@ using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DutchMetar.Core.Infrastructure.Data.Migrations
+namespace DutchMetar.Core.Migrations
 {
     [DbContext(typeof(DutchMetarContext))]
-    partial class DutchMetarContextModelSnapshot : ModelSnapshot
+    [Migration("20260503141453_AddMetarCeiling")]
+    partial class AddMetarCeiling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
