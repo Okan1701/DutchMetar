@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+
+mat-toolbar {
+    @include mat.toolbar-overrides((
+            container-background-color: #252525,
+            container-text-color: var(--mat-sys-primary)
+    ));
+}
+.sidenav {
+    height: 100vh;
+}
+
+.page-content {
+    padding: 10px;
+}
