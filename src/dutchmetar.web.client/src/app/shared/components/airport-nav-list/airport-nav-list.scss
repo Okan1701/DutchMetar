@@ -1,0 +1,23 @@
+@use '@angular/material' as mat;
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.airport-item-list {
+    
+}
+
+.airport-item {
+    padding: 20px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-size: var(--mat-list-list-item-label-text-size, var(--mat-sys-body-large-size));
+    margin-bottom: 10px;
+}

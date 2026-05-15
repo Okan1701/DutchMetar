@@ -1,0 +1,30 @@
+@if (isLoading$ | async) {
+    <div class="spinner-container">
+        <mat-spinner [diameter]="36"></mat-spinner>
+    </div>
+} @else {
+    @let airports = airports$ | async;
+    <div class="airport-item-list">
+        @for (airport of airports; track $index) {
+            @if ($index > 1) {
+                <mat-divider></mat-divider>
+            }
+            <div class="airport-item" matRipple>
+                <div>
+                    <div class="title">{{ airport.icao }}</div>
+                    <div>Issued at {{ airport.lastIssuedMetarDate | date:'HH:mm':'UTC' }}Z</div>
+                    <div>Wind {{ airport.windDirection }}° at {{ airport.windSpeedKnots }}kt</div>
+                </div>
+                <div>
+                    @if (airport.isAuto) {
+                        <span>AUTO</span>
+                    }
+                    @if (airport.isCavok) {
+                        <span>CAVOK</span>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
