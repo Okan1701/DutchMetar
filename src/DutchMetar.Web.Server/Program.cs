@@ -1,3 +1,8 @@
+using DutchMetar.Core.Features.Web.AirportDetails;
+using DutchMetar.Core.Features.Web.AirportPerDayHistory;
+using DutchMetar.Core.Features.Web.AirportSummary;
+using DutchMetar.Core.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
+builder.Services.AddAirportSummaryFeature();
+builder.Services.AddAirportDetailsFeature();
+builder.Services.AddAirportDayHistoryFeature();
 
 var app = builder.Build();
 
