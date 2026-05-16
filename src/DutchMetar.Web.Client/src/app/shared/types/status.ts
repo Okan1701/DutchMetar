@@ -1,1 +1,1 @@
-﻿export type LoadingStatus = "loading" | "error" | "success";
+﻿export type LoadingStatus = "loading" | "error" | "success" | "notfound";

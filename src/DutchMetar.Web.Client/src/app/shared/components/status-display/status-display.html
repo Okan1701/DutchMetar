@@ -1,0 +1,31 @@
+@switch (status) {
+    @case ('loading') {
+        <div class="status-container">
+            <div class="loading-container">
+                <mat-spinner diameter="48" class="spinner"></mat-spinner>
+                <div>Retrieving data</div>
+            </div>
+        </div>
+    }
+    @case ('notfound') {
+        <div class="status-container">
+            <div class="icon-message">
+                <mat-icon class="large-icon">search_off</mat-icon>
+                <h2>Not found</h2>
+                <span>The page you are trying to find does not exist.</span>
+            </div>
+        </div>
+    }
+    @case ('error') {
+        <div class="status-container">
+            <div class="icon-message error">
+                <mat-icon class="large-icon">error_outline</mat-icon>
+                <h2>Something went wrong</h2>
+                <span>An error occurred while loading, please try again later.</span>
+            </div>
+        </div>
+    }
+    @case ('success') {
+        <ng-content></ng-content>
+    }
+}

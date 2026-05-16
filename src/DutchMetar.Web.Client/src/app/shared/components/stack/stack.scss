@@ -1,0 +1,20 @@
+:host {
+    display: flex;
+    flex-direction: var(--direction, column);
+    gap: 16px;
+    flex-wrap: var(--wrap, nowrap);
+}
+
+:host([direction="horizontal"]) {
+    --direction: row;
+    --wrap: wrap;
+}
+
+:host([direction="vertical"]) {
+    --direction: column;
+    --wrap: nowrap;
+}
+
+:host([wrap]) {
+    --wrap: wrap;
+}
