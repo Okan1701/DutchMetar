@@ -19,3 +19,11 @@ mat-sidenav {
 .page-content {
     padding: 10px 20px;
 }
+
+.active-link {
+    color: var(--mat-sys-primary)
+}
+
+.pointer {
+    cursor: pointer;
+}

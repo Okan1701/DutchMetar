@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
     selector: 'app-airport-nav-list',
@@ -18,7 +19,9 @@ import { MatChipsModule } from '@angular/material/chips';
         MatListModule,
         MatIconModule,
         MatRippleModule,
-        MatChipsModule
+        MatChipsModule,
+        RouterLink,
+        RouterLinkActive,
     ],
     templateUrl: './airport-nav-list.html',
     styleUrl: './airport-nav-list.scss',

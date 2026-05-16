@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule, MatNavList } from '@angular/material/list';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { AirportService } from './shared/services/airport-service';
 import { AirportNavList } from './shared/components/airport-nav-list/airport-nav-list';
@@ -13,10 +13,10 @@ import { AirportNavList } from './shared/components/airport-nav-list/airport-nav
         RouterOutlet,
         MatToolbarModule,
         MatSidenavModule,
-        MatNavList,
         MatListModule,
         MatIconModule,
         AirportNavList,
+        RouterLink,
     ],
     templateUrl: './app.html',
     styleUrl: './app.scss',
