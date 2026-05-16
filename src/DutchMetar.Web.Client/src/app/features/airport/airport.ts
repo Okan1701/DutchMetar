@@ -1,20 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AirportDetails } from '../../shared/models/airport-details';
 import { LoadingStatus } from '../../shared/types/status';
 import { AirportService } from '../../shared/services/airport-service';
 import { StatusDisplay } from '../../shared/components/status-display/status-display';
+import { Subject, takeUntil } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Stack } from '../../shared/components/stack/stack';
+import { MatChipsModule } from '@angular/material/chips';
+import { AirportLatestWeather } from './components/airport-latest-weather/airport-latest-weather';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-airport',
-    imports: [StatusDisplay],
+    imports: [StatusDisplay, Stack, MatChipsModule, AirportLatestWeather, DatePipe],
     templateUrl: './airport.html',
     styleUrl: './airport.scss',
 })
-export class Airport implements OnInit {
+export class Airport implements OnInit, OnDestroy {
     protected airportIcao: string | null = null;
     protected airportDetails?: AirportDetails;
-    protected loadingStatus: LoadingStatus = 'loading';
+    protected loadingStatus = signal<LoadingStatus>('loading');
+
+    private unsubscribe$: Subject<void> = new Subject<void>();
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -23,5 +31,32 @@ export class Airport implements OnInit {
 
     public ngOnInit(): void {
         this.airportIcao = this.route.snapshot.paramMap.get('icao');
+        console.log('airport comp', this.airportIcao);
+
+        if (this.airportIcao != null) {
+            this.loadingStatus.set('loading');
+            this.airportService
+                .getAirportDetails(this.airportIcao)
+                .pipe(takeUntil(this.unsubscribe$))
+                .subscribe({
+                    next: (data) => this.onAirportDetailsRetrieved(data),
+                    error: (error) => this.onRetrievalError(error),
+                });
+        }
+    }
+
+    public ngOnDestroy(): void {
+        this.unsubscribe$.next();
+    }
+
+    private onAirportDetailsRetrieved(airportDetails: AirportDetails): void {
+        this.loadingStatus.set('success');
+        this.airportDetails = airportDetails;
+        console.log(this.loadingStatus);
+    }
+
+    private onRetrievalError(error: HttpErrorResponse): void {
+        this.loadingStatus.set('error');
+        console.error('Failed to retrieve details for ' + this.airportIcao, error);
     }
 }

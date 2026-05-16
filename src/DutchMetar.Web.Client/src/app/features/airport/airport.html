@@ -1,3 +1,33 @@
-<app-status-display status="success">
-    {{ airportIcao }}
+<app-status-display [status]="loadingStatus()">
+    <app-stack>
+        <div class="page-header">
+            <div class="page-header-title">
+                <h1>{{ airportDetails?.icao }}</h1>
+                <mat-chip-set aria-label="Fish selection">
+                    @if (airportDetails?.latestWeather?.isAuto) {
+                        <mat-chip>AUTO</mat-chip>
+                    }
+                    @if (airportDetails?.latestWeather?.isCavok) {
+                        <mat-chip>CAVOK</mat-chip>
+                    }
+                    @if (airportDetails?.latestWeather?.isCorrected) {
+                        <mat-chip>COR</mat-chip>
+                    }
+                </mat-chip-set>
+            </div>
+            @if (airportDetails?.lastUpdated) {
+                <div class="page-header-subtitle">
+                    <span>Last update: {{ airportDetails?.lastUpdated | date:'HH:mm':'UTC' }}Z</span>
+                </div>
+            }
+        </div>
+        
+        @if (airportDetails?.latestWeather) {
+            <app-airport-latest-weather [airportWeather]="airportDetails?.latestWeather!"></app-airport-latest-weather>
+        }
+        @else {
+            <p>No information about current weather available.</p>
+        }
+        
+    </app-stack>
 </app-status-display>
