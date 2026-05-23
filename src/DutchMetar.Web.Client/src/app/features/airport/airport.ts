@@ -10,10 +10,18 @@ import { Stack } from '../../shared/components/stack/stack';
 import { MatChipsModule } from '@angular/material/chips';
 import { AirportLatestWeather } from './components/airport-latest-weather/airport-latest-weather';
 import { DatePipe } from '@angular/common';
+import { AirportHistoryData } from './components/airport-history-data/airport-history-data';
 
 @Component({
     selector: 'app-airport',
-    imports: [StatusDisplay, Stack, MatChipsModule, AirportLatestWeather, DatePipe],
+    imports: [
+        StatusDisplay,
+        Stack,
+        MatChipsModule,
+        AirportLatestWeather,
+        DatePipe,
+        AirportHistoryData,
+    ],
     templateUrl: './airport.html',
     styleUrl: './airport.scss',
 })
@@ -31,7 +39,6 @@ export class Airport implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         this.airportIcao = this.route.snapshot.paramMap.get('icao');
-        console.log('airport comp', this.airportIcao);
 
         if (this.airportIcao != null) {
             this.loadingStatus.set('loading');

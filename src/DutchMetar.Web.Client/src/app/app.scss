@@ -27,3 +27,7 @@ mat-sidenav {
 .pointer {
     cursor: pointer;
 }
+
+mat-form-field {
+    @include mat.form-field-density(-4);
+}

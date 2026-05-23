@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+
+mat-form-field {
+    @include mat.form-field-density(-4);
+}
+
+.toolbar {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.toolbar *:last-child {
+    margin-left: auto;
+}
+
+pre {
+    white-space: break-spaces;
+}

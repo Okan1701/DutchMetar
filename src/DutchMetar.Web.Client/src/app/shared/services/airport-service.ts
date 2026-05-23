@@ -4,6 +4,7 @@ import { AirportSummary } from '../models/airport-summary';
 import { LoadingStatus } from '../types/status';
 import { HttpClient } from '@angular/common/http';
 import { AirportDetails } from '../models/airport-details';
+import { AirportDayHistory } from '../models/airport-day-history';
 
 @Injectable({
     providedIn: 'root',
@@ -41,7 +42,9 @@ export class AirportService {
         return this.httpClient.get<AirportDetails>(`${this.airportsEndpoint}/${icao}`);
     }
 
-    public getAirportHistory(icao: string, targetDate: Date): Observable<AirportDetails> {
-        return this.httpClient.get<AirportDetails>(`${this.airportsEndpoint}/${icao}/history/?targetDate=${targetDate.toISOString()}`);
+    public getAirportHistory(icao: string, targetDate: Date): Observable<AirportDayHistory> {
+        return this.httpClient.get<AirportDayHistory>(
+            `${this.airportsEndpoint}/${icao}/history/?targetDate=${targetDate.toISOString().split('T')[0]}`,
+        );
     }
 }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, InputSignal } from '@angular/core';
 import { LoadingStatus } from '../../types/status';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -10,5 +10,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     styleUrls: ['./status-display.scss'],
 })
 export class StatusDisplay {
-    @Input() status: LoadingStatus = 'success';
+    public status: InputSignal<LoadingStatus> = input<LoadingStatus>('success');
+    public loadingText: InputSignal<string> = input<string>('Retrieving data');
+    public notFoundText: InputSignal<string> = input<string>(
+        'The page you are trying to find does not exist.',
+    );
 }

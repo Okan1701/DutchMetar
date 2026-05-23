@@ -1,0 +1,20 @@
+<mat-card>
+    <mat-card-content class="toolbar">
+        <form [formGroup]="form">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Target date</mat-label>
+                <input formControlName="selectedDate" placeholder="d/m/yyyy" [max]="maxDate" matInput [matDatepicker]="picker">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </form>
+        <button matTooltip="Reset to today" mat-icon-button><mat-icon>event_repeat</mat-icon></button>
+        <span>{{ airportHistory()?.history?.length ?? 0 }} results</span>
+    </mat-card-content>
+</mat-card>
+
+<app-status-display notFoundText="No historial data found for the chosen date." loadingText="Retrieving history" [status]="loadingStatus()">
+    @if (airportHistory()) {
+        <pre>{{ airportHistoryJson() }}</pre>
+    }
+</app-status-display>

@@ -1,9 +1,9 @@
-@switch (status) {
+@switch (status()) {
     @case ('loading') {
         <div class="status-container">
             <div class="loading-container">
                 <mat-spinner diameter="48" class="spinner"></mat-spinner>
-                <div>Retrieving data</div>
+                <div>{{ loadingText() }}</div>
             </div>
         </div>
     }
@@ -11,8 +11,8 @@
         <div class="status-container">
             <div class="icon-message">
                 <mat-icon class="large-icon">search_off</mat-icon>
-                <h2>Not found</h2>
-                <span>The page you are trying to find does not exist.</span>
+                <h2>NOT FOUND</h2>
+                <span>{{ notFoundText() }}</span>
             </div>
         </div>
     }
