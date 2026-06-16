@@ -17,3 +17,16 @@ mat-form-field {
 pre {
     white-space: break-spaces;
 }
+
+.chart-section {
+    display: flex;
+    gap: 30px;
+    max-width: 100%;
+    flex-wrap: wrap;
+}
+
+.chart-section * {
+    flex: 1 1 800px;
+    min-width: 300px;
+    box-sizing: border-box;
+}

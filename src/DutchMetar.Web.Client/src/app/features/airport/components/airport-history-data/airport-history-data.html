@@ -15,28 +15,17 @@
     </mat-card>
 
     <app-status-display notFoundText="No historial data found for the chosen date." loadingText="Retrieving history" [status]="loadingStatus()">
-        @if (airportHistory()) {
-            @if (chartOptions) {
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>Temperature History</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <apx-chart
-                                [series]="chartOptions.series!"
-                                [chart]="chartOptions.chart!"
-                                [xaxis]="chartOptions.xaxis!"
-                                [yaxis]="chartOptions.yaxis!"
-                                [stroke]="chartOptions.stroke!"
-                                [tooltip]="chartOptions.tooltip!"
-                                [dataLabels]="chartOptions.dataLabels!"
-                                [markers]="chartOptions.markers!"
-                                [theme]="chartOptions.theme!"
-                        ></apx-chart>
-                    </mat-card-content>
-                </mat-card>
-            }
-            <pre>{{ airportHistoryJson() }}</pre>
+        @if (airportHistory() !== undefined) {
+            <app-stack>
+                <div class="chart-section">
+                    <app-airport-temperature-chart [airportHistory]="airportHistory()"></app-airport-temperature-chart>
+                    <app-airport-dewpoint-chart [airportHistory]="airportHistory()"></app-airport-dewpoint-chart>
+                </div>
+                <div class="chart-section">
+                    <app-airport-visibility-chart [airportHistory]="airportHistory()"></app-airport-visibility-chart>
+                    <app-airport-wind-speed-chart [airportHistory]="airportHistory()"></app-airport-wind-speed-chart>
+                </div>
+            </app-stack>
         }
     </app-status-display>
 </app-stack>

@@ -14,9 +14,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingStatus } from '../../../../shared/types/status';
 import { StatusDisplay } from '../../../../shared/components/status-display/status-display';
-import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
-import { AirportDayHistorySnapshot } from '../../../../shared/models/airport-day-history-snapshot';
 import { Stack } from '../../../../shared/components/stack/stack';
+import { AirportTemperatureChart } from './components/airport-temperature-chart/airport-temperature-chart';
+import { AirportDewpointChart } from './components/airport-dewpoint-chart/airport-dewpoint-chart';
+import { AirportVisibilityChart } from './components/airport-visibility-chart/airport-visibility-chart';
+import { AirportWindSpeedChart } from './components/airport-wind-speed-chart/airport-wind-speed-chart';
 
 @Component({
     selector: 'app-airport-history-data',
@@ -30,7 +32,10 @@ import { Stack } from '../../../../shared/components/stack/stack';
         MatTooltipModule,
         ReactiveFormsModule,
         StatusDisplay,
-        NgApexchartsModule,
+        AirportTemperatureChart,
+        AirportDewpointChart,
+        AirportVisibilityChart,
+        AirportWindSpeedChart,
         Stack,
     ],
     templateUrl: './airport-history-data.html',
@@ -40,11 +45,15 @@ export class AirportHistoryData implements OnInit, OnDestroy {
     public airportIcao = input.required<string>();
 
     protected loadingStatus = signal<LoadingStatus>('loading');
-    protected airportHistory = signal<AirportDayHistory | undefined>(undefined);
+    protected airportHistory = signal<AirportDayHistory>({
+        history: [],
+        icao: "",
+        isMissingData: false
+    });
     protected airportHistoryJson = computed<string>(() => JSON.stringify(this.airportHistory()));
-    protected isLoading = computed(() => this.loadingStatus() === 'loading');
     protected readonly maxDate = new Date();
-    protected chartOptions?: ApexOptions;
+
+    // ...existing code...
 
     private dateSelected$ = new BehaviorSubject<Date>(new Date());
     private unsubscribe$ = new Subject<void>();
@@ -90,78 +99,13 @@ export class AirportHistoryData implements OnInit, OnDestroy {
         if (history.history && history.history.length > 0) {
             this.loadingStatus.set('success');
             this.airportHistory.set(history);
-            this.createChartOptions(history.history);
         } else {
             this.loadingStatus.set('notfound');
-            this.airportHistory.set(undefined);
         }
     }
 
     private onRetrievalError(error: HttpErrorResponse): void {
         this.loadingStatus.set('error');
         console.error('Failed to retrieve history', error);
-        this.airportHistory.set(undefined);
-    }
-
-    private createChartOptions(history: AirportDayHistorySnapshot[]): void {
-        this.chartOptions = {
-            theme: {
-                mode: 'dark',
-                monochrome: {
-                    enabled: true,
-                    color: '#005CBBFF',
-                    shadeTo: 'dark',
-                    shadeIntensity: 0.65,
-                },
-            },
-            series: [
-                {
-                    name: 'Temperature (°C)',
-                    data: history
-                        .filter((d) => d.temperatureCelsius !== undefined)
-                        .map((d) => d.temperatureCelsius!),
-                },
-            ],
-            chart: {
-                type: 'line',
-                height: 350,
-                background: 'transparent',
-                zoom: {
-                    enabled: false,
-                },
-            },
-            xaxis: {
-                type: 'datetime',
-                labels: {
-                    format: 'HH:mm',
-                    datetimeFormatter: {
-                        hour: 'HH:mm',
-                    },
-                },
-                tickAmount: 24,
-                categories: history
-                    .filter((d) => d.temperatureCelsius !== undefined)
-                    .map((d) => d.dateTime),
-            },
-            yaxis: {
-                title: {
-                    text: 'Temperature (°C)',
-                },
-            },
-            stroke: {
-                curve: 'smooth',
-            },
-            tooltip: {
-                x: {
-                    format: 'HH:mm',
-                },
-            },
-            dataLabels: {
-                enabled: false,
-            },
-            markers: {
-                size: 3,
-            },
-        };
     }
 }
