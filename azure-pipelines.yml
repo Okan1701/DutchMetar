@@ -1,5 +1,5 @@
 trigger:
-- master
+  - master
 
 pool:
   vmImage: ubuntu-latest
@@ -11,13 +11,38 @@ stages:
         displayName: Build & Test Solution
         pool:
           name: emeni-build-windows
+        variables:
+          - group: GithubPackages
         steps:
           - task: UseDotNet@2
             displayName: Use .NET 10
             inputs:
               packageType: 'sdk'
               version: '10.x'
-              includePreviewVersions: true
+              includePreviewVersions: false
+
+          - task: PowerShell@2
+            displayName: Create nuget.config file
+            inputs:
+              targetType: 'inline'
+              script: |
+                $xmlContent = @"
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                  <packageSources>
+                    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+                    <add key="github" value="https://nuget.pkg.github.com/Okan1701/index.json" />
+                  </packageSources>
+                  <packageSourceCredentials>
+                    <github>
+                        <add key="Username" value="$(UserName)" />
+                        <add key="ClearTextPassword" value="$(ApiKey)" />
+                    </github>
+                  </packageSourceCredentials>
+                </configuration>
+                "@
+                
+                Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
 
           - task: DotNetCoreCLI@2
             displayName: Build solution
@@ -38,10 +63,11 @@ stages:
         condition: ne(variables['Build.Reason'], 'PullRequest')
         dependsOn: buildSolution
         variables:
-        - group: GithubPackages
-
-        steps: 
+          - group: GithubPackages
+        
+        steps:
           - task: PowerShell@2
+            displayName: Create nuget.config file
             inputs:
               targetType: 'inline'
               script: |
