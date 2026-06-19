@@ -20,6 +20,11 @@ stages:
               packageType: 'sdk'
               version: '10.x'
               includePreviewVersions: false
+              
+          - task: UseNode@1
+            displayName: Setup Node v24
+            inputs:
+              version: 24.x
 
           - task: PowerShell@2
             displayName: Create nuget.config file
