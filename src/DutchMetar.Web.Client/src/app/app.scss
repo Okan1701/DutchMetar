@@ -2,13 +2,18 @@
 
 mat-toolbar {
     @include mat.toolbar-overrides((
-            container-background-color: #1b202a,
+            container-background-color: #262d3e,
             container-text-color: var(--mat-sys-primary)
     ));
+    border-bottom: 5px #35598a solid;
 }
 
 mat-sidenav {
     border-right: 1px #2d2d2d solid;
+    @include mat.sidenav-overrides((
+            container-shape: 0,
+            container-background-color: #0c0c0c
+    ));
 }
 
 .sidenav {
