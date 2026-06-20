@@ -31,3 +31,10 @@
     //color: var(--mat-sys-primary);
     background-color: rgb(127 184 255 / 0.12)
 }
+
+.search-form-field {
+    width: 100%;
+    @include mat.form-field-overrides((
+            filled-container-shape: 0
+    ));
+}

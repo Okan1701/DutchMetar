@@ -5,6 +5,11 @@
 } @else {
     @let airports = airports$ | async;
     <div>
+        <mat-form-field class="search-form-field" subscriptSizing="dynamic">
+            <mat-label>Search Airport</mat-label>
+            <input (input)="onSearchValueChange($event)" placeholder="EHXX" matInput >
+            <mat-icon matIconSuffix>search</mat-icon>
+        </mat-form-field>
         @for (airport of airports; track $index) {
             @if ($index > 1) {
                 <mat-divider></mat-divider>

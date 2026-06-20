@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AirportService } from '../../services/airport-service';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
 import { LoadingStatus } from '../../types/status';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-airport-nav-list',
@@ -22,11 +24,20 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         MatChipsModule,
         RouterLink,
         RouterLinkActive,
+        MatFormField,
+        MatInput,
+        FormsModule,
+        MatLabel,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatSuffix,
     ],
     templateUrl: './airport-nav-list.html',
     styleUrl: './airport-nav-list.scss',
 })
 export class AirportNavList {
+    private searchValue$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+
     constructor(private readonly airportService: AirportService) {}
 
     protected get isLoading$(): Observable<boolean> {
@@ -36,6 +47,19 @@ export class AirportNavList {
     }
 
     protected get airports$(): Observable<AirportSummary[]> {
-        return this.airportService.airports$;
+        return this.airportService.airports$.pipe(
+            combineLatestWith(this.searchValue$),
+            map(([airports, searchValue]) =>
+                searchValue
+                    ? airports.filter((x) =>
+                          x.icao.toLocaleLowerCase().includes(searchValue.toLowerCase()),
+                      )
+                    : airports,
+            ),
+        );
+    }
+
+    protected onSearchValueChange(event: Event): void {
+        this.searchValue$.next((event.target as HTMLInputElement).value);
     }
 }
