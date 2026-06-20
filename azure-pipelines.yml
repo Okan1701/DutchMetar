@@ -4,11 +4,15 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  dotnetVersion: 10.x
+  nodeVersion: x64
+
 stages:
   - stage: build
     jobs:
-      - job: buildSolution
-        displayName: Build & Test Solution
+      - job: publishWebApp
+        displayName: Publish web app
         pool:
           name: emeni-build-windows
         variables:
@@ -18,13 +22,13 @@ stages:
             displayName: Use .NET 10
             inputs:
               packageType: 'sdk'
-              version: '10.x'
+              version: $(dotnetVersion)
               includePreviewVersions: false
               
           - task: UseNode@1
-            displayName: Setup Node v24
+            displayName: Setup Node v$(nodeVersion)
             inputs:
-              version: 24.x
+              version: $(nodeVersion)
 
           - task: PowerShell@2
             displayName: Create nuget.config file
@@ -50,23 +54,31 @@ stages:
                 Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
 
           - task: DotNetCoreCLI@2
-            displayName: Build solution
-            inputs:
-              command: 'build'
-              projects: 'DutchMetar.slnx'
-              arguments: '-c Release'
-
-          - task: DotNetCoreCLI@2
             displayName: Run solution tests
             inputs:
               command: 'test'
               projects: 'DutchMetar.slnx'
               testRunTitle: '.NET Tests'
 
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.Web.Server (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.Web.Server'
+              arguments: '-c Release -a win-x64 -o $(Build.ArtifactStagingDirectory)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'dutchmetar-webapp-win-x64'
+              publishLocation: 'Container'
+
       - job: publishHangfireImage
         displayName: Publish DutchMetar Hangfire image
-        condition: ne(variables['Build.Reason'], 'PullRequest')
-        dependsOn: buildSolution
         variables:
           - group: GithubPackages
         
