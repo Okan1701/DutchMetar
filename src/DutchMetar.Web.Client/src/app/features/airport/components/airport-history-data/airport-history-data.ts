@@ -1,4 +1,4 @@
-import { Component, computed, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, input, OnDestroy, OnInit, signal } from '@angular/core';
 import { AirportDayHistory } from '../../../../shared/models/airport-day-history';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,20 +47,16 @@ export class AirportHistoryData implements OnInit, OnDestroy {
     protected loadingStatus = signal<LoadingStatus>('loading');
     protected airportHistory = signal<AirportDayHistory>({
         history: [],
-        icao: "",
-        isMissingData: false
+        icao: '',
+        isMissingData: false,
     });
-    protected airportHistoryJson = computed<string>(() => JSON.stringify(this.airportHistory()));
     protected readonly maxDate = new Date();
-
-    // ...existing code...
-
-    private dateSelected$ = new BehaviorSubject<Date>(new Date());
-    private unsubscribe$ = new Subject<void>();
-
     protected form = new FormGroup({
         selectedDate: new FormControl<Date>(new Date(), Validators.required),
     });
+
+    private dateSelected$ = new BehaviorSubject<Date>(new Date());
+    private unsubscribe$ = new Subject<void>();
 
     constructor(private readonly airportService: AirportService) {
         this.form.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(() => {

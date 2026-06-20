@@ -27,7 +27,10 @@ import { AirportHistoryData } from './components/airport-history-data/airport-hi
 })
 export class Airport implements OnInit, OnDestroy {
     protected airportIcao: string | null = null;
-    protected airportDetails?: AirportDetails;
+    protected airportDetails = signal<AirportDetails>({
+        icao: '',
+        lastUpdated: new Date(),
+    });
     protected loadingStatus = signal<LoadingStatus>('loading');
 
     private unsubscribe$: Subject<void> = new Subject<void>();
@@ -58,8 +61,7 @@ export class Airport implements OnInit, OnDestroy {
 
     private onAirportDetailsRetrieved(airportDetails: AirportDetails): void {
         this.loadingStatus.set('success');
-        this.airportDetails = airportDetails;
-        console.log(this.loadingStatus);
+        this.airportDetails.set(airportDetails);
     }
 
     private onRetrievalError(error: HttpErrorResponse): void {
