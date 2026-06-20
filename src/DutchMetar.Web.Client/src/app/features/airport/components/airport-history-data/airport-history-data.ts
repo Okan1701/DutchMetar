@@ -4,7 +4,6 @@ import {
     OnDestroy,
     OnInit,
     signal,
-    ChangeDetectionStrategy,
 } from '@angular/core';
 import { AirportDayHistory } from '../../../../shared/models/airport-day-history';
 import { MatCardModule } from '@angular/material/card';
@@ -46,7 +45,6 @@ import { AirportWindSpeedChart } from './components/airport-wind-speed-chart/air
         Stack,
     ],
     templateUrl: './airport-history-data.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './airport-history-data.scss',
 })
 export class AirportHistoryData implements OnInit, OnDestroy {

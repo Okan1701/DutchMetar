@@ -17,13 +17,7 @@
             </div>
             @if (airportDetails().lastUpdated) {
                 <div class="page-header-subtitle">
-                    <span
-                        >Last update:
-                        {{
-                            $safeNavigationMigration(airportDetails()?.lastUpdated)
-                                | date: 'HH:mm' : 'UTC'
-                        }}Z</span
-                    >
+                    <span>Last update: {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}Z</span>
                 </div>
             }
         </div>

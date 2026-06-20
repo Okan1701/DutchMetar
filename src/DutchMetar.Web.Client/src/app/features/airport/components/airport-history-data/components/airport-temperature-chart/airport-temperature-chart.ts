@@ -1,4 +1,4 @@
-import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { NgApexchartsModule, ApexOptions } from 'ng-apexcharts';
 import { AirportDayHistory } from '../../../../../../shared/models/airport-day-history';
@@ -8,7 +8,6 @@ import { AirportDayHistorySnapshot } from '../../../../../../shared/models/airpo
     selector: 'app-airport-temperature-chart',
     imports: [MatCardModule, NgApexchartsModule],
     templateUrl: './airport-temperature-chart.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './airport-temperature-chart.scss',
 })
 export class AirportTemperatureChart {

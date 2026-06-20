@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AirportDetails } from '../../shared/models/airport-details';
 import { LoadingStatus } from '../../shared/types/status';
@@ -23,7 +23,6 @@ import { AirportHistoryData } from './components/airport-history-data/airport-hi
         AirportHistoryData,
     ],
     templateUrl: './airport.html',
-    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './airport.scss',
 })
 export class Airport implements OnInit, OnDestroy {
