@@ -6,6 +6,11 @@ mat-toolbar {
             container-text-color: var(--mat-sys-primary)
     ));
     border-bottom: 5px #35598a solid;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 mat-sidenav {
@@ -17,8 +22,28 @@ mat-sidenav {
 }
 
 .sidenav {
-    height: 100vh;
+    position: fixed;
+    top: 64px; // Default height of toolbar, not available in css variables sadly
+    left: 0;
+    right: 0;
+    bottom: 0;
     border-radius: 0;
+}
+
+/* Responsive: on narrow screens the toolbar is usually shorter (56px). */
+@media (max-width: 600px) {
+    .sidenav {
+        top: 56px; // Default height of mobile toolbar, not available in css variables sadly
+    }
+}
+
+mat-sidenav {
+    height: 100%;
+}
+
+mat-sidenav-content {
+    height: 100%;
+    overflow: auto;
 }
 
 .page-content {
