@@ -7,6 +7,7 @@ public static class AirportCurrentMetarMapping
     public static AirportCurrentMetar Map(Core.Features.Web.AirportDetails.Models.AirportCurrentMetar source) => new()
     {
         RawMetar = source.RawMetar,
+        IssuedAt =  source.IssuedAt,
         IsAuto = source.IsAuto,
         IsCavok = source.IsCavok,
         IsCorrected = source.IsCorrected,

@@ -1,5 +1,6 @@
 ﻿export type AirportCurrentMetar = {
     rawMetar: string;
+    issuedAt: string;
     isAuto: boolean;
     isCavok: boolean;
     isCorrected: boolean;

@@ -47,6 +47,7 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
 
     private AirportCurrentMetar MapMetarEntityToModel(Metar metar) => new()
     {
+        IssuedAt =  metar.IssuedAt,
         IsAuto = metar.IsAuto,
         IsCavok = metar.IsCavok,
         IsCorrected = metar.IsCorrected,

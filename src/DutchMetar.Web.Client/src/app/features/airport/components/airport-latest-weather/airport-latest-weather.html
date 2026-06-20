@@ -1,5 +1,5 @@
 <app-stack>
-    <mat-card>
+    <mat-card appearance="outlined">
         <mat-card-header>
             <mat-card-title>Raw METAR</mat-card-title>
         </mat-card-header>
@@ -9,6 +9,12 @@
     </mat-card>
     
     <app-stack direction="horizontal">
+        
+        @if (airportWeather().issuedAt) {
+            <app-latest-weather-value-card label="Issued At">
+                {{ issuedAt() }}z
+            </app-latest-weather-value-card>
+        }
         @if (airportWeather().temperatureCelsius) {
             <app-latest-weather-value-card label="Temperature">
                 {{ airportWeather().temperatureCelsius }} °C
