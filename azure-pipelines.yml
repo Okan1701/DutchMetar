@@ -6,7 +6,7 @@ pool:
 
 variables:
   dotnetVersion: 10.x
-  nodeVersion: x64
+  nodeVersion: 24.x
 
 stages:
   - stage: build
@@ -79,6 +79,7 @@ stages:
 
       - job: publishHangfireImage
         displayName: Publish DutchMetar Hangfire image
+        condition: ne(variables['Build.Reason'], 'PullRequest')
         variables:
           - group: GithubPackages
         
