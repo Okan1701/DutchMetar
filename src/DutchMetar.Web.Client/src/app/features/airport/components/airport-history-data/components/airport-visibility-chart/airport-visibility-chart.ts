@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { NgApexchartsModule, ApexOptions } from 'ng-apexcharts';
 import { AirportDayHistory } from '../../../../../../shared/models/airport-day-history';
@@ -8,6 +8,7 @@ import { AirportDayHistorySnapshot } from '../../../../../../shared/models/airpo
     selector: 'app-airport-visibility-chart',
     imports: [MatCardModule, NgApexchartsModule],
     templateUrl: './airport-visibility-chart.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './airport-visibility-chart.scss',
 })
 export class AirportVisibilityChart {
@@ -75,4 +76,3 @@ export class AirportVisibilityChart {
         };
     }
 }
-

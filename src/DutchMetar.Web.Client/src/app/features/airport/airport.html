@@ -17,22 +17,31 @@
             </div>
             @if (airportDetails().lastUpdated) {
                 <div class="page-header-subtitle">
-                    <span>Last update: {{ airportDetails()?.lastUpdated | date:'HH:mm':'UTC' }}Z</span>
+                    <span
+                        >Last update:
+                        {{
+                            $safeNavigationMigration(airportDetails()?.lastUpdated)
+                                | date: 'HH:mm' : 'UTC'
+                        }}Z</span
+                    >
                 </div>
             }
         </div>
 
         <h2>Latest Weather</h2>
         @if (airportDetails().latestWeather) {
-            <app-airport-latest-weather [airportWeather]="airportDetails().latestWeather!"></app-airport-latest-weather>
-        }
-        @else {
+            <app-airport-latest-weather
+                [airportWeather]="airportDetails().latestWeather!"
+            ></app-airport-latest-weather>
+        } @else {
             <p>No information about current weather available.</p>
         }
-        
+
         <h2>Historical Data</h2>
         @if (airportDetails().icao) {
-            <app-airport-history-data [airportIcao]="airportDetails().icao"></app-airport-history-data>
+            <app-airport-history-data
+                [airportIcao]="airportDetails().icao"
+            ></app-airport-history-data>
         }
     </app-stack>
 </app-status-display>

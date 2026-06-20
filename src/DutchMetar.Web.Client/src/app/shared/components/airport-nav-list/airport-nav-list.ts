@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AirportService } from '../../services/airport-service';
 import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
 import { LoadingStatus } from '../../types/status';
@@ -33,6 +33,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         MatSuffix,
     ],
     templateUrl: './airport-nav-list.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './airport-nav-list.scss',
 })
 export class AirportNavList {

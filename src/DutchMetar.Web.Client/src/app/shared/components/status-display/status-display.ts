@@ -1,4 +1,4 @@
-import { Component, input, InputSignal } from '@angular/core';
+import { Component, input, InputSignal, ChangeDetectionStrategy } from '@angular/core';
 import { LoadingStatus } from '../../types/status';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     selector: 'app-status-display',
     imports: [MatProgressSpinnerModule, MatIconModule],
     templateUrl: './status-display.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./status-display.scss'],
 })
 export class StatusDisplay {
