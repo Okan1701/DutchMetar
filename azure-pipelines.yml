@@ -10,6 +10,7 @@ variables:
 
 stages:
   - stage: build
+    displayName: Build
     jobs:
       - job: publishWebApp
         displayName: Publish web app
@@ -66,7 +67,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: './src/DutchMetar.Web.Server'
-              arguments: '-c Release -a win-x64 -o $(Build.ArtifactStagingDirectory)'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
               zipAfterPublish: false
               modifyOutputPath: false
 
