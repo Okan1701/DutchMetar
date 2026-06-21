@@ -9,6 +9,11 @@
     <Project Path="src/DutchMetar.Core/DutchMetar.Core.csproj" />
     <Project Path="src/DutchMetar.Hangfire.Host/DutchMetar.Hangfire.Host.csproj" />
     <Project Path="src/DutchMetar.Tools.StubData/DutchMetar.Tools.StubData.csproj" />
+    <Project Path="src/DutchMetar.Web.Client/DutchMetar.Web.Client.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+    <Project Path="src/DutchMetar.Web.Server/DutchMetar.Web.Server.csproj" Id="0d4d2d0d-0c87-4146-b57e-1ac7d85c52fc" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/DutchMetar.Core.Tests/DutchMetar.Core.Tests.csproj" />

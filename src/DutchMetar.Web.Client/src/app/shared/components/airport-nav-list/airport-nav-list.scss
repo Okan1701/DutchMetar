@@ -1,0 +1,40 @@
+@use '@angular/material' as mat;
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.airport-item {
+    padding: 20px;
+    font-size: 12px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #2b2b2b;
+}
+
+.airport-item > div:last-child {
+    margin-left: auto;
+}
+
+.airport-item:hover {
+    cursor: pointer;
+}
+
+.title {
+    font-size: var(--mat-list-list-item-label-text-size, var(--mat-sys-body-large-size));
+    margin-bottom: 10px;
+}
+
+.active {
+    //color: var(--mat-sys-primary);
+    background-color: rgb(127 184 255 / 0.12)
+}
+
+.search-form-field {
+    width: 100%;
+    @include mat.form-field-overrides((
+            filled-container-shape: 0
+    ));
+}

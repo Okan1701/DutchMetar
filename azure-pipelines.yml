@@ -1,30 +1,59 @@
 trigger:
-- master
+  - master
 
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  dotnetVersion: 10.x
+  nodeVersion: 24.x
+  webAppWin64ArtifactName: dutchmetar-webapp-win-x64
+
 stages:
   - stage: build
+    displayName: Build
     jobs:
-      - job: buildSolution
-        displayName: Build & Test Solution
+      - job: publishWebApp
+        displayName: Publish web app
         pool:
           name: emeni-build-windows
+        variables:
+          - group: GithubPackages
         steps:
           - task: UseDotNet@2
             displayName: Use .NET 10
             inputs:
               packageType: 'sdk'
-              version: '10.x'
-              includePreviewVersions: true
-
-          - task: DotNetCoreCLI@2
-            displayName: Build solution
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+              
+          - task: UseNode@1
+            displayName: Setup Node v$(nodeVersion)
             inputs:
-              command: 'build'
-              projects: 'DutchMetar.slnx'
-              arguments: '-c Release'
+              version: $(nodeVersion)
+
+          - task: PowerShell@2
+            displayName: Create nuget.config file
+            inputs:
+              targetType: 'inline'
+              script: |
+                $xmlContent = @"
+                <?xml version="1.0" encoding="utf-8"?>
+                <configuration>
+                  <packageSources>
+                    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+                    <add key="github" value="https://nuget.pkg.github.com/Okan1701/index.json" />
+                  </packageSources>
+                  <packageSourceCredentials>
+                    <github>
+                        <add key="Username" value="$(UserName)" />
+                        <add key="ClearTextPassword" value="$(ApiKey)" />
+                    </github>
+                  </packageSourceCredentials>
+                </configuration>
+                "@
+                
+                Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
 
           - task: DotNetCoreCLI@2
             displayName: Run solution tests
@@ -33,15 +62,32 @@ stages:
               projects: 'DutchMetar.slnx'
               testRunTitle: '.NET Tests'
 
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.Web.Server (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.Web.Server'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: $(webAppWin64ArtifactName)
+              publishLocation: 'Container'
+
       - job: publishHangfireImage
         displayName: Publish DutchMetar Hangfire image
         condition: ne(variables['Build.Reason'], 'PullRequest')
-        dependsOn: buildSolution
         variables:
-        - group: GithubPackages
-
-        steps: 
+          - group: GithubPackages
+        
+        steps:
           - task: PowerShell@2
+            displayName: Create nuget.config file
             inputs:
               targetType: 'inline'
               script: |
@@ -72,3 +118,41 @@ stages:
               Dockerfile: 'src/DutchMetar.Hangfire.Host/Dockerfile'
               buildContext: '.'
               tags: 'latest'
+
+  - stage: deploy_test
+    displayName: Deploy Test
+    jobs:
+      - deployment: web
+        environment:
+          name: Test
+          resourceType: VirtualMachine
+        displayName: Deploy web app
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+
+                - task: DownloadSecureFile@1
+                  displayName: Download appsettings
+                  name: appsettingsFile
+                  inputs:
+                    secureFile: 'appsettings.Test.json'
+
+
+                - task: PowerShell@2
+                  displayName: Move appsettings
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      $source = '$(appsettingsFile.secureFilePath)'
+                      $targetDir = '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
+                      $dest = Join-Path $targetDir 'appsettings.Production.json'
+                      Move-Item -Path $source -Destination $dest -Force
+
+                - task: IISWebAppDeploymentOnMachineGroup@0
+                  inputs:
+                    WebSiteName: 'test.dutchmetar.hc.emeni.nl'
+                    Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
+                    RemoveAdditionalFilesFlag: true
+                    TakeAppOfflineFlag: true
+                

@@ -1,0 +1,13 @@
+<mat-toolbar>
+    <span class="pointer" routerLink="/" >DutchMetar</span>
+</mat-toolbar>
+<mat-sidenav-container class="sidenav">
+    <mat-sidenav mode="side" opened>
+        <app-airport-nav-list></app-airport-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div class="page-content">
+            <router-outlet/>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

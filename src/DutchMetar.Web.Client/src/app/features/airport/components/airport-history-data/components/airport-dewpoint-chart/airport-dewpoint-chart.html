@@ -1,0 +1,21 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>Dewpoint History</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        @if (chartOptions()) {
+            <apx-chart
+                    [series]="chartOptions()!.series!"
+                    [chart]="chartOptions()!.chart!"
+                    [xaxis]="chartOptions()!.xaxis!"
+                    [yaxis]="chartOptions()!.yaxis!"
+                    [stroke]="chartOptions()!.stroke!"
+                    [tooltip]="chartOptions()!.tooltip!"
+                    [dataLabels]="chartOptions()!.dataLabels!"
+                    [markers]="chartOptions()!.markers!"
+                    [theme]="chartOptions()!.theme!"
+            ></apx-chart>
+        }
+    </mat-card-content>
+</mat-card>
+

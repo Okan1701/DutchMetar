@@ -1,0 +1,44 @@
+<app-stack>
+    <mat-card appearance="outlined">
+        <mat-card-header>
+            <mat-card-title>Raw METAR</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <pre>{{ airportWeather().rawMetar }}</pre>
+        </mat-card-content>
+    </mat-card>
+    
+    <app-stack direction="horizontal">
+        
+        @if (airportWeather().issuedAt) {
+            <app-latest-weather-value-card label="Issued At">
+                {{ issuedAt() }}z
+            </app-latest-weather-value-card>
+        }
+        @if (airportWeather().temperatureCelsius) {
+            <app-latest-weather-value-card label="Temperature">
+                {{ airportWeather().temperatureCelsius }} °C
+            </app-latest-weather-value-card>
+        }
+        @if (airportWeather().dewpointCelsius) {
+            <app-latest-weather-value-card label="Dewpoint">
+                {{ airportWeather().dewpointCelsius }} °C
+            </app-latest-weather-value-card>
+        }
+        @if (airportWeather().windDirection && airportWeather().windSpeedKnots) {
+            <app-latest-weather-value-card label="Wind Direction & Speed">
+                {{ airportWeather().windDirection }}° / {{ airportWeather().windSpeedKnots }} kt
+            </app-latest-weather-value-card>
+        }
+        @if (airportWeather().visibilityMeters) {
+            <app-latest-weather-value-card label="Visibility">
+                {{ airportWeather().visibilityMeters }} m
+            </app-latest-weather-value-card>
+        }
+        @if (airportWeather().altimeterValue) {
+            <app-latest-weather-value-card label="Pressure">
+                {{ airportWeather().altimeterValue }} hPA
+            </app-latest-weather-value-card>
+        }
+    </app-stack>    
+</app-stack>

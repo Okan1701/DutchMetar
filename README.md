@@ -1,13 +1,14 @@
 > [!WARNING]  
-> This project is still a work in progress!
+> This project is still a work in progress! Features are still missing. Any published binary or docker image is not meant to be used yet.
 # About
 
 [![Build Status](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
 
-DutchMetar is a .NET project for scraping METAR data from all available stations in the Netherlands.
-The goal is to create a database that contains historic metar data.
+DutchMetar is a .NET project for displaying METAR and TAF data for Dutch airports. 
+The goal is to visualize the latest data and to provide a historical view.
+The data is retrieved from the KNMI Data Platform. [Click here to learn more about KNMI Data platform](https://dataplatform.knmi.nl/).
 
-Currently the project consists of a recurrent task that scrapes the data and stores it. The goal is to have an interactive frontend that can visualize the data.
+The project currently consists of a background job worker that retreives and stores data and a interactive web application for displaying it.
 
 The main purpose for this project is purely for hobbyist reasons. 
 
