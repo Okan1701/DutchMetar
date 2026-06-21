@@ -131,7 +131,6 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: none
 
                 - task: DownloadSecureFile@1
                   displayName: Download appsettings
@@ -141,7 +140,7 @@ stages:
 
                 - task: CopyFiles@2
                   inputs:
-                    SourceFolder: '$(appsettingsFile.path)'
+                    SourceFolder: '$(appsettingsFile.secureFilePath)'
                     Contents: '**'
                     TargetFolder: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
 
