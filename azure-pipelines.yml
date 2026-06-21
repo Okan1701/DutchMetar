@@ -123,7 +123,9 @@ stages:
     displayName: Deploy Test
     jobs:
       - deployment: web
-        environment: Test
+        environment:
+          name: Test
+          resourceType: VirtualMachine
         displayName: Deploy web app
         strategy:
           runOnce:
@@ -141,7 +143,7 @@ stages:
                   inputs:
                     SourceFolder: '$(appsettingsFile.path)'
                     Contents: '**'
-                    TargetFolder: '$(Pipeline.Workspace)/$(webApp64ArtifactName)'
+                    TargetFolder: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
 
                 - task: CmdLine@2
                   inputs:
@@ -150,7 +152,7 @@ stages:
                 - task: IISWebAppDeploymentOnMachineGroup@0
                   inputs:
                     WebSiteName: 'test.dutchmetar.hc.emeni.nl'
-                    Package: '$(Pipeline.Workspace)/$(webApp64ArtifactName)'
+                    Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
                     RemoveAdditionalFilesFlag: true
                     TakeAppOfflineFlag: true
                 
