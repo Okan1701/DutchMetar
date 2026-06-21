@@ -7,6 +7,7 @@ pool:
 variables:
   dotnetVersion: 10.x
   nodeVersion: 24.x
+  webAppWin64ArtifactName: dutchmetar-webapp-win-x64
 
 stages:
   - stage: build
@@ -75,7 +76,7 @@ stages:
             displayName: Upload artifacts
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'dutchmetar-webapp-win-x64'
+              ArtifactName: $(webAppWin64ArtifactName)
               publishLocation: 'Container'
 
       - job: publishHangfireImage
@@ -117,3 +118,39 @@ stages:
               Dockerfile: 'src/DutchMetar.Hangfire.Host/Dockerfile'
               buildContext: '.'
               tags: 'latest'
+
+  - stage: deploy_test
+    displayName: Deploy Test
+    jobs:
+      - deployment: web
+        environment: Test
+        displayName: Deploy web app
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+                - task: DownloadSecureFile@1
+                  displayName: Download appsettings
+                  name: appsettingsFile
+                  inputs:
+                    secureFile: 'appsettings.Test.json'
+
+                - task: CopyFiles@2
+                  inputs:
+                    SourceFolder: '$(appsettingsFile.path)'
+                    Contents: '**'
+                    TargetFolder: '$(Pipeline.Workspace)/$(webApp64ArtifactName)'
+
+                - task: CmdLine@2
+                  inputs:
+                    script: 'dir'
+                
+                - task: IISWebAppDeploymentOnMachineGroup@0
+                  inputs:
+                    WebSiteName: 'test.dutchmetar.hc.emeni.nl'
+                    Package: '$(Pipeline.Workspace)/$(webApp64ArtifactName)'
+                    RemoveAdditionalFilesFlag: true
+                    TakeAppOfflineFlag: true
+                
