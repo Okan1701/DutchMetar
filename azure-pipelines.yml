@@ -138,16 +138,17 @@ stages:
                   inputs:
                     secureFile: 'appsettings.Test.json'
 
-                - task: CopyFiles@2
-                  inputs:
-                    SourceFolder: '$(appsettingsFile.secureFilePath)'
-                    Contents: '**'
-                    TargetFolder: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
 
-                - task: CmdLine@2
+                - task: PowerShell@2
+                  displayName: Move appsettings
                   inputs:
-                    script: 'dir'
-                
+                    targetType: 'inline'
+                    script: |
+                      $source = '$(appsettingsFile.secureFilePath)'
+                      $targetDir = '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
+                      $dest = Join-Path $targetDir 'appsettings.Production.json'
+                      Move-Item -Path $source -Destination $dest -Force
+
                 - task: IISWebAppDeploymentOnMachineGroup@0
                   inputs:
                     WebSiteName: 'test.dutchmetar.hc.emeni.nl'
