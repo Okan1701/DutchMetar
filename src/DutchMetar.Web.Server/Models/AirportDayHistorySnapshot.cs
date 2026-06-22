@@ -2,7 +2,7 @@
 
 public class AirportDayHistorySnapshot
 {
-    public required DateTime DateTime { get; set; }
+    public required DateTimeOffset DateTime { get; set; }
     
     public int? TemperatureCelsius { get; set; }
     

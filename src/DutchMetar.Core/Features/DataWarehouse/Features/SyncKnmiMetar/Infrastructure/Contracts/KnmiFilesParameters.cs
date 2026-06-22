@@ -9,12 +9,12 @@ public class KnmiFilesParameters
     /// <summary>
     /// Used with <see cref="End"/> to specify a date range.
     /// </summary>
-    public DateTime? Begin { get; set; }
+    public DateTimeOffset? Begin { get; set; }
     
     /// <summary>
     /// Used with <see cref="Begin"/> to specify a date range.
     /// </summary>
-    public DateTime? End { get; set; }
+    public DateTimeOffset? End { get; set; }
 
     /// <summary>
     /// Max supported value: 1000

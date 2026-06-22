@@ -44,10 +44,10 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
         {
             savedMetarFiles.Add(new()
             {
-                FileCreatedAt = DateTime.UtcNow.AddYears(-i).AddDays(0 * -1),
-                FileLastModifiedAt = DateTime.UtcNow.AddYears(-i).AddDays(-1),
+                FileCreatedAt = DateTimeOffset.UtcNow.AddYears(-i).AddDays(0 * -1),
+                FileLastModifiedAt = DateTimeOffset.UtcNow.AddYears(-i).AddDays(-1),
                 FileName = Guid.NewGuid().ToString(),
-                CreatedAt = DateTime.UtcNow.AddYears(-i).AddDays(-1)
+                CreatedAt = DateTimeOffset.UtcNow.AddYears(-i).AddDays(-1)
             });
         }
         await _context.KnmiMetarFiles.AddRangeAsync(savedMetarFiles);
@@ -65,7 +65,7 @@ public class SyncKnmiMetarFileListFeatureTests : IDisposable
             Guid.NewGuid()).Returns(Task.CompletedTask);
         _mockBulkRetriever.GetAndSaveKnmiFiles(
             Arg.Is<KnmiFilesParameters>(x => 
-                x.Begin == new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc) &&
+            x.Begin == new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero) &&
                 x.End == savedMetarFiles.Last().FileLastModifiedAt &&
                 x.Sorting == "desc" &&
                 x.OrderBy == "created"),

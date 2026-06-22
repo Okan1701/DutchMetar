@@ -28,8 +28,8 @@ public class ReprocessFailedFilesFeatureTests : TestsWithContext
         {
             Context.KnmiMetarFiles.Add(new KnmiMetarFile
             {
-                FileCreatedAt = DateTime.UtcNow.AddDays(-i),
-                FileLastModifiedAt = DateTime.UtcNow.AddDays(-i),
+                FileCreatedAt = DateTimeOffset.UtcNow.AddDays(-i),
+                FileLastModifiedAt = DateTimeOffset.UtcNow.AddDays(-i),
                 FileName = Guid.NewGuid().ToString(),
                 ExtractedRawMetar = Guid.NewGuid().ToString(),
                 IsFileProcessed = false
@@ -55,8 +55,8 @@ public class ReprocessFailedFilesFeatureTests : TestsWithContext
         var cancellationTokenSource = new CancellationTokenSource();
         Context.KnmiMetarFiles.Add(new KnmiMetarFile
         {
-            FileCreatedAt = DateTime.UtcNow,
-            FileLastModifiedAt = DateTime.UtcNow,
+            FileCreatedAt = DateTimeOffset.UtcNow,
+            FileLastModifiedAt = DateTimeOffset.UtcNow,
             FileName = Guid.NewGuid().ToString(),
             ExtractedRawMetar = Guid.NewGuid().ToString(),
             IsFileProcessed = false
@@ -81,8 +81,8 @@ public class ReprocessFailedFilesFeatureTests : TestsWithContext
     {
         Context.KnmiMetarFiles.Add(new KnmiMetarFile
         {
-            FileCreatedAt = DateTime.UtcNow,
-            FileLastModifiedAt = DateTime.UtcNow,
+            FileCreatedAt = DateTimeOffset.UtcNow,
+            FileLastModifiedAt = DateTimeOffset.UtcNow,
             FileName = Guid.NewGuid().ToString(),
             IsFileProcessed = false
         });

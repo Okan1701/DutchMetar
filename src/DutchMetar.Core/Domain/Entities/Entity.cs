@@ -11,14 +11,14 @@ public abstract class Entity
     public int Id { get; set; }
     
     /// <summary>
-    /// <see cref="DateTime"/> when this entity was created.
+    /// <see cref="DateTimeOffset"/> when this entity was created.
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
     
     /// <summary>
-    /// <see cref="DateTime"/> when this entity was last updated.
+    /// <see cref="DateTimeOffset"/> when this entity was last updated.
     /// </summary>
-    public DateTime LastUpdatedAt { get; set; }
+    public DateTimeOffset LastUpdatedAt { get; set; }
     
     /// <summary>
     /// ID of the request/session that created this entity.

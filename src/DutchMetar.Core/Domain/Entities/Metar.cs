@@ -37,7 +37,7 @@ public class Metar : Entity
     [MaxLength(EntityConstants.DefaultMaxStringLength)]
     public string? Remarks { get; set; }
     
-    public DateTime IssuedAt { get; set; }
+    public DateTimeOffset IssuedAt { get; set; }
     
     public ICollection<MetarCeiling>? Ceilings { get; set; }
 }

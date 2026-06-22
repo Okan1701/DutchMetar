@@ -62,7 +62,7 @@ public class SyncKnmiMetarFileListFeature : ISyncKnmiMetarFileListFeature
         var parametersToRetrieveOlderFiles = new KnmiFilesParameters
         {
             End = oldestSavedFileDate,
-            Begin = new DateTime(DefaultStartYear, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+            Begin = new DateTimeOffset(DefaultStartYear, 1, 1, 0, 0, 0, TimeSpan.Zero),
             Sorting = "desc",
             OrderBy = "created"
         };
