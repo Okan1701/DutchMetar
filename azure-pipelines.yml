@@ -71,7 +71,14 @@ stages:
               packageType: 'sdk'
               version: $(dotnetVersion)
               includePreviewVersions: false
-
+              
+          - task: DotNetCoreCLI@2
+            displayName: Update dotnet-ef tool
+            inputs:
+              command: custom
+              custom: 'tool'
+              arguments: 'update --global dotnet-ef'
+      
           - template: templates/nuget-config.yml
 
           - task: DotNetCoreCLI@2
