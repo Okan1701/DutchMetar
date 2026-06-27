@@ -88,6 +88,13 @@ stages:
               projects: 'DutchMetar.slnx'
 
           - task: DotNetCoreCLI@2
+            displayName: Build solution (diagnostic)
+            inputs:
+              command: 'build'
+              projects: 'DutchMetar.slnx'
+              arguments: '-c Release --no-restore /verbosity:detailed'
+
+          - task: DotNetCoreCLI@2
             displayName: Generate SQL migration script
             inputs:
               command: 'custom'
