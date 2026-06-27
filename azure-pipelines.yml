@@ -32,28 +32,7 @@ stages:
             inputs:
               version: $(nodeVersion)
 
-          - task: PowerShell@2
-            displayName: Create nuget.config file
-            inputs:
-              targetType: 'inline'
-              script: |
-                $xmlContent = @"
-                <?xml version="1.0" encoding="utf-8"?>
-                <configuration>
-                  <packageSources>
-                    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
-                    <add key="github" value="https://nuget.pkg.github.com/Okan1701/index.json" />
-                  </packageSources>
-                  <packageSourceCredentials>
-                    <github>
-                        <add key="Username" value="$(UserName)" />
-                        <add key="ClearTextPassword" value="$(ApiKey)" />
-                    </github>
-                  </packageSourceCredentials>
-                </configuration>
-                "@
-                
-                Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
+          - template: templates/nuget-config.yml
 
           - task: DotNetCoreCLI@2
             displayName: Run solution tests
@@ -79,6 +58,49 @@ stages:
               ArtifactName: $(webAppWin64ArtifactName)
               publishLocation: 'Container'
 
+      - job: generateMigrations
+        displayName: Generate EF migration script
+        pool:
+          name: emeni-build-windows
+        variables:
+          - group: GithubPackages
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET $(dotnetVersion)
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+              
+          - task: DotNetCoreCLI@2
+            displayName: Update dotnet-ef tool
+            inputs:
+              command: custom
+              custom: 'tool'
+              arguments: 'update --global dotnet-ef'
+      
+          - template: templates/nuget-config.yml
+
+          - task: DotNetCoreCLI@2
+            displayName: Restore solution
+            inputs:
+              command: 'restore'
+              projects: 'DutchMetar.slnx'
+
+          - task: DotNetCoreCLI@2
+            displayName: Generate SQL migration script
+            inputs:
+              command: 'custom'
+              custom: 'ef'
+              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.Hangfire.Host'
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifact
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql'
+              ArtifactName: 'dutchmetar-db-migrations'
+              publishLocation: 'Container'
+
       - job: publishHangfireImage
         displayName: Publish DutchMetar Hangfire image
         condition: ne(variables['Build.Reason'], 'PullRequest')
@@ -86,28 +108,7 @@ stages:
           - group: GithubPackages
         
         steps:
-          - task: PowerShell@2
-            displayName: Create nuget.config file
-            inputs:
-              targetType: 'inline'
-              script: |
-                $xmlContent = @"
-                <?xml version="1.0" encoding="utf-8"?>
-                <configuration>
-                  <packageSources>
-                    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
-                    <add key="github" value="https://nuget.pkg.github.com/Okan1701/index.json" />
-                  </packageSources>
-                  <packageSourceCredentials>
-                    <github>
-                        <add key="Username" value="$(UserName)" />
-                        <add key="ClearTextPassword" value="$(ApiKey)" />
-                    </github>
-                  </packageSourceCredentials>
-                </configuration>
-                "@
-                
-                Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
+          - template: templates/nuget-config.yml
 
           - task: Docker@2
             displayName: Build & Push
