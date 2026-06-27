@@ -1,0 +1,23 @@
+﻿steps:
+  - task: PowerShell@2
+    displayName: Create nuget.config file
+    inputs:
+      targetType: 'inline'
+      script: |
+        $xmlContent = @"
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+          <packageSources>
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+            <add key="github" value="https://nuget.pkg.github.com/Okan1701/index.json" />
+          </packageSources>
+          <packageSourceCredentials>
+            <github>
+                <add key="Username" value="$(UserName)" />
+                <add key="ClearTextPassword" value="$(ApiKey)" />
+            </github>
+          </packageSourceCredentials>
+        </configuration>
+        "@
+        
+        Set-Content -Path "./nuget.config" -Value $xmlContent -Encoding UTF8
