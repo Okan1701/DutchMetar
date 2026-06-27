@@ -97,7 +97,7 @@ stages:
           - task: PublishBuildArtifacts@1
             displayName: Upload artifact
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)/ef-migrations.sql'
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql'
               ArtifactName: 'dutchmetar-db-migrations'
               publishLocation: 'Container'
 
