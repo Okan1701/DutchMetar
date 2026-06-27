@@ -88,18 +88,11 @@ stages:
               projects: 'DutchMetar.slnx'
 
           - task: DotNetCoreCLI@2
-            displayName: Build solution (diagnostic)
-            inputs:
-              command: 'build'
-              projects: 'DutchMetar.slnx'
-              arguments: '-c Release --no-restore /verbosity:detailed'
-
-          - task: DotNetCoreCLI@2
             displayName: Generate SQL migration script
             inputs:
               command: 'custom'
               custom: 'ef'
-              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.Web.Server'
+              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.Hangfire.Host'
 
           - task: PublishBuildArtifacts@1
             displayName: Upload artifact
