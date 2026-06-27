@@ -91,7 +91,8 @@ stages:
             displayName: Generate SQL migration script
             inputs:
               command: 'custom'
-              custom: 'ef migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Infrastructure --startup-project ./src/DutchMetar.Web.Server'
+              custom: 'ef'
+              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Infrastructure --startup-project ./src/DutchMetar.Web.Server'
 
           - task: PublishBuildArtifacts@1
             displayName: Upload artifact
