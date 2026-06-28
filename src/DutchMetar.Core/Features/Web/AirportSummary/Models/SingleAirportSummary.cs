@@ -4,7 +4,7 @@ public class SingleAirportSummary
 {
     public required string Icao  { get; set; }
     
-    public DateTime LastIssuedMetarDate { get; set; }
+    public DateTimeOffset LastIssuedMetarDate { get; set; }
     
     public bool IsAuto { get; set; }
     

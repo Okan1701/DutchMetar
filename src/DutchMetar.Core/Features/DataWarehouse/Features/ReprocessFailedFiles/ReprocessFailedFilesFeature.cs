@@ -65,7 +65,7 @@ public class ReprocessFailedFilesFeature : IReprocessFailedFilesFeature
                 {
                     try
                     {
-                        DateTimeOffset date = DateTime.SpecifyKind(knmiFile.FileCreatedAt, DateTimeKind.Utc);
+                        DateTimeOffset date = knmiFile.FileCreatedAt.ToUniversalTime();
                         await _metarProcessor.ProcessRawMetarAsync(knmiFile.ExtractedRawMetar, null, date,
                             cancellationToken);
                         knmiFile.IsFileProcessed = true;

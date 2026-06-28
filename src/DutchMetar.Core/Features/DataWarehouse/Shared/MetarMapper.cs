@@ -55,9 +55,9 @@ public class MetarMapper : IMetarMapper
             VisibilityMeters = decodedMetar?.PrevailingVisibility?.VisibilityInMeters?.VisibilityValue,
             Remarks = decodedMetar?.Remarks,
             Ceilings = ceilings.ToArray(),
-            IssuedAt = new DateTime(createdAt.Year, createdAt.Month, decodedMetar!.ObservationDayTime.Day,
+            IssuedAt = new DateTimeOffset(createdAt.Year, createdAt.Month, decodedMetar!.ObservationDayTime.Day,
                 decodedMetar.ObservationDayTime.Time.Hours, decodedMetar.ObservationDayTime.Time.Minutes, 0,
-                DateTimeKind.Utc)
+                TimeSpan.Zero)
         };
     }
 

@@ -4,7 +4,7 @@ public class AirportCurrentMetar
 {
     public required string RawMetar { get; set; } = "NIL";
     
-    public DateTime IssuedAt { get; set; }
+    public DateTimeOffset IssuedAt { get; set; }
     
     public bool IsAuto { get; set; }
     

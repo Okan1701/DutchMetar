@@ -15,7 +15,7 @@ public class KnmiFileSummary
     public KnmiMetarFile ToKnmiMetarFileEntity() => new KnmiMetarFile
     {
         FileName = Filename,
-        FileCreatedAt = Created.UtcDateTime,
-        FileLastModifiedAt = LastModified.UtcDateTime
+        FileCreatedAt = Created,
+        FileLastModifiedAt = LastModified
     };
 }

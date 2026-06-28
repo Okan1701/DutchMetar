@@ -72,13 +72,13 @@ public class DutchMetarContext : DbContext
                 switch (changedEntity.State)
                 {
                     case EntityState.Added:
-                        entity.CreatedAt = DateTime.UtcNow;
-                        entity.LastUpdatedAt = DateTime.UtcNow;
+                        entity.CreatedAt = DateTimeOffset.UtcNow;
+                        entity.LastUpdatedAt = DateTimeOffset.UtcNow;
                         break;
 
                     case EntityState.Modified:
                         Entry(entity).Property(x => x.CreatedAt).IsModified = false;
-                        entity.LastUpdatedAt = DateTime.UtcNow;
+                        entity.LastUpdatedAt = DateTimeOffset.UtcNow;
                         break;
                 }
             }

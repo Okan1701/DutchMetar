@@ -57,7 +57,7 @@ public class StubDataGenerator
         var remarks = random.Next(0, 2) == 1 ? "REMARKS" : null;
 
         // Generate a raw METAR string (simplified for stub)
-        var rawMetar = $"METAR {airport.Icao} {issuedAt:yyyyMMddHHmm}Z AUTO {windDirection:D3}/{windSpeedKnots:D2}G{windSpeedGustsKnots ?? 0:D2}KT {visibilityMeters:D4} {temperatureCelsius:D2}/{dewpointCelsius:D2} A{altimeterValue:D4}";
+        var rawMetar = $"METAR {airport.Icao} {issuedAt:yyyyMMddHHmm}Z AUTO {windDirection:D3}/{windSpeedKnots:D2}G{windSpeedGustsKnots ?? 0:D2}KT {visibilityMeters:D4} {temperatureCelsius:D2}/{dewpointCelsius:D2} Q{altimeterValue:D4}";
 
         // Create METAR
         var metar = new Metar
