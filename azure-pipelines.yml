@@ -8,6 +8,7 @@ variables:
   dotnetVersion: 10.x
   nodeVersion: 24.x
   webAppWin64ArtifactName: dutchmetar-webapp-win-x64
+  databaseArtifactName: dutchmetar-db-migrations
 
 stages:
   - stage: build
@@ -26,7 +27,7 @@ stages:
               packageType: 'sdk'
               version: $(dotnetVersion)
               includePreviewVersions: false
-              
+
           - task: UseNode@1
             displayName: Setup Node v$(nodeVersion)
             inputs:
@@ -71,14 +72,14 @@ stages:
               packageType: 'sdk'
               version: $(dotnetVersion)
               includePreviewVersions: false
-              
+
           - task: DotNetCoreCLI@2
             displayName: Update dotnet-ef tool
             inputs:
               command: custom
               custom: 'tool'
               arguments: 'update --global dotnet-ef'
-      
+
           - template: templates/nuget-config.yml
 
           - task: DotNetCoreCLI@2
@@ -98,7 +99,7 @@ stages:
             displayName: Upload artifact
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql'
-              ArtifactName: 'dutchmetar-db-migrations'
+              ArtifactName: $(databaseArtifactName)
               publishLocation: 'Container'
 
       - job: publishHangfireImage
@@ -156,4 +157,20 @@ stages:
                     Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
                     RemoveAdditionalFilesFlag: true
                     TakeAppOfflineFlag: true
+
+      - deployment: database
+        environment: Test
+        pool: emeni-deploy-windows
+        displayName: Deploy database
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: SqlDacpacDeploymentOnMachineGroup@0
+                  inputs:
+                    TaskType: 'sqlQuery'
+                    SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
+                    ServerName: 'mssql.hc.emeni.nl'
+                    DatabaseName: 'dutchmetar_test'
+                    AuthScheme: 'windowsAuthentication'
                 
