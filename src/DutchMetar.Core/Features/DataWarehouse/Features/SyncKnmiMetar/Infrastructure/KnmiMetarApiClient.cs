@@ -76,12 +76,12 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
 
         if (parameters.Begin.HasValue)
         {
-            url += $"begin={parameters.Begin.Value.ToString("o", CultureInfo.InvariantCulture)}&";
+            url += $"begin={parameters.Begin.Value.DateTime.ToString("o", CultureInfo.InvariantCulture)}&";
         }
         
         if (parameters.End.HasValue)
         {
-            url += $"end={parameters.End.Value.ToString("o", CultureInfo.InvariantCulture)}&";
+            url += $"end={parameters.End.Value.DateTime.ToString("o", CultureInfo.InvariantCulture)}&";
         }
         
         if (parameters.MaxKeys.HasValue)
