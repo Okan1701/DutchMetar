@@ -169,7 +169,7 @@ stages:
                 - task: SqlDacpacDeploymentOnMachineGroup@0
                   inputs:
                     TaskType: 'sqlQuery'
-                    SqlFile: '$(Pipeline.Workspace)/$(databaseArtifactName)/dutchmetar_mssql_migrations.sql'
+                    SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
                     ServerName: 'mssql.hc.emeni.nl'
                     DatabaseName: 'dutchmetar_test'
                     AuthScheme: 'windowsAuthentication'
