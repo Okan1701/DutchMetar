@@ -62,7 +62,7 @@ public class MetarFileBulkRetriever : IMetarFileBulkRetriever
             // Filter out filenames that already exist in the database.
             var filteredFiles = data.Files
                 .Where(x => currentSavedFileNames.All(y => y != x.Filename))
-                .OrderBy(x => x.Created);
+                .OrderByDescending(x => x.Created);
             
             // For each file, retrieve the contents and convert it into domain entities.
             foreach (var file in filteredFiles)
