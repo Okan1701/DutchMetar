@@ -1,5 +1,7 @@
 @use '@angular/material' as mat;
 
+$page-content-background: #0c0c0c;
+
 mat-toolbar {
     @include mat.toolbar-overrides((
             container-background-color: #262d3e,
@@ -17,7 +19,7 @@ mat-sidenav {
     border-right: 1px #2d2d2d solid;
     @include mat.sidenav-overrides((
             container-shape: 0,
-            container-background-color: #0c0c0c
+            container-background-color: var(--mat-sys-background)
     ));
 }
 
@@ -44,6 +46,7 @@ mat-sidenav {
 mat-sidenav-content {
     height: 100%;
     overflow: auto;
+    background-color: $page-content-background;
 }
 
 .page-content {
