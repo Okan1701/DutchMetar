@@ -2,12 +2,12 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Exceptions;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Exceptions;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Interfaces;
 using Microsoft.Extensions.Options;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure;
 
 public class KnmiMetarApiClient : IKnmiMetarApiClient
 {
@@ -137,5 +137,10 @@ public class KnmiMetarApiClient : IKnmiMetarApiClient
         
         // General HTTP errors are wrapped in this exception
         throw new KnmiApiException(response.StatusCode, errorResponse?.Error ?? responseContent);
+    }
+
+    public async Task<string> GetFileContentFromUrlAsync(string url, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

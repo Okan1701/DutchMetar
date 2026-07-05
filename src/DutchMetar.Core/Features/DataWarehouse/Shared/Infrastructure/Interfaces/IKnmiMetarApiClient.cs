@@ -1,6 +1,6 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
+﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Contracts;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Interfaces;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Interfaces;
 
 /// <summary>
 /// Client for interacting with the KNMI Data Platform.
@@ -25,4 +25,12 @@ public interface IKnmiMetarApiClient
     /// <param name="cancellationToken">(Optional) cancellation token to abort the operation.</param>
     /// <returns></returns>
     Task<string> GetKnmiMetarFileContentAsync(string fileName, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Gets the file content from the provided URL. This is a more generic method for downloading files from KNMI Data Platform
+    /// </summary>
+    /// <param name="url">URL to the file</param>
+    /// <param name="cancellationToken">(Optional) cancellation token to abort the operation.</param>
+    /// <returns></returns>
+    Task<string> GetFileContentFromUrlAsync(string url, CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Channels;
+using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Contracts;
 using DutchMetar.Core.Features.DataWarehouse.Features.Notification.EventArgs;
 
 namespace DutchMetar.Core.Features.DataWarehouse.Features.Notification.Interfaces;
@@ -21,5 +22,5 @@ public interface IKnmiNotificationClient : IDisposable
     Task DisconnectAsync(CancellationToken cancellationToken);
 
     // Channel Reader for obtaining the incoming messages in an async manner.
-    ChannelReader<string> ChannelReader { get; }
+    ChannelReader<FileEvent> ChannelReader { get; }
 }

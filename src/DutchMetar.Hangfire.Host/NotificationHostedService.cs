@@ -1,22 +1,29 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Interfaces;
+﻿using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Interfaces;
 
 namespace DutchMetar.Hangfire.Host;
 
 public class NotificationHostedService : BackgroundService
 {
     private readonly IKnmiNotificationClient _knmiNotificationClient;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public NotificationHostedService(IKnmiNotificationClient knmiNotificationClient)
+    public NotificationHostedService(IKnmiNotificationClient knmiNotificationClient, IServiceScopeFactory serviceScopeFactory)
     {
         _knmiNotificationClient = knmiNotificationClient;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await foreach (string item in _knmiNotificationClient.ChannelReader.ReadAllAsync(stoppingToken))
-        {
-            Console.WriteLine($"Received: {item}");
-        }
+        using var scope = _serviceScopeFactory.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<IKnmiFileEventHandler>();
+        var fileEvents = await _knmiNotificationClient
+            .ChannelReader
+            .ReadAllAsync(stoppingToken)
+            .ToArrayAsync(stoppingToken);
+        
+        await handler.HandleFileEventsAsync(fileEvents);
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)

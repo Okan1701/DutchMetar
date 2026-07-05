@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
+﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Contracts;
 
 /// <summary>
 /// Response when retrieving file url

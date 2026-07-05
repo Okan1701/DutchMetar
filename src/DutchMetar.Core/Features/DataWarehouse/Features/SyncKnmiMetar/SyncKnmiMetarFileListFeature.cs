@@ -1,6 +1,6 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Exceptions;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
+﻿using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Exceptions;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

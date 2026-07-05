@@ -23,6 +23,6 @@ public class FileEvent
     public string? DataContentType { get; set; }
     
     [JsonPropertyName("data")]
-    public ICollection<FileData> Data { get; set; } = new List<FileData>();
+    public FileData? Data { get; set; }
     
 }

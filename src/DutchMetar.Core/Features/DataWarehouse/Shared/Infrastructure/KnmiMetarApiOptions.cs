@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure;
+﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure;
 
 public class KnmiMetarApiOptions
 {

@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Contracts;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Contracts;
 
 public class KnmiFileSummary
 {

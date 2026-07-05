@@ -1,0 +1,76 @@
+﻿0000370801
+
+        LANL80 EHLE 051422
+
+        <?xml version="1.0" ?>
+<iwxxm:METAR automatedStation="true" gml:id="uuid.ff9de5e2-113a-40d9-be4f-c6be51dbcbb1" permissibleUsage="OPERATIONAL" reportStatus="NORMAL" translatedBulletinID="" translatedBulletinReceptionTime="2026-07-05T14:22:01Z" translationCentreDesignator="EHLE" translationCentreName="MetConsole" translationTime="2026-07-05T14:22:01Z" xmlns:aixm="http://www.aixm.aero/schema/5.1.1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:iwxxm="http://icao.int/iwxxm/3.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://icao.int/iwxxm/3.0 http://schemas.wmo.int/iwxxm/3.0/iwxxm.xsd
+http://def.wmo.int/metce/2013 http://schemas.wmo.int/metce/1.2/metce.xsd">
+    <!-- METAR EHLE 051425Z AUTO 29017KT 250V320 9999 FEW019 SCT031 BKN036 20/15 Q1021 NOSIG= -->
+    <iwxxm:issueTime>
+        <gml:TimeInstant gml:id="uuid.4bd264eb-afbc-4ae0-842c-358d3094be25">
+            <gml:timePosition>2026-07-05T14:25:00Z</gml:timePosition>
+        </gml:TimeInstant>
+    </iwxxm:issueTime>
+    <iwxxm:aerodrome>
+        <aixm:AirportHeliport gml:id="uuid.527f0da0-ee35-47a5-9862-56985e71a8d7">
+            <aixm:timeSlice>
+                <aixm:AirportHeliportTimeSlice gml:id="uuid.ead66b3f-c704-451a-b71d-91b6ca0d2abf">
+                    <gml:validTime/>
+                    <aixm:interpretation>SNAPSHOT</aixm:interpretation>
+                    <aixm:designator>EHLE</aixm:designator>
+                    <aixm:name>LELYSTAD AIRPORT</aixm:name>
+                    <aixm:locationIndicatorICAO>EHLE</aixm:locationIndicatorICAO>
+                </aixm:AirportHeliportTimeSlice>
+            </aixm:timeSlice>
+        </aixm:AirportHeliport>
+    </iwxxm:aerodrome>
+    <iwxxm:observationTime>
+        <gml:TimeInstant gml:id="uuid.8f4e6a82-5ca9-4122-b69a-9ec0b5a779a6">
+            <gml:timePosition>2026-07-05T14:25:00Z</gml:timePosition>
+        </gml:TimeInstant>
+    </iwxxm:observationTime>
+    <iwxxm:observation>
+        <iwxxm:MeteorologicalAerodromeObservation cloudAndVisibilityOK="false" gml:id="uuid.1df51d14-8f0e-4dbf-b588-0518961e8cd5">
+            <iwxxm:airTemperature uom="Cel">20.0</iwxxm:airTemperature>
+            <iwxxm:dewpointTemperature uom="Cel">15.0</iwxxm:dewpointTemperature>
+            <iwxxm:qnh uom="hPa">1021.0</iwxxm:qnh>
+            <iwxxm:surfaceWind>
+                <iwxxm:AerodromeSurfaceWind variableWindDirection="false">
+                    <iwxxm:meanWindDirection uom="deg">290.0</iwxxm:meanWindDirection>
+                    <iwxxm:meanWindSpeed uom="[kn_i]">17.0</iwxxm:meanWindSpeed>
+                    <iwxxm:extremeClockwiseWindDirection uom="deg">250.0</iwxxm:extremeClockwiseWindDirection>
+                    <iwxxm:extremeCounterClockwiseWindDirection uom="deg">320.0</iwxxm:extremeCounterClockwiseWindDirection>
+                </iwxxm:AerodromeSurfaceWind>
+            </iwxxm:surfaceWind>
+            <iwxxm:visibility>
+                <iwxxm:AerodromeHorizontalVisibility>
+                    <iwxxm:prevailingVisibility uom="m">10000.0</iwxxm:prevailingVisibility>
+                    <iwxxm:prevailingVisibilityOperator>ABOVE</iwxxm:prevailingVisibilityOperator>
+                </iwxxm:AerodromeHorizontalVisibility>
+            </iwxxm:visibility>
+            <iwxxm:cloud>
+                <iwxxm:AerodromeCloud>
+                    <iwxxm:layer>
+                        <iwxxm:CloudLayer>
+                            <iwxxm:amount xlink:href="http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/FEW"/>
+                            <iwxxm:base uom="[ft_i]">1900.0</iwxxm:base>
+                        </iwxxm:CloudLayer>
+                    </iwxxm:layer>
+                    <iwxxm:layer>
+                        <iwxxm:CloudLayer>
+                            <iwxxm:amount xlink:href="http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/SCT"/>
+                            <iwxxm:base uom="[ft_i]">3100.0</iwxxm:base>
+                        </iwxxm:CloudLayer>
+                    </iwxxm:layer>
+                    <iwxxm:layer>
+                        <iwxxm:CloudLayer>
+                            <iwxxm:amount xlink:href="http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/BKN"/>
+                            <iwxxm:base uom="[ft_i]">3600.0</iwxxm:base>
+                        </iwxxm:CloudLayer>
+                    </iwxxm:layer>
+                </iwxxm:AerodromeCloud>
+            </iwxxm:cloud>
+        </iwxxm:MeteorologicalAerodromeObservation>
+    </iwxxm:observation>
+    <iwxxm:trendForecast nilReason="http://codes.wmo.int/common/nil/noSignificantChange" xsi:nil="true"/>
+</iwxxm:METAR>

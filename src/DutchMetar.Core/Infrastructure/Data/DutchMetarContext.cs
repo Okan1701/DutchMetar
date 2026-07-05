@@ -31,6 +31,10 @@ public class DutchMetarContext : DbContext
             .HasIndex(u => u.FileName)
             .IsUnique();
         
+        builder.Entity<KnmiMetarFile>()
+            .Property(d => d.FileContent)
+            .HasColumnType("nvarchar(max)");
+        
         // When deleting a Metar entity, it is safe to auto-delete related MetarCeiling entities
         builder.Entity<Metar>()
             .HasMany(m => m.Ceilings)

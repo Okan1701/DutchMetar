@@ -2,10 +2,10 @@
 using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles;
 using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Infrastructure.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Shared;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

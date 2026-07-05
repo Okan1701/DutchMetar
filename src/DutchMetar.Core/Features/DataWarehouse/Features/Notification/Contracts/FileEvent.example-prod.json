@@ -1,0 +1,14 @@
+{
+    "specversion": "1.0",
+    "type": "nl.knmi.dataplatform.file.created.v1",
+    "source": "https://dataplatform.knmi.nl",
+    "id": "12eed8c3-5c59-097f-9a8d-a7e93c2b1da2",
+    "time": "2026-07-05T10:52:34Z",
+    "datacontenttype": "application/json",
+    "data": {
+        "datasetName": "metar",
+        "datasetVersion": "1.0",
+        "filename": "A_LANL80EHRD051052_C_EHRD_050726105204.xml",
+        "url": "https://api.dataplatform.knmi.nl/open-data/v1/datasets/metar/versions/1.0/files/A_LANL80EHRD051052_C_EHRD_050726105204.xml/url"
+    }
+}

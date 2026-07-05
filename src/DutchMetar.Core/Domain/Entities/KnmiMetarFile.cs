@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using DutchMetar.Core.Domain.Constants;
 
 namespace DutchMetar.Core.Domain.Entities;
@@ -16,4 +17,7 @@ public class KnmiMetarFile : Entity
     
     [MaxLength(EntityConstants.DefaultMaxStringLength)]
     public string? ExtractedRawMetar { get; set; }
+    
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
+    public string? FileContent { get; set; }
 }

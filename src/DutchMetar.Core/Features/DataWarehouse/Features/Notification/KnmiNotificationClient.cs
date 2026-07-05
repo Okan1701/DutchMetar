@@ -18,7 +18,7 @@ public class KnmiNotificationClient : IKnmiNotificationClient
     private readonly IOptions<KnmiMqttOptions> _options;
     private readonly IMqttClient _mqttClient;
     private readonly ILogger<KnmiNotificationClient> _logger;
-    private readonly Channel<string> _channel = Channel.CreateUnbounded<string>();
+    private readonly Channel<FileEvent> _channel = Channel.CreateUnbounded<FileEvent>();
     
     private MqttClientOptions MqttClientOptions => new MqttClientOptionsBuilder()
         .WithWebSocketServer(builder => builder.WithUri(new Uri("wss://" + _options.Value.Host).AbsoluteUri))
@@ -30,7 +30,7 @@ public class KnmiNotificationClient : IKnmiNotificationClient
         .WithSessionExpiryInterval((uint)TimeSpan.FromHours(24).TotalSeconds)
         .Build();
     
-    public ChannelReader<string> ChannelReader => _channel.Reader;
+    public ChannelReader<FileEvent> ChannelReader => _channel.Reader;
 
     public KnmiNotificationClient(IOptions<KnmiMqttOptions> options, ILogger<KnmiNotificationClient> logger)
     {
@@ -106,14 +106,17 @@ public class KnmiNotificationClient : IKnmiNotificationClient
 
         if (string.IsNullOrEmpty(rawPayload))
         {
-            _logger.LogWarning($"Received null or empty payload from MQTT notification.");
+            _logger.LogWarning("Received null or empty payload from MQTT notification.");
             return;
         }
 
         try
         {
             var fileEvent = JsonSerializer.Deserialize<FileEvent>(rawPayload);
-            await _channel.Writer.WriteAsync(e.ApplicationMessage.ConvertPayloadToString());
+            if (fileEvent != null)
+            {
+                await _channel.Writer.WriteAsync(fileEvent);
+            }
         }
         catch (JsonException ex)
         {
