@@ -30,6 +30,7 @@ public partial class MetarXmlMapperTests
         Assert.Equal(1022, result.AltimeterValue);
         Assert.False(result.NoCloudsDetected);
         Assert.Equal(new DateTimeOffset(2026, 7, 5, 13, 55, 0, TimeSpan.Zero), result.IssuedAt);
+        Assert.Equal(TrendType.Tempo, result.TrendType);
         Assert.NotNull(result?.Ceilings);
         Assert.Equal(3, result?.Ceilings.Count);
         Assert.Contains(result!.Ceilings!, x => x is { Type: CeilingType.Few, Height: 1400 });
@@ -56,6 +57,7 @@ public partial class MetarXmlMapperTests
         Assert.Equal(15, result.DewpointCelsius);
         Assert.Equal(1022, result.AltimeterValue);
         Assert.False(result.NoCloudsDetected);
+        Assert.Equal(TrendType.Nosig, result.TrendType);
         Assert.Equal(new DateTimeOffset(2026, 7, 5, 13, 55, 0, TimeSpan.Zero), result.IssuedAt);
     }
 

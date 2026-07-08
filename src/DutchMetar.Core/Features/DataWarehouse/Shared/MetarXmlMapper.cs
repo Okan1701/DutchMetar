@@ -35,7 +35,8 @@ public class MetarXmlMapper : IMetarXmlMapper
             { "iwxxm", XNamespace.Get("http://icao.int/iwxxm/3.0") },
             { "gml", XNamespace.Get("http://www.opengis.net/gml/3.2") },
             { "aixm", XNamespace.Get("http://www.aixm.aero/schema/5.1.1") },
-            { "xlink", XNamespace.Get("http://www.w3.org/1999/xlink") }
+            { "xlink", XNamespace.Get("http://www.w3.org/1999/xlink") },
+            { "xsi", XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance") },
         };
 
         var metar = new Metar
@@ -54,6 +55,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             AltimeterValue = ExtractAltimeter(root, ns),
             Remarks = ExtractRemarks(root, ns),
             NoCloudsDetected = ExtractNoCloudsDetected(root, ns),
+            TrendType = ExtractTrendType(root, ns),
             Ceilings = ExtractCeilings(root, ns)
         };
 
@@ -228,6 +230,21 @@ public class MetarXmlMapper : IMetarXmlMapper
     {
         // TODO: Figure out where in the XML this is normally present.
         return null;
+    }
+
+    private TrendType ExtractTrendType(XElement root, Dictionary<string, XNamespace> ns)
+    {
+        var trendForecastElement = root.Element(ns["iwxxm"] + "trendForecast");
+        var isNil = bool.TryParse(trendForecastElement?.Attribute(ns["xsi"] + "nil")?.Value, out var isNilParsed) && isNilParsed;
+        var nilReason = trendForecastElement?.Attribute("nilReason")?.Value ?? string.Empty;
+
+        if (isNil && nilReason == "http://codes.wmo.int/common/nil/noSignificantChange") return TrendType.Nosig;
+        
+        var forecastElement =  trendForecastElement?.Element(ns["iwxxm"] + "MeteorologicalAerodromeTrendForecast");
+        if (forecastElement == null) return TrendType.None;
+        
+        var indicatorValue = forecastElement.Attribute("changeIndicator")?.Value ?? string.Empty;
+        return indicatorValue == "TEMPORARY_FLUCTUATIONS" ? TrendType.Tempo : TrendType.None;
     }
 
     private MetarCeiling[] ExtractCeilings(XElement root, Dictionary<string, XNamespace> ns)
