@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Domain.Enums;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 
@@ -13,46 +14,50 @@ public class MetarXmlMapper : IMetarXmlMapper
         if (string.IsNullOrWhiteSpace(xmlContent))
             throw new MetarMappingException("XML content cannot be null or empty.");
 
+        var cleanedXml = CleanXmlContent(xmlContent);
+        XDocument document;
         try
         {
-            var cleanedXml = CleanXmlContent(xmlContent);
-            var document = XDocument.Parse(cleanedXml);
-            var root = document.Root;
-
-            if (root == null)
-                throw new MetarMappingException("XML document has no root element.");
-
-            var ns = new Dictionary<string, XNamespace>
-            {
-                { "iwxxm", XNamespace.Get("http://icao.int/iwxxm/3.0") },
-                { "gml", XNamespace.Get("http://www.opengis.net/gml/3.2") },
-                { "aixm", XNamespace.Get("http://www.aixm.aero/schema/5.1.1") }
-            };
-
-            var metar = new Metar
-            {
-                RawMetar = ExtractRawMetarFromComment(document) ?? string.Empty,
-                IssuedAt = ExtractIssueTime(root, ns) ?? DateTimeOffset.UtcNow,
-                IsAuto = ExtractIsAuto(root),
-                IsCavok = ExtractIsCavok(root, ns),
-                IsCorrected = ExtractIsCorrected(root),
-                WindDirection = ExtractWindDirection(root, ns),
-                WindSpeedKnots = ExtractWindSpeed(root, ns),
-                WindSpeedGustsKnots = ExtractWindGust(root, ns),
-                VisibilityMeters = ExtractVisibility(root, ns),
-                TemperatureCelsius = ExtractTemperature(root, ns),
-                DewpointCelsius = ExtractDewpoint(root, ns),
-                AltimeterValue = ExtractAltimeter(root, ns),
-                Remarks = ExtractRemarks(root, ns),
-                NoCloudsDetected = ExtractNoCloudsDetected(root, ns)
-            };
-
-            return metar;
+            document = XDocument.Parse(cleanedXml);
         }
         catch (Exception ex)
         {
-            throw new MetarMappingException("Failed to map METAR XML content.", ex);
+            throw new MetarMappingException("Failed to parse XML.", ex);
         }
+
+        var root = document.Root;
+
+        if (root == null)
+            throw new MetarMappingException("XML document has no root element.");
+
+        var ns = new Dictionary<string, XNamespace>
+        {
+            { "iwxxm", XNamespace.Get("http://icao.int/iwxxm/3.0") },
+            { "gml", XNamespace.Get("http://www.opengis.net/gml/3.2") },
+            { "aixm", XNamespace.Get("http://www.aixm.aero/schema/5.1.1") },
+            { "xlink", XNamespace.Get("http://www.w3.org/1999/xlink") }
+        };
+
+        var metar = new Metar
+        {
+            RawMetar = ExtractRawMetarFromComment(document) ?? string.Empty,
+            IssuedAt = ExtractIssueTime(root, ns) ?? DateTimeOffset.UtcNow,
+            IsAuto = ExtractIsAuto(root),
+            IsCavok = ExtractIsCavok(root, ns),
+            IsCorrected = ExtractIsCorrected(root),
+            WindDirection = ExtractWindDirection(root, ns),
+            WindSpeedKnots = ExtractWindSpeed(root, ns),
+            WindSpeedGustsKnots = ExtractWindGust(root, ns),
+            VisibilityMeters = ExtractVisibility(root, ns),
+            TemperatureCelsius = ExtractTemperature(root, ns),
+            DewpointCelsius = ExtractDewpoint(root, ns),
+            AltimeterValue = ExtractAltimeter(root, ns),
+            Remarks = ExtractRemarks(root, ns),
+            NoCloudsDetected = ExtractNoCloudsDetected(root, ns),
+            Ceilings = ExtractCeilings(root, ns)
+        };
+
+        return metar;
     }
 
     private string CleanXmlContent(string xmlContent)
@@ -221,7 +226,53 @@ public class MetarXmlMapper : IMetarXmlMapper
 
     private string? ExtractRemarks(XElement root, Dictionary<string, XNamespace> ns)
     {
-        // Remarks field is not present in current IWXXM structure
+        // TODO: Figure out where in the XML this is normally present.
         return null;
+    }
+
+    private MetarCeiling[] ExtractCeilings(XElement root, Dictionary<string, XNamespace> ns)
+    {
+        // Only consider cloud layers from the main MeteorologicalAerodromeObservation (not trendForecast)
+        var observation = root.Element(ns["iwxxm"] + "observation");
+        var meteorologicalObs = observation?.Element(ns["iwxxm"] + "MeteorologicalAerodromeObservation");
+
+        if (meteorologicalObs == null)
+            return Array.Empty<MetarCeiling>();
+
+        var cloudLayers = meteorologicalObs
+            .Descendants(ns["iwxxm"] + "CloudLayer")
+            .ToArray();
+
+        return cloudLayers.Select(layer =>
+        {
+            var amount = layer
+                .Descendants(ns["iwxxm"] + "amount")
+                .Attributes(ns["xlink"] + "href")
+                .FirstOrDefault()?.Value ?? string.Empty;
+            
+            var layerBase = layer
+                .Descendants(ns["iwxxm"] + "base")
+                .FirstOrDefault()?.Value ?? string.Empty;
+            
+            var height = -1;
+            if (decimal.TryParse(layerBase, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var baseVal))
+            {
+                height = (int)Math.Round(baseVal);
+            }
+
+            return new MetarCeiling
+            {
+                Type = amount switch
+                {
+                    "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/FEW" => CeilingType.Few,
+                    "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/SCT" => CeilingType.Scattered,
+                    "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/BKN" => CeilingType.Broken,
+                    "http://codes.wmo.int/49-2/CloudAmountReportedAtAerodrome/OVC" => CeilingType.Overcast,
+                    _ => CeilingType.Other
+                },
+                Height = height,
+            };
+        }).ToArray();
+        
     }
 }

@@ -1,3 +1,5 @@
+using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Domain.Enums;
 using DutchMetar.Core.Features.DataWarehouse.Shared;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
@@ -13,7 +15,7 @@ public partial class MetarXmlMapperTests
     {
         var result = _mapper.Map(Eham051353Xml);
 
-        Assert.NotNull(result);
+        Assert.NotNull(result.Ceilings);
         Assert.Equal("METAR EHAM 051355Z 29015KT 260V320 9999 FEW014 BKN016 BKN024 19/15 Q1022 TEMPO SCT016=",
             result.RawMetar);
         Assert.False(result.IsAuto);
@@ -28,6 +30,11 @@ public partial class MetarXmlMapperTests
         Assert.Equal(1022, result.AltimeterValue);
         Assert.False(result.NoCloudsDetected);
         Assert.Equal(new DateTimeOffset(2026, 7, 5, 13, 55, 0, TimeSpan.Zero), result.IssuedAt);
+        Assert.NotNull(result?.Ceilings);
+        Assert.Equal(3, result?.Ceilings.Count);
+        Assert.Contains(result!.Ceilings!, x => x is { Type: CeilingType.Few, Height: 1400 });
+        Assert.Contains(result!.Ceilings!, x => x is { Type: CeilingType.Broken, Height: 1600 });
+        Assert.Contains(result!.Ceilings!, x => x is { Type: CeilingType.Broken, Height: 2400 });
     }
 
     [Fact]
