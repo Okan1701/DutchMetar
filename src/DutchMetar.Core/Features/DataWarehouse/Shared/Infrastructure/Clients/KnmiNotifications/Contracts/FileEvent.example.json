@@ -1,0 +1,14 @@
+{
+    "specversion": "1.0.0",
+    "type": "nl.knmi.dataplatform.file.created.v1",
+    "source": "https://dataplatform.knmi.nl",
+    "id": "9e1c862f-e898-01c3-7bc0-6ff7c7e5d366",
+    "time": "2023-11-03T09:11:45Z",
+    "datacontenttype": "application/json",
+    "data": {
+        "datasetName": "Actuele10mindataKNMIstations",
+        "datasetVersion": "2",
+        "filename": "KMDS__OPER_P___10M_OBS_L2_202311031350.nc",
+        "url": "https://api.dataplatform.knmi.nl/open-data/v1/datasets/Actuele10mindataKNMIstations/versions/2/files/KMDS__OPER_P___10M_OBS_L2_202311031350.nc/url"
+    }
+}

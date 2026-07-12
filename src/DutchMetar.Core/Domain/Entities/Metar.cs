@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using DutchMetar.Core.Domain.Constants;
+using DutchMetar.Core.Domain.Enums;
 
 namespace DutchMetar.Core.Domain.Entities;
 
@@ -38,6 +39,8 @@ public class Metar : Entity
     public string? Remarks { get; set; }
     
     public DateTimeOffset IssuedAt { get; set; }
+    
+    public TrendType TrendType { get; set; } = TrendType.None;
     
     public ICollection<MetarCeiling>? Ceilings { get; set; }
 }

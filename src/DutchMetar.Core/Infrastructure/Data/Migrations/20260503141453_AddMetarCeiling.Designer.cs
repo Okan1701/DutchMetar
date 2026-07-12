@@ -4,6 +4,7 @@ using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DutchMetar.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DutchMetarContext))]
-    partial class DutchMetarContextModelSnapshot : ModelSnapshot
+    [Migration("20260503141453_AddMetarCeiling")]
+    partial class AddMetarCeiling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,15 +36,15 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<Guid?>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Icao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("LastUpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -62,21 +65,18 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<Guid?>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ExtractedRawMetar")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("FileContent")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("FileCreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("FileCreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("FileLastModifiedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("FileLastModifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FileName")
                         .IsRequired()
@@ -86,8 +86,8 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<bool>("IsFileProcessed")
                         .HasColumnType("bit");
 
-                    b.Property<DateTimeOffset>("LastUpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -114,8 +114,8 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<Guid?>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DewpointCelsius")
                         .HasColumnType("int");
@@ -129,11 +129,11 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<bool>("IsCorrected")
                         .HasColumnType("bit");
 
-                    b.Property<DateTimeOffset>("IssuedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("LastUpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("NoCloudsDetected")
                         .HasColumnType("bit");
@@ -148,9 +148,6 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("TemperatureCelsius")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TrendType")
                         .HasColumnType("int");
 
                     b.Property<int?>("VisibilityMeters")
@@ -183,14 +180,14 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<Guid?>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Height")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("LastUpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MetarId")
                         .HasColumnType("int");
@@ -225,8 +222,8 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<Guid?>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ExceptionMessage")
                         .HasColumnType("nvarchar(max)");
@@ -240,8 +237,8 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<string>("FailedMetarParses")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("LastUpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Result")
                         .HasColumnType("int");

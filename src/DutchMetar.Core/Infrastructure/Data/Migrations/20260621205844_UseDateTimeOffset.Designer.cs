@@ -4,6 +4,7 @@ using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DutchMetar.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DutchMetarContext))]
-    partial class DutchMetarContextModelSnapshot : ModelSnapshot
+    [Migration("20260621205844_UseDateTimeOffset")]
+    partial class UseDateTimeOffset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -68,9 +71,6 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                     b.Property<string>("ExtractedRawMetar")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("FileContent")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("FileCreatedAt")
                         .HasColumnType("datetimeoffset");
@@ -148,9 +148,6 @@ namespace DutchMetar.Core.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("TemperatureCelsius")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TrendType")
                         .HasColumnType("int");
 
                     b.Property<int?>("VisibilityMeters")
