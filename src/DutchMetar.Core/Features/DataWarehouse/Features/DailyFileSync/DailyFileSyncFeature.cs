@@ -14,6 +14,9 @@ public class DailyFileSyncFeature : IDailyFileSyncFeature
     private readonly ICorrelationIdAccessor _correlationIdAccessor;
     private readonly INewKnmiFileHandler _newKnmiFileHandler;
     
+    // Simple way to prevent rate limit; this controls the delay before the next file download.
+    private const int FileDownloadIntervalMs = 1000;
+    
     public DailyFileSyncFeature(ILogger<DailyFileSyncFeature> logger, IKnmiRepository knmiRepository, ICorrelationIdAccessor correlationIdAccessor, INewKnmiFileHandler newKnmiFileHandler)
     {
         _logger = logger;
@@ -32,9 +35,12 @@ public class DailyFileSyncFeature : IDailyFileSyncFeature
         _logger.LogInformation("Starting KNMI Metar file sync.");
         
         // Parameters for retrieving files from the last 24h.
+        // The end parameter is set 1 hour behind current time to prevent overlap with MQTT messages.
+        var end = DateTimeOffset.UtcNow.AddHours(-1);
         var parameters = new KnmiFilesParameters
         {
-            Begin = DateTimeOffset.UtcNow.AddDays(-1),
+            End = end,
+            Begin = end.AddDays(-1),
             Sorting = "desc",
             OrderBy = "created",
             MaxKeys = 1000,
@@ -49,6 +55,7 @@ public class DailyFileSyncFeature : IDailyFileSyncFeature
             foreach (var fileName in fileNames)
             {
                 await _newKnmiFileHandler.HandleFileAsync(fileName, cancellationToken);
+                await Task.Delay(FileDownloadIntervalMs, cancellationToken);
             }
             
             
