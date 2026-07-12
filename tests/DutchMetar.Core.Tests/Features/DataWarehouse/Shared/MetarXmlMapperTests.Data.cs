@@ -1,6 +1,6 @@
 namespace DutchMetar.Core.Tests.Features.DataWarehouse.Shared;
 
-public partial class MetarXmlMapperTests
+public partial class MetarXmlParserTests
 {
     private const string Eham051353Xml = """
         0000431201

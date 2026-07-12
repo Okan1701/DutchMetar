@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Exceptions;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Exceptions;
 
 public class KnmiApiException : Exception
 {

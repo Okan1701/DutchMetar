@@ -1,5 +1,5 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Exceptions;
+﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Exceptions;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 using DutchMetar.Core.Infrastructure.Accessors;

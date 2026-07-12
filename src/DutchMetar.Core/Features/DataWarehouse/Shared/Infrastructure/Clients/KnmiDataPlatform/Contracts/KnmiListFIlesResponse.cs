@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
+﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Contracts;
 
 public class KnmiListFilesResponse
 {

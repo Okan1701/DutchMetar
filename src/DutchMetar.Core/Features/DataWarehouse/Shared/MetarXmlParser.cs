@@ -1,5 +1,5 @@
+using System.Globalization;
 using System.Xml.Linq;
-using System.Text.RegularExpressions;
 using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Domain.Enums;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
@@ -7,12 +7,12 @@ using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 
 namespace DutchMetar.Core.Features.DataWarehouse.Shared;
 
-public class MetarXmlMapper : IMetarXmlMapper
+public class MetarXmlParser : IMetarXmlParser
 {
     public Metar Map(string xmlContent)
     {
         if (string.IsNullOrWhiteSpace(xmlContent))
-            throw new MetarMappingException("XML content cannot be null or empty.");
+            throw new MetarXmlParsingException("XML content cannot be null or empty.");
 
         var cleanedXml = CleanXmlContent(xmlContent);
         XDocument document;
@@ -22,13 +22,13 @@ public class MetarXmlMapper : IMetarXmlMapper
         }
         catch (Exception ex)
         {
-            throw new MetarMappingException("Failed to parse XML.", ex);
+            throw new MetarXmlParsingException("Failed to parse XML.", ex);
         }
 
         var root = document.Root;
 
         if (root == null)
-            throw new MetarMappingException("XML document has no root element.");
+            throw new MetarXmlParsingException("XML document has no root element.");
 
         var ns = new Dictionary<string, XNamespace>
         {
@@ -105,7 +105,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (DateTimeOffset.TryParse(timePosition, null, System.Globalization.DateTimeStyles.AdjustToUniversal,
+        if (DateTimeOffset.TryParse(timePosition, null, DateTimeStyles.AdjustToUniversal,
                 out var result))
             return result;
 
@@ -150,7 +150,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (decimal.TryParse(windDirection, System.Globalization.CultureInfo.InvariantCulture, out var direction))
+        if (decimal.TryParse(windDirection, CultureInfo.InvariantCulture, out var direction))
             return (int)Math.Round(direction);
 
         return null;
@@ -163,7 +163,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (decimal.TryParse(windSpeed, System.Globalization.CultureInfo.InvariantCulture, out var speed))
+        if (decimal.TryParse(windSpeed, CultureInfo.InvariantCulture, out var speed))
             return (int)Math.Round(speed);
 
         return null;
@@ -182,7 +182,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (decimal.TryParse(visibility, System.Globalization.CultureInfo.InvariantCulture, out var vis))
+        if (decimal.TryParse(visibility, CultureInfo.InvariantCulture, out var vis))
             return (int)Math.Round(vis);
 
         return null;
@@ -195,7 +195,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (decimal.TryParse(temperature, System.Globalization.CultureInfo.InvariantCulture, out var temp))
+        if (decimal.TryParse(temperature, CultureInfo.InvariantCulture, out var temp))
             return (int)Math.Round(temp);
 
         return null;
@@ -208,7 +208,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (decimal.TryParse(dewpoint, System.Globalization.CultureInfo.InvariantCulture, out var dew))
+        if (decimal.TryParse(dewpoint, CultureInfo.InvariantCulture, out var dew))
             return (int)Math.Round(dew);
 
         return null;
@@ -221,7 +221,7 @@ public class MetarXmlMapper : IMetarXmlMapper
             .FirstOrDefault()?
             .Value;
 
-        if (decimal.TryParse(qnh, System.Globalization.CultureInfo.InvariantCulture, out var altimeter))
+        if (decimal.TryParse(qnh, CultureInfo.InvariantCulture, out var altimeter))
             return (int)Math.Round(altimeter);
 
         return null;
@@ -236,14 +236,15 @@ public class MetarXmlMapper : IMetarXmlMapper
     private TrendType ExtractTrendType(XElement root, Dictionary<string, XNamespace> ns)
     {
         var trendForecastElement = root.Element(ns["iwxxm"] + "trendForecast");
-        var isNil = bool.TryParse(trendForecastElement?.Attribute(ns["xsi"] + "nil")?.Value, out var isNilParsed) && isNilParsed;
+        var isNil = bool.TryParse(trendForecastElement?.Attribute(ns["xsi"] + "nil")?.Value, out var isNilParsed) &&
+                    isNilParsed;
         var nilReason = trendForecastElement?.Attribute("nilReason")?.Value ?? string.Empty;
 
         if (isNil && nilReason == "http://codes.wmo.int/common/nil/noSignificantChange") return TrendType.Nosig;
-        
-        var forecastElement =  trendForecastElement?.Element(ns["iwxxm"] + "MeteorologicalAerodromeTrendForecast");
+
+        var forecastElement = trendForecastElement?.Element(ns["iwxxm"] + "MeteorologicalAerodromeTrendForecast");
         if (forecastElement == null) return TrendType.None;
-        
+
         var indicatorValue = forecastElement.Attribute("changeIndicator")?.Value ?? string.Empty;
         return indicatorValue == "TEMPORARY_FLUCTUATIONS" ? TrendType.Tempo : TrendType.None;
     }
@@ -267,13 +268,14 @@ public class MetarXmlMapper : IMetarXmlMapper
                 .Descendants(ns["iwxxm"] + "amount")
                 .Attributes(ns["xlink"] + "href")
                 .FirstOrDefault()?.Value ?? string.Empty;
-            
+
             var layerBase = layer
                 .Descendants(ns["iwxxm"] + "base")
                 .FirstOrDefault()?.Value ?? string.Empty;
-            
+
             var height = -1;
-            if (decimal.TryParse(layerBase, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var baseVal))
+            if (decimal.TryParse(layerBase, NumberStyles.Float,
+                    CultureInfo.InvariantCulture, out var baseVal))
             {
                 height = (int)Math.Round(baseVal);
             }
@@ -291,7 +293,6 @@ public class MetarXmlMapper : IMetarXmlMapper
                 Height = height,
             };
         }).ToArray();
-        
     }
 
     private Airport? ExtractAirport(XElement root, Dictionary<string, XNamespace> ns)

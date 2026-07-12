@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using System.Threading.Channels;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.Notifications;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications.Contracts;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,7 +9,7 @@ using MQTTnet.Exceptions;
 using MQTTnet.Formatter;
 using MQTTnet.Protocol;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 
 public class KnmiNotificationClient : IKnmiNotificationClient
 {

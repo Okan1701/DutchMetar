@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.Notifications;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications.Contracts;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Interfaces;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 
 /// <summary>
 /// Represents a client for connecting and receiving messages from the <seealso href="https://developer.dataplatform.knmi.nl/notification-service">KNMI Notification Service</seealso>.

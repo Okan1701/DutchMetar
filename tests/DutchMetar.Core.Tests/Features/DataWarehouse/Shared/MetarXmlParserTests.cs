@@ -6,14 +6,14 @@ using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 
 namespace DutchMetar.Core.Tests.Features.DataWarehouse.Shared;
 
-public partial class MetarXmlMapperTests
+public partial class MetarXmlParserTests
 {
-    private readonly IMetarXmlMapper _mapper = new MetarXmlMapper();
+    private readonly IMetarXmlParser _parser = new MetarXmlParser();
 
     [Fact]
     public void Map_WithEham051353_MapsAllFieldsCorrectly()
     {
-        var result = _mapper.Map(Eham051353Xml);
+        var result = _parser.Map(Eham051353Xml);
 
         Assert.NotNull(result.Ceilings);
         Assert.Equal("METAR EHAM 051355Z 29015KT 260V320 9999 FEW014 BKN016 BKN024 19/15 Q1022 TEMPO SCT016=",
@@ -41,7 +41,7 @@ public partial class MetarXmlMapperTests
     [Fact]
     public void Map_WithEhbk051352_MapsAllFieldsCorrectly()
     {
-        var result = _mapper.Map(Ehbk051352Xml);
+        var result = _parser.Map(Ehbk051352Xml);
 
         Assert.NotNull(result);
         Assert.Equal("METAR EHBK 051355Z AUTO 30007KT 240V360 9999 BKN027 BKN035 OVC041 21/15 Q1022 NOSIG=",
@@ -64,18 +64,18 @@ public partial class MetarXmlMapperTests
     [Fact]
     public void Map_WithNullInput_ThrowsMetarMappingException()
     {
-        Assert.Throws<MetarMappingException>(() => _mapper.Map(null!));
+        Assert.Throws<MetarXmlParsingException>(() => _parser.Map(null!));
     }
 
     [Fact]
     public void Map_WithEmptyInput_ThrowsMetarMappingException()
     {
-        Assert.Throws<MetarMappingException>(() => _mapper.Map(string.Empty));
+        Assert.Throws<MetarXmlParsingException>(() => _parser.Map(string.Empty));
     }
 
     [Fact]
     public void Map_WithInvalidXml_ThrowsMetarMappingException()
     {
-        Assert.Throws<MetarMappingException>(() => _mapper.Map("<invalid>xml</broken>"));
+        Assert.Throws<MetarXmlParsingException>(() => _parser.Map("<invalid>xml</broken>"));
     }
 }

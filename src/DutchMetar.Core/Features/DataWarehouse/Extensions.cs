@@ -2,7 +2,8 @@
 using DutchMetar.Core.Features.DataWarehouse.Features.Notifications;
 using DutchMetar.Core.Features.DataWarehouse.Shared;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Options;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories.Interfaces;
@@ -21,7 +22,7 @@ public static class Extensions
             services.AddScoped<INotificationsFeature, NotificationsFeature>();
             services.AddScoped<IDailyFileSyncFeature, DailyFileSyncFeature>();
             services.AddScoped<INewKnmiFileHandler, NewKnmiFileHandler>();
-            services.AddScoped<IMetarXmlMapper, MetarXmlMapper>();
+            services.AddScoped<IMetarXmlParser, MetarXmlParser>();
             services.AddScoped<IKnmiRepository, KnmiRepository>();
             services.Configure<KnmiMetarApiOptions>(configuration.GetSection(nameof(KnmiMetarApiOptions)));
             services.AddHttpClient<IKnmiMetarApiClient, KnmiMetarApiClient>();

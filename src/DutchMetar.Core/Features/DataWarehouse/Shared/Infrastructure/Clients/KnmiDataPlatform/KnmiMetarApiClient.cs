@@ -2,13 +2,13 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Exceptions;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Options;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Exceptions;
 using Microsoft.Extensions.Options;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform;
 
 public class KnmiMetarApiClient : IKnmiMetarApiClient
 {

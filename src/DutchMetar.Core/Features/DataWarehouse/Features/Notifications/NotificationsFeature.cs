@@ -14,6 +14,11 @@ public class NotificationsFeature : INotificationsFeature
 
     public async Task HandleFileAsync(KnmiFileMeta fileMeta, CancellationToken cancellationToken)
     {
+        if (fileMeta.FileName == string.Empty || fileMeta.CreatedOn == DateTimeOffset.MinValue)
+        {
+            return;
+        }
+        
         await  _newKnmiFileHandler.HandleFileAsync(fileMeta, cancellationToken);
     }
 }

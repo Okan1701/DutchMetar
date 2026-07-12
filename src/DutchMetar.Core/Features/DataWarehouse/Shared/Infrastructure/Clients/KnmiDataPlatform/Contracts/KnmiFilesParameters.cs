@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
+﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Contracts;
 
 /// <summary>
 /// Represents supported parameters by the KNMI Data API.

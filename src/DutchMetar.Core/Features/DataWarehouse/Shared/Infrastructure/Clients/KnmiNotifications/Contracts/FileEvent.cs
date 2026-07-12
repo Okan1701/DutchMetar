@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.Notifications;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications.Contracts;
 
 public class FileEvent
 {

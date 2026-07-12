@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Exceptions;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 using DutchMetar.Core.Infrastructure.Data;
@@ -14,14 +14,14 @@ public class NewKnmiFileHandler : INewKnmiFileHandler
     private readonly DutchMetarContext _context;
     private readonly ILogger<NewKnmiFileHandler> _logger;
     private readonly IKnmiMetarApiClient _knmiMetarApiClient;
-    private readonly IMetarXmlMapper _metarXmlMapper;
+    private readonly IMetarXmlParser _metarXmlParser;
 
-    public NewKnmiFileHandler(DutchMetarContext context, ILogger<NewKnmiFileHandler> logger, IKnmiMetarApiClient knmiMetarApiClient, IMetarXmlMapper metarXmlMapper)
+    public NewKnmiFileHandler(DutchMetarContext context, ILogger<NewKnmiFileHandler> logger, IKnmiMetarApiClient knmiMetarApiClient, IMetarXmlParser metarXmlParser)
     {
         _context = context;
         _logger = logger;
         _knmiMetarApiClient = knmiMetarApiClient;
-        _metarXmlMapper = metarXmlMapper;
+        _metarXmlParser = metarXmlParser;
     }
 
     public async Task HandleFileAsync(KnmiFileMeta fileMeta, CancellationToken cancellationToken)
@@ -52,7 +52,7 @@ public class NewKnmiFileHandler : INewKnmiFileHandler
 
         try
         {
-            var metarEntity = _metarXmlMapper.Map(fileContent);
+            var metarEntity = _metarXmlParser.Map(fileContent);
 
             if (metarEntity?.Airport?.Icao != null)
             {
@@ -68,7 +68,7 @@ public class NewKnmiFileHandler : INewKnmiFileHandler
                 _context.Metars.Add(metarEntity);
             }
         }
-        catch (MetarMappingException ex)
+        catch (MetarXmlParsingException ex)
         {
             _logger.LogError(ex, "Failed to map XML file {FileName}", fileMeta.FileName);
         }

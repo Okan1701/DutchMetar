@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.Notifications;
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications.Contracts;
 
 /// <summary>
 /// <see href="https://tyk-cdn.dataplatform.knmi.nl/notification/index.html#schema-FileEvent"/>

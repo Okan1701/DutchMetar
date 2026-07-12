@@ -1,4 +1,4 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
+﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Contracts;
 
 namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories.Interfaces;
 

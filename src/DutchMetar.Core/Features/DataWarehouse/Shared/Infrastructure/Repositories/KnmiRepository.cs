@@ -1,7 +1,6 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Interfaces;
+﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiDataPlatform.Contracts;
+using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories.Interfaces;
-using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 
 namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories;
@@ -9,13 +8,11 @@ namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositor
 public class KnmiRepository : IKnmiRepository
 {
     private readonly IKnmiMetarApiClient _knmiMetarApiClient;
-    private readonly DutchMetarContext _dutchMetarContext;
     private readonly ILogger<KnmiRepository> _logger;
 
-    public KnmiRepository(IKnmiMetarApiClient knmiMetarApiClient, DutchMetarContext dutchMetarContext, ILogger<KnmiRepository> logger)
+    public KnmiRepository(IKnmiMetarApiClient knmiMetarApiClient, ILogger<KnmiRepository> logger)
     {
         _knmiMetarApiClient = knmiMetarApiClient;
-        _dutchMetarContext = dutchMetarContext;
         _logger = logger;
     }
     
