@@ -1,0 +1,21 @@
+﻿using DutchMetar.Core.Domain.Entities;
+
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
+
+public class KnmiFileSummary
+{
+    public required string Filename { get; set; }
+    
+    public DateTimeOffset LastModified { get; set; }
+    
+    public int Size { get; set; }
+    
+    public DateTimeOffset Created { get; set; }
+
+    public KnmiMetarFile ToKnmiMetarFileEntity() => new KnmiMetarFile
+    {
+        FileName = Filename,
+        FileCreatedAt = Created,
+        FileLastModifiedAt = LastModified
+    };
+}

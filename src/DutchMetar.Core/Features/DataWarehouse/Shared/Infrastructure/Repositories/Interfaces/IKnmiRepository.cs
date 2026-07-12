@@ -1,0 +1,9 @@
+﻿using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Contracts.DataPlatform;
+
+namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories.Interfaces;
+
+public interface IKnmiRepository
+{
+    Task<ICollection<KnmiFileMeta>> GetKnmiMetarFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken,
+        Guid correlationId);
+}
