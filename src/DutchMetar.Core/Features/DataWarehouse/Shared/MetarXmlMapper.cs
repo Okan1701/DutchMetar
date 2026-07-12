@@ -56,7 +56,8 @@ public class MetarXmlMapper : IMetarXmlMapper
             Remarks = ExtractRemarks(root, ns),
             NoCloudsDetected = ExtractNoCloudsDetected(root, ns),
             TrendType = ExtractTrendType(root, ns),
-            Ceilings = ExtractCeilings(root, ns)
+            Ceilings = ExtractCeilings(root, ns),
+            Airport = ExtractAirport(root, ns)
         };
 
         return metar;
@@ -291,5 +292,20 @@ public class MetarXmlMapper : IMetarXmlMapper
             };
         }).ToArray();
         
+    }
+
+    private Airport? ExtractAirport(XElement root, Dictionary<string, XNamespace> ns)
+    {
+        var airportHeliportTimeSlice = root?
+            .Descendants(ns["aixm"] + "AirportHeliportTimeSlice")
+            .FirstOrDefault();
+
+        if (airportHeliportTimeSlice == null) return null;
+
+        return new Airport
+        {
+            Icao = airportHeliportTimeSlice.Element(ns["aixm"] + "locationIndicatorICAO")?.Value ?? string.Empty,
+            Name = airportHeliportTimeSlice.Element(ns["aixm"] + "name")?.Value ?? string.Empty
+        };
     }
 }

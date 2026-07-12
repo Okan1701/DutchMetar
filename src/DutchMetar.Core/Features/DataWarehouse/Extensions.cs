@@ -1,11 +1,10 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Interfaces;
-using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles;
-using DutchMetar.Core.Features.DataWarehouse.Features.ReprocessFailedFiles.Interfaces;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar;
-using DutchMetar.Core.Features.DataWarehouse.Features.SyncKnmiMetar.Interfaces;
+﻿using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.Options;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Repositories;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Repositories.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Shared;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure;
-using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Interfaces;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,25 +16,15 @@ public static class Extensions
 {
     extension(IServiceCollection services)
     {
-        public void AddSyncKnmiMetarFileListFeature(IConfiguration configuration)
+        public void AddDataWarehouseServices(IConfiguration configuration)
         {
-            services.TryAddSharedServices();
-            services.AddScoped<ISyncKnmiMetarFileListFeature, SyncKnmiMetarFileListFeature>();
-            services.AddScoped<IMetarFileBulkRetriever, MetarFileBulkRetriever>();
-            services.AddHttpClient<IKnmiMetarApiClient, KnmiMetarApiClient>();
+            services.AddScoped<IDailyFileSyncFeature, DailyFileSyncFeature>();
+            services.AddScoped<IRawMetarFileHandlingFeature, RawMetarFileHandlingFeature>();
+            services.AddScoped<IMetarXmlMapper, MetarXmlMapper>();
+            services.AddScoped<IKnmiRepository, KnmiRepository>();
             services.Configure<KnmiMetarApiOptions>(configuration.GetSection(nameof(KnmiMetarApiOptions)));
-        }
-
-        public void AddReprocessFailedFilesFeature()
-        {
-            services.TryAddSharedServices();
-            services.AddScoped<IReprocessFailedFilesFeature, ReprocessFailedFilesFeature>();
-        }
-
-        private void TryAddSharedServices()
-        {
-            services.TryAddScoped<IMetarMapper, MetarMapper>();
-            services.TryAddScoped<IMetarProcessor, MetarProcessor>();
+            services.AddHttpClient<IKnmiMetarApiClient, KnmiMetarApiClient>();
+            services.AddSingleton<IKnmiNotificationClient, KnmiNotificationClient>();
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Contracts;
-using DutchMetar.Core.Features.DataWarehouse.Features.Notification.Interfaces;
+﻿using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.Interfaces;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Repositories;
+using DutchMetar.Core.Features.DataWarehouse.Interfaces;
 
 namespace DutchMetar.Hangfire.Host;
 
@@ -16,14 +17,25 @@ public class NotificationHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceScopeFactory.CreateScope();
-        var handler = scope.ServiceProvider.GetRequiredService<IKnmiFileEventHandler>();
-        var fileEvents = await _knmiNotificationClient
-            .ChannelReader
-            .ReadAllAsync(stoppingToken)
-            .ToArrayAsync(stoppingToken);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var handler = scope.ServiceProvider.GetRequiredService<IRawMetarFileHandlingFeature>();
+            var fileEvents = await _knmiNotificationClient
+                .ChannelReader
+                .ReadAllAsync(stoppingToken)
+                .ToArrayAsync(stoppingToken);
+
+            var mappedFiles = fileEvents
+                .Where(x => !string.IsNullOrEmpty(x.Time) && !string.IsNullOrEmpty(x.Data?.FileName))
+                .Select(x => new KnmiFileMeta
+                {
+                    FileName = x.Data?.FileName ?? string.Empty,
+                    CreatedOn = !string.IsNullOrEmpty(x.Time) ? DateTimeOffset.Parse(x.Time) : DateTimeOffset.MinValue,
+                }).ToArray();
         
-        await handler.HandleFileEventsAsync(fileEvents);
+            await handler.HandleFilesAsync(mappedFiles);
+        }
     }
 
     public override async Task StartAsync(CancellationToken cancellationToken)
