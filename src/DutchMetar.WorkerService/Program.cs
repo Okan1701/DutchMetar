@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseWindowsService();
 builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
 builder.Services.AddDataWarehouseServices(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
