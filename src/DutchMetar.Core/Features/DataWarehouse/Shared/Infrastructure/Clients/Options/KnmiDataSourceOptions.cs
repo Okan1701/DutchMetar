@@ -1,6 +1,6 @@
 ﻿namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.Options;
 
-public class KnmiMetarApiOptions
+public class KnmiDataSourceOptions
 {
     /// <summary>
     /// Authorization token used to authenticate with the KNMI API

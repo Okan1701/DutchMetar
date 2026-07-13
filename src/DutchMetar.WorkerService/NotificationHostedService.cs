@@ -2,7 +2,7 @@
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.KnmiNotifications;
 using DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Repositories;
 
-namespace DutchMetar.Hangfire.Host;
+namespace DutchMetar.WorkerService;
 
 public class NotificationHostedService : BackgroundService
 {

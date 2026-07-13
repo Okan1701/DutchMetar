@@ -3,7 +3,7 @@ using DutchMetar.Core.Features.DataWarehouse.Features.DailyFileSync;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
-using DutchMetar.Hangfire.Host;
+using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 

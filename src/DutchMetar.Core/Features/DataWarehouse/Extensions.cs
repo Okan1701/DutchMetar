@@ -24,7 +24,7 @@ public static class Extensions
             services.AddScoped<INewKnmiFileHandler, NewKnmiFileHandler>();
             services.AddScoped<IMetarXmlParser, MetarXmlParser>();
             services.AddScoped<IKnmiRepository, KnmiRepository>();
-            services.Configure<KnmiMetarApiOptions>(configuration.GetSection(nameof(KnmiMetarApiOptions)));
+            services.Configure<KnmiDataSourceOptions>(configuration.GetSection(nameof(KnmiDataSourceOptions)));
             services.AddHttpClient<IKnmiMetarApiClient, KnmiMetarApiClient>();
             services.AddSingleton<IKnmiNotificationClient, KnmiNotificationClient>();
         }

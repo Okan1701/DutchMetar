@@ -1,6 +1,6 @@
 ﻿using Hangfire.Dashboard;
 
-namespace DutchMetar.Hangfire.Host;
+namespace DutchMetar.WorkerService;
 
 public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
 {
