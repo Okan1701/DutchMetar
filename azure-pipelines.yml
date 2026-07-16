@@ -14,6 +14,8 @@ variables:
 stages:
   - stage: build
     displayName: Build
+    pool:
+      vmImage: windows-latest
     jobs:
       - job: publishWebApp
         displayName: Publish web app
