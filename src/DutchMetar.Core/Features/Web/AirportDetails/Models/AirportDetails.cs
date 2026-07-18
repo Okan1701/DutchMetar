@@ -3,6 +3,8 @@
 public class AirportDetails
 {
     public required string Icao { get; set; }
+    
+    public string? Name { get; set; }
 
     public DateTimeOffset LastUpdated { get; set; } = DateTimeOffset.MinValue;
     

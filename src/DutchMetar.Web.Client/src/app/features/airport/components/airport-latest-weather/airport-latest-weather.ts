@@ -3,10 +3,13 @@ import { MatCardModule } from '@angular/material/card';
 import { Stack } from '../../../../shared/components/stack/stack';
 import { LatestWeatherValueCard } from './latest-weather-value-card/latest-weather-value-card';
 import { AirportCurrentMetar } from '../../../../shared/models/airport-current-metar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-airport-latest-weather',
-    imports: [MatCardModule, Stack, LatestWeatherValueCard],
+    imports: [MatCardModule, Stack, LatestWeatherValueCard, MatTooltip, MatIconButton, MatIcon],
     templateUrl: './airport-latest-weather.html',
     styleUrl: './airport-latest-weather.scss',
 })

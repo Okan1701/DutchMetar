@@ -4,12 +4,14 @@
             <mat-card-subtitle>Raw METAR</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <pre>{{ airportWeather().rawMetar }}</pre>
+            <div class="metar-card-content">
+                <pre>{{ airportWeather().rawMetar }}</pre>
+                <button matTooltip="Copy METAR to clipboard" mat-icon-button><mat-icon>content_copy</mat-icon></button>
+            </div>
         </mat-card-content>
     </mat-card>
     
     <app-stack direction="horizontal">
-        
         @if (airportWeather().issuedAt) {
             <app-latest-weather-value-card label="Issued At">
                 {{ issuedAt() }}z

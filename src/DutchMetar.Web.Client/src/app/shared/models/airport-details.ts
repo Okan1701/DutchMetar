@@ -2,6 +2,7 @@
 
 export type AirportDetails = {
     icao: string;
+    name?: string;
     lastUpdated: Date;
     latestWeather?: AirportCurrentMetar
 }

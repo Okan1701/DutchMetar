@@ -13,8 +13,11 @@
                     <app-badge type="neutral">AUTO</app-badge>
                 }
             </div>
+            @if (airportDetails().name) {
+                <span class="page-header-subtitle">{{ airportDetails().name }}</span>
+            }
             @if (airportDetails().lastUpdated) {
-                <div class="page-header-subtitle">
+                <div>
                     <span>Last update: {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}Z</span>
                 </div>
             }
