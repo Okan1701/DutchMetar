@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Badge } from '../badge/badge';
 
 @Component({
     selector: 'app-airport-nav-list',
@@ -31,6 +32,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ReactiveFormsModule,
         MatIconModule,
         MatSuffix,
+        Badge,
     ],
     templateUrl: './airport-nav-list.html',
     styleUrl: './airport-nav-list.scss',

@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AirportLatestWeather } from './components/airport-latest-weather/airport-latest-weather';
 import { DatePipe } from '@angular/common';
 import { AirportHistoryData } from './components/airport-history-data/airport-history-data';
+import { Badge } from '../../shared/components/badge/badge';
 
 @Component({
     selector: 'app-airport',
@@ -21,6 +22,7 @@ import { AirportHistoryData } from './components/airport-history-data/airport-hi
         AirportLatestWeather,
         DatePipe,
         AirportHistoryData,
+        Badge,
     ],
     templateUrl: './airport.html',
     styleUrl: './airport.scss',
