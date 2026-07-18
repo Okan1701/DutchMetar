@@ -1,0 +1,9 @@
+<div
+        class="badge"
+        [class.success]="type() === 'success'"
+        [class.danger]="type() === 'danger'"
+        [class.primary]="type() === 'primary'"
+        [class.neutral]="type() === 'neutral'"
+        [class.narrow]="narrow()">
+    <ng-content></ng-content>
+</div>

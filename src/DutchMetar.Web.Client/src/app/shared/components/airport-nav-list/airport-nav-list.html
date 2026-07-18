@@ -15,21 +15,23 @@
                 <mat-divider></mat-divider>
             }
             <div class="airport-item" matRipple routerLinkActive="active" [routerLink]="['/airport/', airport.icao]" >
-                <div>
-                    <mat-icon>circle</mat-icon>
-                </div>
-                <div>
-                    <div class="title">{{ airport.icao }}</div>
-                    <div>Issued at {{ airport.lastIssuedMetarDate | date:'HH:mm':'UTC' }}Z</div>
-                    <div>Wind {{ airport.windDirection }}° at {{ airport.windSpeedKnots }}kt</div>
-                </div>
-                <div>
-                    @if (airport.isAuto) {
-                        <div>AUTO</div>
-                    }
-                    @if (airport.isCavok) {
-                        <div>CAVOK</div>
-                    }   
+                <div class="airport-item-content">
+                    <div>
+                        <mat-icon>circle</mat-icon>
+                    </div>
+                    <div>
+                        <div class="title">{{ airport.icao }}</div>
+                        <div>Issued at {{ airport.lastIssuedMetarDate | date:'HH:mm':'UTC' }}Z</div>
+                        <div>Wind {{ airport.windDirection }}° at {{ airport.windSpeedKnots }}kt</div>
+                    </div>
+                    <div class="badges">
+                        @if (airport.isCavok) {
+                            <app-badge [narrow]="true" type="success">CAVOK</app-badge>
+                        }
+                        @if (airport.isAuto) {
+                            <app-badge [narrow]="true" type="neutral">AUTO</app-badge>
+                        }
+                    </div>
                 </div>
             </div>
         }
