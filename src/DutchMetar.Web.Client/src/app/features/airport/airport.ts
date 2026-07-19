@@ -13,6 +13,7 @@ import { DatePipe } from '@angular/common';
 import { AirportHistoryData } from './components/airport-history-data/airport-history-data';
 import { Badge } from '../../shared/components/badge/badge';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MeteoCondition } from '../../shared/types/meteo-condition';
 
 @Component({
     selector: 'app-airport',
@@ -32,6 +33,7 @@ export class Airport {
     protected airportIcao: string | null = null;
     protected airportDetails = signal<AirportDetails>({
         icao: '',
+        meteoCondition: MeteoCondition.None,
         lastUpdated: new Date(),
     });
     protected loadingStatus = signal<LoadingStatus>('loading');
@@ -72,4 +74,6 @@ export class Airport {
         this.loadingStatus.set('error');
         console.error('Failed to retrieve details for ' + this.airportIcao, error);
     }
+
+    protected readonly MeteoCondition = MeteoCondition;
 }

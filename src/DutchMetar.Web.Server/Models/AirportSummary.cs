@@ -1,4 +1,6 @@
-﻿namespace DutchMetar.Web.Server.Models;
+﻿using DutchMetar.Core.Helpers.Enums;
+
+namespace DutchMetar.Web.Server.Models;
 
 public class AirportSummary
 {
@@ -11,6 +13,8 @@ public class AirportSummary
     public bool IsCavok { get; set; }
     
     public bool IsCorrected { get; set; }
+    
+    public MetarMeteoCondition MeteoCondition { get; set; } = MetarMeteoCondition.None;
     
     public int? WindDirection { get; set; }
     
