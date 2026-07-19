@@ -10,6 +10,8 @@ public class AirportSummary
     
     public bool IsCavok { get; set; }
     
+    public bool IsCorrected { get; set; }
+    
     public int? WindDirection { get; set; }
     
     public int? WindSpeedKnots { get; set; }

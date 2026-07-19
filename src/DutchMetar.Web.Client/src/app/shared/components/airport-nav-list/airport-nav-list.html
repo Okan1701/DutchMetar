@@ -25,6 +25,9 @@
                         <div>Wind {{ airport.windDirection }}° at {{ airport.windSpeedKnots }}kt</div>
                     </div>
                     <div class="badges">
+                        @if (airport.isCorrected) {
+                            <app-badge [narrow]="true" type="primary">COR</app-badge>
+                        }
                         @if (airport.isCavok) {
                             <app-badge [narrow]="true" type="success">CAVOK</app-badge>
                         }

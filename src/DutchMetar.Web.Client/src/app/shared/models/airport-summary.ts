@@ -3,6 +3,7 @@
     lastIssuedMetarDate: string;
     isAuto: boolean;
     isCavok: boolean;
+    isCorrected: boolean;
     windDirection?: number;
     windSpeedKnots?: number;
 };

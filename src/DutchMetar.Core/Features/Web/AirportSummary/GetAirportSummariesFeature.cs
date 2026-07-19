@@ -30,6 +30,7 @@ public class GetAirportSummariesFeature : IGetAirportSummariesFeature
             Icao = x.Icao,
             IsAuto = x.MetarReports.First().IsAuto,
             IsCavok = x.MetarReports.First().IsCavok,
+            IsCorrected = x.MetarReports.First().IsCorrected,
             LastIssuedMetarDate = x.MetarReports.First().IssuedAt,
             WindDirection = x.MetarReports.First().WindDirection,
             WindSpeedKnots = x.MetarReports.First().WindSpeedKnots

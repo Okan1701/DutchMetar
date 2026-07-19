@@ -13,6 +13,7 @@ public static class AirportSummaryMapping
             LastIssuedMetarDate = single.LastIssuedMetarDate,
             IsAuto = single.IsAuto,
             IsCavok = single.IsCavok,
+            IsCorrected = single.IsCorrected,
             WindDirection = single.WindDirection,
             WindSpeedKnots = single.WindSpeedKnots
         };
