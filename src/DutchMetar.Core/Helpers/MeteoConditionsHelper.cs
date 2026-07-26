@@ -6,7 +6,7 @@ namespace DutchMetar.Core.Helpers;
 
 public static class MeteoConditionsHelper
 {
-    public static MetarMeteoCondition IsVmc(Metar metar)
+    public static MetarMeteoCondition GetMeteoCondition(Metar metar)
     {
         if (metar.IsCavok || metar.NoCloudsDetected)
         {

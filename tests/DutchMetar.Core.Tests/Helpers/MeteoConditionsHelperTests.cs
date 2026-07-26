@@ -17,7 +17,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Vmc, result);
     }
@@ -32,7 +32,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Vmc, result);
     }
@@ -46,7 +46,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Imc, result);
     }
@@ -60,7 +60,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Vmc, result);
     }
@@ -78,7 +78,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Imc, result);
     }
@@ -96,7 +96,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Vmc, result);
     }
@@ -114,7 +114,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Vmc, result);
     }
@@ -133,7 +133,7 @@ public class MeteoConditionsHelperTests
             RawMetar = "TEST"
         };
 
-        var result = MeteoConditionsHelper.IsVmc(metar);
+        var result = MeteoConditionsHelper.GetMeteoCondition(metar);
 
         Assert.Equal(MetarMeteoCondition.Imc, result);
     }

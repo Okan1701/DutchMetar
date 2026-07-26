@@ -41,7 +41,7 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
         {
             airportDetails.LatestWeather = MapMetarEntityToModel(latestMetar);
             airportDetails.LastUpdated = latestMetar.LastUpdatedAt;
-            airportDetails.MeteoCondition = MeteoConditionsHelper.IsVmc(latestMetar);
+            airportDetails.MeteoCondition = MeteoConditionsHelper.GetMeteoCondition(latestMetar);
         }
 
         return airportDetails;
