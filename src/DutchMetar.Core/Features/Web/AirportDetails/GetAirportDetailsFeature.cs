@@ -34,6 +34,7 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
         var airportDetails = new Models.AirportDetails
         {
             Icao = airport.Icao,
+            Name = airport.Name
         };
 
         var latestMetar = airport.MetarReports.FirstOrDefault();
