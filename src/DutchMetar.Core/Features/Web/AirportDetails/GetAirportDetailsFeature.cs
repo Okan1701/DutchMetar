@@ -2,6 +2,7 @@
 using DutchMetar.Core.Domain.Exceptions;
 using DutchMetar.Core.Features.Web.AirportDetails.Interfaces;
 using DutchMetar.Core.Features.Web.AirportDetails.Models;
+using DutchMetar.Core.Helpers;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
         {
             airportDetails.LatestWeather = MapMetarEntityToModel(latestMetar);
             airportDetails.LastUpdated = latestMetar.LastUpdatedAt;
+            airportDetails.MeteoCondition = MeteoConditionsHelper.GetMeteoCondition(latestMetar);
         }
 
         return airportDetails;

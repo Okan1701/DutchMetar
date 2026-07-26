@@ -13,6 +13,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Badge } from '../badge/badge';
+import { MeteoCondition } from '../../types/meteo-condition';
 
 @Component({
     selector: 'app-airport-nav-list',
@@ -63,5 +64,17 @@ export class AirportNavList {
 
     protected onSearchValueChange(event: Event): void {
         this.searchValue$.next((event.target as HTMLInputElement).value);
+    }
+
+    protected isVmc(airport: AirportSummary) {
+        return airport.meteoCondition === MeteoCondition.Vmc;
+    }
+
+    protected isImc(airport: AirportSummary) {
+        return airport.meteoCondition === MeteoCondition.Imc;
+    }
+
+    protected isMarginal(airport: AirportSummary) {
+        return airport.meteoCondition === MeteoCondition.Marginal;
     }
 }

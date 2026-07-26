@@ -17,7 +17,7 @@
             <div class="airport-item" matRipple routerLinkActive="active" [routerLink]="['/airport/', airport.icao]" >
                 <div class="airport-item-content">
                     <div>
-                        <mat-icon>circle</mat-icon>
+                        <mat-icon [class.vmc]="isVmc(airport)" [class.imc]="isImc(airport)" [class.marginal]="isMarginal(airport)">circle</mat-icon>
                     </div>
                     <div>
                         <div class="title">{{ airport.icao }}</div>
@@ -30,6 +30,12 @@
                         }
                         @if (airport.isCavok) {
                             <app-badge [narrow]="true" type="success">CAVOK</app-badge>
+                        } @else if (isVmc(airport)) {
+                            <app-badge [narrow]="true" type="success">VMC</app-badge>
+                        } @else if (isImc(airport)) {
+                            <app-badge [narrow]="true" type="danger">IMC</app-badge>
+                        } @else if (isMarginal(airport)) {
+                            <app-badge [narrow]="true" type="warning">MARGINAL</app-badge>
                         }
                         @if (airport.isAuto) {
                             <app-badge [narrow]="true" type="neutral">AUTO</app-badge>

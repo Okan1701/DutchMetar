@@ -14,6 +14,7 @@ public static class AirportSummaryMapping
             IsAuto = single.IsAuto,
             IsCavok = single.IsCavok,
             IsCorrected = single.IsCorrected,
+            MeteoCondition =  single.MeteoCondition,
             WindDirection = single.WindDirection,
             WindSpeedKnots = single.WindSpeedKnots
         };

@@ -8,6 +8,12 @@
                 }
                 @if (airportDetails().latestWeather?.isCavok) {
                     <app-badge type="success">CAVOK</app-badge>
+                } @else if (airportDetails().meteoCondition === MeteoCondition.Vmc) {
+                    <app-badge type="success">VMC</app-badge>
+                } @else if (airportDetails().meteoCondition === MeteoCondition.Imc) {
+                    <app-badge type="danger">IMC</app-badge>
+                } @else if (airportDetails().meteoCondition === MeteoCondition.Marginal) {
+                    <app-badge type="warning">MARGINAL</app-badge>
                 }
                 @if (airportDetails().latestWeather?.isAuto) {
                     <app-badge type="neutral">AUTO</app-badge>

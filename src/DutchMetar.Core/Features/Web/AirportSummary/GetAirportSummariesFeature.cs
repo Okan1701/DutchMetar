@@ -1,5 +1,6 @@
 ﻿using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 using DutchMetar.Core.Features.Web.AirportSummary.Models;
+using DutchMetar.Core.Helpers;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,7 @@ public class GetAirportSummariesFeature : IGetAirportSummariesFeature
             IsAuto = x.MetarReports.First().IsAuto,
             IsCavok = x.MetarReports.First().IsCavok,
             IsCorrected = x.MetarReports.First().IsCorrected,
+            MeteoCondition = MeteoConditionsHelper.GetMeteoCondition(x.MetarReports.First()),
             LastIssuedMetarDate = x.MetarReports.First().IssuedAt,
             WindDirection = x.MetarReports.First().WindDirection,
             WindSpeedKnots = x.MetarReports.First().WindSpeedKnots
