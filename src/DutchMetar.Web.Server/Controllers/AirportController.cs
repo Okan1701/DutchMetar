@@ -37,6 +37,7 @@ public class AirportController : ControllerBase
         return Ok(new AirportDetails
         {
             Icao =  airportDetails.Icao,
+            Name = airportDetails.Name,
             MeteoCondition = airportDetails.MeteoCondition,
             LastUpdated =  airportDetails.LastUpdated,
             LatestWeather = airportDetails.LatestWeather != null ? AirportCurrentMetarMapping.Map(airportDetails.LatestWeather) : null,

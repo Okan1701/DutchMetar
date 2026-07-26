@@ -1,19 +1,36 @@
+.page-header-flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .page-header {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 15px;
 }
 
 .page-header-title > h1 {
     margin: 0;
 }
 
+.page-header-title-suplement {
+    color: gray;
+}
+
 .page-header-title {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
+}
+
+h1 {
+    margin: 0;
+    line-height: 30px;
 }
 
 h2 {
     margin: 0;
+    font-weight: 500;
 }
