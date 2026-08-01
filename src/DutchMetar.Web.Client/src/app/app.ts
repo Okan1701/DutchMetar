@@ -35,6 +35,7 @@ export class App implements OnInit {
 
     public ngOnInit(): void {
         this.airportService.initializeAirports();
+        this.windowWidth.set(window.innerWidth);
     }
 
     @HostListener('window:resize')
