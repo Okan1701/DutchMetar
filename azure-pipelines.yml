@@ -146,6 +146,8 @@ stages:
 
   - stage: deploy_test
     displayName: Deploy Test
+    variables:
+      - group: DutchMetarTestEnv
     jobs:
       - deployment: web
         environment:
@@ -161,8 +163,7 @@ stages:
                   displayName: Download appsettings
                   name: appsettingsFile
                   inputs:
-                    secureFile: 'appsettings.Test.json'
-
+                    secureFile: 'appsettings.webapp.test.json'
 
                 - task: PowerShell@2
                   displayName: Move appsettings
@@ -176,7 +177,7 @@ stages:
 
                 - task: IISWebAppDeploymentOnMachineGroup@0
                   inputs:
-                    WebSiteName: 'test.dutchmetar.hc.emeni.nl'
+                    WebSiteName: '$(WebAppSiteName)'
                     Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
                     RemoveAdditionalFilesFlag: true
                     TakeAppOfflineFlag: true
@@ -193,7 +194,54 @@ stages:
                   inputs:
                     TaskType: 'sqlQuery'
                     SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
-                    ServerName: 'mssql.hc.emeni.nl'
-                    DatabaseName: 'dutchmetar_test'
+                    ServerName: '$(DatabaseServer)'
+                    DatabaseName: '$(MainDatabaseName)'
                     AuthScheme: 'windowsAuthentication'
-                
+
+      - deployment: worker
+        environment:
+          name: Test
+          resourceType: VirtualMachine
+        pool: emeni-deploy-windows
+        displayName: Deploy worker service
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: PowerShell@2
+                  displayName: Stop worker service
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      Stop-Service -Name '$(WorkerSvcWinServiceName)' -Force
+                      (Get-Service -Name '$(WorkerSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
+
+                - task: CopyFiles@2
+                  displayName: Deploy worker files
+                  inputs:
+                    SourceFolder: '$(Pipeline.Workspace)/$(workerSvcWin64ArtifactName)'
+                    Contents: '**'
+                    TargetFolder: '$(WorkerSvcPath)'
+                    overWrite: true
+
+                - task: DownloadSecureFile@1
+                  displayName: Download worker appsettings
+                  name: workerAppsettingsFile
+                  inputs:
+                    secureFile: 'appsettings.workerservice.test.json'
+
+                - task: PowerShell@2
+                  displayName: Move worker appsettings
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      $source = '$(workerAppsettingsFile.secureFilePath)'
+                      $dest = Join-Path '$(WorkerSvcPath)' 'appsettings.Production.json'
+                      Move-Item -Path $source -Destination $dest -Force
+
+                - task: PowerShell@2
+                  displayName: Start worker service
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      Start-Service -Name '$(WorkerSvcWinServiceName)'
