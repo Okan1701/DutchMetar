@@ -2,7 +2,8 @@
 > This project is still a work in progress! Features are still missing. Any published binary or docker image is not meant to be used yet.
 # About
 
-[![Build Status](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
+[![Azure Pipelines](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
+[![GitHub Actions](https://github.com/Okan1701/DutchMetar/actions/workflows/build.yaml/badge.svg)](https://github.com/Okan1701/DutchMetar/actions/workflows/build.yaml)
 
 DutchMetar is a .NET project for displaying METAR and TAF data for Dutch airports. 
 The goal is to visualize the latest data and to provide a historical view.
