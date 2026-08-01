@@ -32,7 +32,9 @@ export class AirportLatestWeather {
 
     protected copyMetarToClipboard(): void {
         if (this.clipboard.copy(this.airportWeather().rawMetar)) {
-            this.snackBar.open('METAR copied to clipboard!');
+            this.snackBar.open('METAR copied to clipboard!', undefined, {
+                duration: 2000,
+            });
         }
     }
 }
