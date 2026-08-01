@@ -8,7 +8,7 @@ on:
 
 env:
   DOTNET_VERSION: '10.0.x'
-  NODE_VERSION: '20.x'
+  NODE_VERSION: '24.x'
 
 jobs:
   dotnet-build:
@@ -45,7 +45,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build -c Release --no-restore
+        run: dotnet build --no-restore
 
       - name: Test
         run: dotnet test --no-restore --no-build
