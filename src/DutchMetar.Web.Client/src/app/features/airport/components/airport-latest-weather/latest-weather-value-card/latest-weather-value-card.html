@@ -1,12 +1,17 @@
 <mat-card appearance="outlined">
     <mat-card-content>
-        <div class="container">
-            <div class="value">
-                <ng-content></ng-content>
+        @if (icon()) {
+            <div class="icon-container">
+                <mat-icon>{{ icon() }}</mat-icon>
             </div>
+        }
+        <div class="container">
             @if (label()) {
                 <div class="label">{{ label() }}</div>
             }
+            <div class="value">
+                <ng-content></ng-content>
+            </div>
         </div>
     </mat-card-content>
 </mat-card>

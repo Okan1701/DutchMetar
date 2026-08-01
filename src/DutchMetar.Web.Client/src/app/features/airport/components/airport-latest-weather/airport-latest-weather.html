@@ -1,42 +1,45 @@
 <app-stack>
     <mat-card appearance="outlined">
-        <mat-card-header>
-            <mat-card-subtitle>Raw METAR</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-            <pre>{{ airportWeather().rawMetar }}</pre>
+        <mat-card-content class="card-content">
+            <div>
+                <strong>RAW METAR</strong>
+                <pre>{{ airportWeather().rawMetar }}</pre>
+            </div>
+            <div>
+                <button (click)="copyMetarToClipboard()" mat-icon-button><mat-icon matTooltip="Copy to clipboard">content_copy</mat-icon></button>
+            </div>
         </mat-card-content>
     </mat-card>
     
     <app-stack direction="horizontal">
         
         @if (airportWeather().issuedAt) {
-            <app-latest-weather-value-card label="Issued At">
+            <app-latest-weather-value-card icon="access_time" label="Issued At">
                 {{ issuedAt() }}z
             </app-latest-weather-value-card>
         }
         @if (airportWeather().temperatureCelsius) {
-            <app-latest-weather-value-card label="Temperature">
+            <app-latest-weather-value-card icon="device_thermostat" label="Temperature">
                 {{ airportWeather().temperatureCelsius }} °C
             </app-latest-weather-value-card>
         }
         @if (airportWeather().dewpointCelsius) {
-            <app-latest-weather-value-card label="Dewpoint">
+            <app-latest-weather-value-card icon="water_drop" label="Dewpoint">
                 {{ airportWeather().dewpointCelsius }} °C
             </app-latest-weather-value-card>
         }
         @if (airportWeather().windDirection && airportWeather().windSpeedKnots) {
-            <app-latest-weather-value-card label="Wind Direction & Speed">
+            <app-latest-weather-value-card icon="air" label="Wind Direction & Speed">
                 {{ airportWeather().windDirection }}° / {{ airportWeather().windSpeedKnots }} kt
             </app-latest-weather-value-card>
         }
         @if (airportWeather().visibilityMeters) {
-            <app-latest-weather-value-card label="Visibility">
+            <app-latest-weather-value-card icon="visibility" label="Visibility">
                 {{ airportWeather().visibilityMeters }} m
             </app-latest-weather-value-card>
         }
         @if (airportWeather().altimeterValue) {
-            <app-latest-weather-value-card label="Pressure">
+            <app-latest-weather-value-card icon="compress" label="Pressure">
                 {{ airportWeather().altimeterValue }} hPA
             </app-latest-weather-value-card>
         }

@@ -18,3 +18,9 @@
 :host([wrap]) {
     --wrap: wrap;
 }
+
+@media screen and (max-width: 786px) {
+    :host {
+        gap: 15px;
+    }
+}
