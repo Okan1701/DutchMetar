@@ -1,8 +1,11 @@
 <mat-toolbar>
+    @if (showMobileSideNav()) {
+        <button (click)="toggleSideNav()" mat-icon-button><mat-icon>menu</mat-icon></button>
+    }
     <span class="pointer" routerLink="/" >DutchMetar</span>
 </mat-toolbar>
 <mat-sidenav-container class="sidenav">
-    <mat-sidenav mode="side" opened>
+    <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()">
         <app-airport-nav-list></app-airport-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
