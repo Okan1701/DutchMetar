@@ -6,11 +6,11 @@ COPY . ./
 # Restore as distinct layers
 RUN dotnet restore --configfile nuget.config
 # Build and publish a release
-RUN dotnet publish ./src/DutchMetar.Hangfire.Host -c Release -o out --no-restore
+RUN dotnet publish ./src/DutchMetar.WorkerService -c Release -o out --no-restore
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build /app/out .
 ENV ASPNETCORE_URLS=http://*:5000
-ENTRYPOINT ["dotnet", "DutchMetar.Hangfire.Host.dll"]
+ENTRYPOINT ["dotnet", "DutchMetar.WorkerService.dll"]

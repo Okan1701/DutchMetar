@@ -3,13 +3,14 @@ using DutchMetar.Core.Features.DataWarehouse.Features.DailyFileSync;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
-using DutchMetar.Hangfire.Host;
+using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseWindowsService();
 builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
 builder.Services.AddDataWarehouseServices(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);

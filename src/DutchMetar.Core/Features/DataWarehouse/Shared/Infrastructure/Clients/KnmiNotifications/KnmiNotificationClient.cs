@@ -13,7 +13,7 @@ namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.K
 
 public class KnmiNotificationClient : IKnmiNotificationClient
 {
-    private readonly IOptions<KnmiMetarApiOptions> _options;
+    private readonly IOptions<KnmiDataSourceOptions> _options;
     private readonly IMqttClient _mqttClient;
     private readonly ILogger<KnmiNotificationClient> _logger;
     private readonly Channel<FileEvent> _channel = Channel.CreateUnbounded<FileEvent>();
@@ -33,7 +33,7 @@ public class KnmiNotificationClient : IKnmiNotificationClient
     
     public ChannelReader<FileEvent> ChannelReader => _channel.Reader;
 
-    public KnmiNotificationClient(IOptions<KnmiMetarApiOptions> options, ILogger<KnmiNotificationClient> logger)
+    public KnmiNotificationClient(IOptions<KnmiDataSourceOptions> options, ILogger<KnmiNotificationClient> logger)
     {
         _options = options;
         _logger = logger;

@@ -8,16 +8,17 @@ variables:
   dotnetVersion: 10.x
   nodeVersion: 24.x
   webAppWin64ArtifactName: dutchmetar-webapp-win-x64
+  workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
 
 stages:
   - stage: build
     displayName: Build
+    pool:
+      vmImage: windows-latest
     jobs:
       - job: publishWebApp
         displayName: Publish web app
-        pool:
-          name: emeni-build-windows
         variables:
           - group: GithubPackages
         steps:
@@ -93,7 +94,7 @@ stages:
             inputs:
               command: 'custom'
               custom: 'ef'
-              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.Hangfire.Host'
+              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.WorkerService'
 
           - task: PublishBuildArtifacts@1
             displayName: Upload artifact
@@ -102,27 +103,51 @@ stages:
               ArtifactName: $(databaseArtifactName)
               publishLocation: 'Container'
 
-      - job: publishHangfireImage
-        displayName: Publish DutchMetar Hangfire image
-        condition: ne(variables['Build.Reason'], 'PullRequest')
+      - job: publishWorkerService
+        displayName: Publish worker service
+        pool:
+          name: emeni-build-windows
         variables:
           - group: GithubPackages
         
         steps:
+          - task: UseDotNet@2
+            displayName: Use .NET 10
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+
           - template: templates/nuget-config.yml
 
-          - task: Docker@2
-            displayName: Build & Push
+          - task: DotNetCoreCLI@2
+            displayName: Run solution tests
             inputs:
-              containerRegistry: 'Docker Hub'
-              repository: 'ultimateantic/dutchmetar-jobs'
-              command: 'buildAndPush'
-              Dockerfile: 'src/DutchMetar.Hangfire.Host/Dockerfile'
-              buildContext: '.'
-              tags: 'latest'
+              command: 'test'
+              projects: 'DutchMetar.slnx'
+              testRunTitle: '.NET Tests'
+
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.WorkerService (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.WorkerService'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: $(workerSvcWin64ArtifactName)
+              publishLocation: 'Container'
 
   - stage: deploy_test
     displayName: Deploy Test
+    variables:
+      - group: DutchMetarTestEnv
     jobs:
       - deployment: web
         environment:
@@ -138,8 +163,7 @@ stages:
                   displayName: Download appsettings
                   name: appsettingsFile
                   inputs:
-                    secureFile: 'appsettings.Test.json'
-
+                    secureFile: 'appsettings.webapp.test.json'
 
                 - task: PowerShell@2
                   displayName: Move appsettings
@@ -153,7 +177,7 @@ stages:
 
                 - task: IISWebAppDeploymentOnMachineGroup@0
                   inputs:
-                    WebSiteName: 'test.dutchmetar.hc.emeni.nl'
+                    WebSiteName: '$(WebAppSiteName)'
                     Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
                     RemoveAdditionalFilesFlag: true
                     TakeAppOfflineFlag: true
@@ -170,7 +194,54 @@ stages:
                   inputs:
                     TaskType: 'sqlQuery'
                     SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
-                    ServerName: 'mssql.hc.emeni.nl'
-                    DatabaseName: 'dutchmetar_test'
+                    ServerName: '$(DatabaseServer)'
+                    DatabaseName: '$(MainDatabaseName)'
                     AuthScheme: 'windowsAuthentication'
-                
+
+      - deployment: worker
+        environment:
+          name: Test
+          resourceType: VirtualMachine
+        pool: emeni-deploy-windows
+        displayName: Deploy worker service
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: PowerShell@2
+                  displayName: Stop worker service
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      Stop-Service -Name '$(WorkerSvcWinServiceName)' -Force
+                      (Get-Service -Name '$(WorkerSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
+
+                - task: CopyFiles@2
+                  displayName: Deploy worker files
+                  inputs:
+                    SourceFolder: '$(Pipeline.Workspace)/$(workerSvcWin64ArtifactName)'
+                    Contents: '**'
+                    TargetFolder: '$(WorkerSvcPath)'
+                    overWrite: true
+
+                - task: DownloadSecureFile@1
+                  displayName: Download worker appsettings
+                  name: workerAppsettingsFile
+                  inputs:
+                    secureFile: 'appsettings.workerservice.test.json'
+
+                - task: PowerShell@2
+                  displayName: Move worker appsettings
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      $source = '$(workerAppsettingsFile.secureFilePath)'
+                      $dest = Join-Path '$(WorkerSvcPath)' 'appsettings.Production.json'
+                      Move-Item -Path $source -Destination $dest -Force
+
+                - task: PowerShell@2
+                  displayName: Start worker service
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      Start-Service -Name '$(WorkerSvcWinServiceName)'

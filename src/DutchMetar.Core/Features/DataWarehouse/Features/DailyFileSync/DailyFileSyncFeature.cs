@@ -16,6 +16,7 @@ public class DailyFileSyncFeature : IDailyFileSyncFeature
     
     // Simple way to prevent rate limit; this controls the delay before the next file download.
     private const int FileDownloadIntervalMs = 1000;
+    private const int MaxRequests = 1000;
     
     public DailyFileSyncFeature(ILogger<DailyFileSyncFeature> logger, IKnmiRepository knmiRepository, ICorrelationIdAccessor correlationIdAccessor, INewKnmiFileHandler newKnmiFileHandler)
     {
@@ -27,6 +28,7 @@ public class DailyFileSyncFeature : IDailyFileSyncFeature
     
     public async Task SyncKnmiMetarFiles(CancellationToken cancellationToken = default)
     {
+        var requestCounter = 1;
         var scope = _logger.BeginScope(new KeyValuePair<string, object?>[]
         {
             new("CorrelationId", _correlationIdAccessor.CorrelationId),
@@ -54,8 +56,12 @@ public class DailyFileSyncFeature : IDailyFileSyncFeature
 
             foreach (var fileName in fileNames)
             {
+                // Safety guard on our end
+                if (requestCounter == FileDownloadIntervalMs) throw new KnmiRateLimitReachedException();
+                
                 await _newKnmiFileHandler.HandleFileAsync(fileName, cancellationToken);
                 await Task.Delay(FileDownloadIntervalMs, cancellationToken);
+                requestCounter++;
             }
             
             

@@ -13,12 +13,12 @@ namespace DutchMetar.Core.Features.DataWarehouse.Shared.Infrastructure.Clients.K
 public class KnmiMetarApiClient : IKnmiMetarApiClient
 {
     private readonly HttpClient _httpClient;
-    private readonly KnmiMetarApiOptions _options;
+    private readonly KnmiDataSourceOptions _options;
     private const string FileListUrl = "https://api.dataplatform.knmi.nl/open-data/v1/datasets/metar/versions/1.0/files";
     private const string FileDownloadUrl =
         "https://api.dataplatform.knmi.nl/open-data/v1/datasets/metar/versions/1.0/files/{0}/url";
 
-    public KnmiMetarApiClient(HttpClient httpClient, IOptions<KnmiMetarApiOptions> options)
+    public KnmiMetarApiClient(HttpClient httpClient, IOptions<KnmiDataSourceOptions> options)
     {
         _httpClient = httpClient;
         _options = options.Value;
