@@ -1,13 +1,13 @@
 using DutchMetar.Core.Features.DataWarehouse;
-using DutchMetar.Core.Features.DataWarehouse.Features.DailyFileSync;
+using DutchMetar.Core.Features.DataWarehouse.Features.Metar.DailySync;
+using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Notifications;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.HostedServices;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-
-const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseWindowsService();
@@ -47,6 +47,6 @@ using (var scope = app.Services.CreateScope())
 // Register recurring jobs
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(3600));
-RecurringJob.AddOrUpdate<IDailyFileSyncFeature>("KnmiDailySync", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.DayInterval(1));;
+RecurringJob.AddOrUpdate<IDailyMetarSyncFeature>("KnmiDailySync", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.DayInterval(1));;
 
 app.Run();
