@@ -1,6 +1,5 @@
 using DutchMetar.Core.Features.DataWarehouse;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.DailySync;
-using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Notifications;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.HostedServices;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
@@ -8,6 +7,8 @@ using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+
+const string hangfireConnectionStringKey = "HangfireMssql";
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseWindowsService();
