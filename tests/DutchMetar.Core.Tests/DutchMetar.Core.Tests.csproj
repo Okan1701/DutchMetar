@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\DataWarehouse\Features\" />
+      <Folder Include="Features\DataWarehouse\Features\Notifications\" />
     </ItemGroup>
 
 </Project>
