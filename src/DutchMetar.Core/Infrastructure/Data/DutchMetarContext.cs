@@ -13,6 +13,8 @@ public class DutchMetarContext : DbContext
     
     public DbSet<MetarCeiling> MetarCeilings { get; set; }
     
+    public DbSet<Taf> Tafs { get; set; }
+    
     public DbSet<MetarImportResult> MetarImportResults { get; set; }
     
     public DbSet<KnmiMetarFile> KnmiMetarFiles { get; set; }
