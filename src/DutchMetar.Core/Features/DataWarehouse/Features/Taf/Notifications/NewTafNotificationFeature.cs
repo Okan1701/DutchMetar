@@ -10,11 +10,11 @@ namespace DutchMetar.Core.Features.DataWarehouse.Features.Taf.Notifications;
 public class NewTafNotificationFeature : INewTafNotificationFeature
 {
     private readonly IKnmiApiClient _knmiApiClient;
-    private readonly ILogger _logger;
+    private readonly ILogger<NewTafNotificationFeature> _logger;
     private readonly DutchMetarContext _context;
     private readonly IRawTafFileParser _tafFileParser;
 
-    public NewTafNotificationFeature(IKnmiApiClient knmiApiClient, ILogger logger, DutchMetarContext context, IRawTafFileParser tafFileParser)
+    public NewTafNotificationFeature(IKnmiApiClient knmiApiClient, ILogger<NewTafNotificationFeature> logger, DutchMetarContext context, IRawTafFileParser tafFileParser)
     {
         _knmiApiClient = knmiApiClient;
         _logger = logger;

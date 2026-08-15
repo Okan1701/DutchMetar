@@ -2,6 +2,8 @@ using DutchMetar.Core.Features.DataWarehouse.Features.Metar.DailySync;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Notifications;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Processing.Handlers;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Processing.Parsers;
+using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Notifications;
+using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Parsers;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiDataPlatform;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiNotifications;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.Options;
@@ -17,6 +19,9 @@ public static class Extensions
     public static void AddDataWarehouseServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<INewMetarKnmiNotificationFeature, NewMetarKnmiNotificationFeature>();
+        services.AddScoped<INewTafNotificationFeature, NewTafNotificationFeature>();
+        services.AddScoped<IRawTafFileParser, RawTafFileParser>();
+        services.AddScoped<IKnmiNotificationHandler>(provider => provider.GetRequiredService<INewTafNotificationFeature>());
         services.AddScoped<IKnmiNotificationHandler>(provider => provider.GetRequiredService<INewMetarKnmiNotificationFeature>());
         services.AddScoped<IDailyMetarSyncFeature, DailyMetarSyncFeature>();
         services.AddScoped<IMetarFileHandler, MetarFileHandler>();
