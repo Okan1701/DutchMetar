@@ -9,7 +9,7 @@ public class Taf : Entity
 
     public Airport? Airport { get; set; }
     
-    public DateTimeOffset IssuedAt { get; set; }
+    public DateTimeOffset? IssuedAt { get; set; }
     
     [MaxLength(EntityConstants.DefaultMaxStringLength)]
     public required string RawTaf { get; set; }
