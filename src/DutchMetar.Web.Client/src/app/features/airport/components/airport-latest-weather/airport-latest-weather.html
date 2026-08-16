@@ -1,46 +1,38 @@
 <app-stack>
-    <mat-card appearance="outlined">
-        <mat-card-content class="card-content">
-            <div>
-                <strong>RAW METAR</strong>
-                <pre>{{ airportWeather().rawMetar }}</pre>
-            </div>
-            <div>
-                <button (click)="copyMetarToClipboard()" mat-icon-button><mat-icon matTooltip="Copy to clipboard">content_copy</mat-icon></button>
-            </div>
-        </mat-card-content>
-    </mat-card>
-    
+    <app-latest-metar-taf-card
+            [latestMetar]="airportDetails().latestWeather"
+            [latestForecast]="airportDetails().latestForecast"
+    ></app-latest-metar-taf-card>
     <app-stack direction="horizontal">
         
-        @if (airportWeather().issuedAt) {
+        @if (airportDetails().latestWeather?.issuedAt) {
             <app-latest-weather-value-card icon="access_time" label="Issued At">
                 {{ issuedAt() }}z
             </app-latest-weather-value-card>
         }
-        @if (airportWeather().temperatureCelsius) {
+        @if (airportDetails().latestWeather?.temperatureCelsius) {
             <app-latest-weather-value-card icon="device_thermostat" label="Temperature">
-                {{ airportWeather().temperatureCelsius }} °C
+                {{ airportDetails().latestWeather?.temperatureCelsius }} °C
             </app-latest-weather-value-card>
         }
-        @if (airportWeather().dewpointCelsius) {
+        @if (airportDetails().latestWeather?.dewpointCelsius) {
             <app-latest-weather-value-card icon="water_drop" label="Dewpoint">
-                {{ airportWeather().dewpointCelsius }} °C
+                {{ airportDetails().latestWeather?.dewpointCelsius }} °C
             </app-latest-weather-value-card>
         }
-        @if (airportWeather().windDirection && airportWeather().windSpeedKnots) {
+        @if (airportDetails().latestWeather?.windDirection && airportDetails().latestWeather?.windSpeedKnots) {
             <app-latest-weather-value-card icon="air" label="Wind Direction & Speed">
-                {{ airportWeather().windDirection }}° / {{ airportWeather().windSpeedKnots }} kt
+                {{ airportDetails().latestWeather?.windDirection }}° / {{ airportDetails().latestWeather?.windSpeedKnots }} kt
             </app-latest-weather-value-card>
         }
-        @if (airportWeather().visibilityMeters) {
+        @if (airportDetails().latestWeather?.visibilityMeters) {
             <app-latest-weather-value-card icon="visibility" label="Visibility">
-                {{ airportWeather().visibilityMeters }} m
+                {{ airportDetails().latestWeather?.visibilityMeters }} m
             </app-latest-weather-value-card>
         }
-        @if (airportWeather().altimeterValue) {
+        @if (airportDetails().latestWeather?.altimeterValue) {
             <app-latest-weather-value-card icon="compress" label="Pressure">
-                {{ airportWeather().altimeterValue }} hPA
+                {{ airportDetails().latestWeather?.altimeterValue }} hPA
             </app-latest-weather-value-card>
         }
     </app-stack>    

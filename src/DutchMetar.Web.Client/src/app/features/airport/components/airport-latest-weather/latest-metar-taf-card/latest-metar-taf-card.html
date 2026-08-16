@@ -1,0 +1,45 @@
+<mat-card appearance="outlined">
+    <mat-card-content>
+        <div class="card-content">
+            <div>
+                <div class="title-block">
+                    <strong>METAR</strong>
+                    @if (metar()) {
+                        <span [class.outdated]="metarAgeMinutes() > 30">issued {{ metarAgeMinutes() | number: '1.0-0' }}m ago</span>
+                    }
+                </div>
+                @if (metar()) {
+                    <pre>{{ metar() }}</pre>
+                } @else {
+                    <pre class="no-data">No current METAR available.</pre>
+                }
+            </div>
+            <div>
+                <button (click)="copyMetarToClipboard()" mat-icon-button [disabled]="!metar()">
+                    <mat-icon matTooltip="Copy METAR">content_copy</mat-icon>
+                </button>
+            </div>
+        </div>
+        <br>
+        <div class="card-content">
+            <div>
+                <div class="title-block">
+                    <strong>TAF</strong>
+                    @if (taf()) {
+                        <span [class.outdated]="tafAgeHours() > 30">issued {{ tafAgeHours() | number: '1.0-0' }}h ago</span>
+                    }
+                </div>
+                @if (taf()) {
+                    <pre>{{ formatTaf(taf()) }}</pre>
+                } @else {
+                    <pre class="no-data">No current TAF available.</pre>
+                }
+            </div>
+            <div>
+                <button (click)="copyTafToClipboard()" mat-icon-button [disabled]="!taf()">
+                    <mat-icon matTooltip="Copy TAF">content_copy</mat-icon>
+                </button>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
