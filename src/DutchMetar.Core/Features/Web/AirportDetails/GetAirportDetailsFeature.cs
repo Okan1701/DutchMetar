@@ -21,6 +21,9 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
     {
         
         var airport = await _dbContext.Airports
+            .Include(x => x.TafReports
+                .OrderByDescending(m => m.IssuedAt)
+                .Take(1))
             .Include(x => x.MetarReports
                 .OrderByDescending(m => m.IssuedAt)
                 .Take(1))
@@ -36,6 +39,16 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
             Icao = airport.Icao,
             Name = airport.Name
         };
+        
+        var latestTaf = airport.TafReports.FirstOrDefault();
+        if (latestTaf != null)
+        {
+            airportDetails.LatestForecast = MapTafEntityToModel(latestTaf);
+            if (latestTaf.IssuedAt.HasValue)
+            {
+                airportDetails.LastUpdated = latestTaf.IssuedAt.GetValueOrDefault();
+            }
+        }
 
         var latestMetar = airport.MetarReports.FirstOrDefault();
         if (latestMetar != null)
@@ -64,5 +77,11 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
         DewpointCelsius = metar.DewpointCelsius,
         AltimeterValue = metar.AltimeterValue,
         Remarks = metar.Remarks,
+    };
+
+    private AirportForecast MapTafEntityToModel(Taf taf) => new()
+    {
+        RawTaf = taf.RawTaf,
+        IssuedAt = taf.IssuedAt ?? DateTimeOffset.MinValue,
     };
 }

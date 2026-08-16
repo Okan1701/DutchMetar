@@ -2,8 +2,6 @@
 using DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
 using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 using DutchMetar.Web.Server.Constants;
-using DutchMetar.Web.Server.Mapping;
-using DutchMetar.Web.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DutchMetar.Web.Server.Controllers;
@@ -27,21 +25,14 @@ public class AirportController : ControllerBase
     public async Task<IActionResult> GetAirportSummaries()
     {
         var airports = await _getAirportSummariesFeature.GetAirportSummariesAsync();
-        return Ok(airports.Select(AirportSummaryMapping.Map));
+        return Ok(airports);
     }
     
     [HttpGet("{airportIcao}")]
     public async Task<IActionResult> GetAirportDetails([FromRoute] string airportIcao, CancellationToken cancellationToken)
     {
         var airportDetails = await _getAirportDetailsFeature.GetAirportDetailsAsync(airportIcao, cancellationToken);
-        return Ok(new AirportDetails
-        {
-            Icao =  airportDetails.Icao,
-            Name = airportDetails.Name,
-            MeteoCondition = airportDetails.MeteoCondition,
-            LastUpdated =  airportDetails.LastUpdated,
-            LatestWeather = airportDetails.LatestWeather != null ? AirportCurrentMetarMapping.Map(airportDetails.LatestWeather) : null,
-        });
+        return Ok(airportDetails);
     }
 
     [HttpGet("{airportIcao}/history")]
@@ -55,6 +46,6 @@ public class AirportController : ControllerBase
             Icao = airportIcao
         }, cancellationToken);
 
-        return Ok(result.MapToWebModel());
+        return Ok(result);
     }
 }
