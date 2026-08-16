@@ -13,4 +13,6 @@ public class AirportDetails
     public DateTimeOffset LastUpdated { get; set; } = DateTimeOffset.MinValue;
     
     public AirportCurrentMetar? LatestWeather { get; set; }
+    
+    public AirportForecast? LatestForecast { get; set; }
 }
