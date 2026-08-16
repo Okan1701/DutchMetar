@@ -29,14 +29,14 @@ public class NewTafNotificationFeature : INewTafNotificationFeature
 
     public async Task HandleNotificationAsync(FileEvent fileEvent, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Handling new TAF notification: {FileName}", fileEvent.Data?.DataSetName);
-        if (string.IsNullOrEmpty(fileEvent.Data?.DataSetName))
+        _logger.LogInformation("Handling new TAF notification: {FileName}", fileEvent.Data?.FileName);
+        if (string.IsNullOrEmpty(fileEvent.Data?.FileName))
         {
             _logger.LogWarning("Received new TAF FileEvent with an empty FileName!");
             return;
         }
         
-        var fileContent = await _knmiApiClient.GetDatasetFileContentAsync(KnmiDatasetNames.Taf, fileEvent.Data.DataSetName, cancellationToken);
+        var fileContent = await _knmiApiClient.GetDatasetFileContentAsync(KnmiDatasetNames.Taf, fileEvent.Data.FileName, cancellationToken);
 
         if (string.IsNullOrEmpty(fileContent))
         {
