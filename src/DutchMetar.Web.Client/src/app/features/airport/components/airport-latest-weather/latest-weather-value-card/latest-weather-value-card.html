@@ -1,17 +1,15 @@
-<mat-card appearance="outlined">
-    <mat-card-content>
-        @if (icon()) {
-            <div class="icon-container">
-                <mat-icon>{{ icon() }}</mat-icon>
-            </div>
-        }
-        <div class="container">
-            @if (label()) {
-                <div class="label">{{ label() }}</div>
-            }
-            <div class="value">
-                <ng-content></ng-content>
-            </div>
+<div style="display: flex; gap: 10px;align-items: center">
+    @if (icon()) {
+        <div class="icon-container">
+            <mat-icon>{{ icon() }}</mat-icon>
         </div>
-    </mat-card-content>
-</mat-card>
+    }
+    <div class="container">
+        @if (label()) {
+            <div class="label">{{ label() }}</div>
+        }
+        <div class="value">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

@@ -2,11 +2,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5px;
 }
 
 .value {
-    font-size: 24px;
+    font-weight: 500;
 }
 
 .label {
@@ -14,15 +13,10 @@
 }
 
 :host {
-    flex: 1 1 200px;
+    flex: 1 1 100px;
 }
 
-mat-card-content {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
 
 .icon-container {
-    transform: scale(1.3);
+    transform: scale(1);
 }
