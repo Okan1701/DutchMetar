@@ -1,0 +1,37 @@
+pre {
+    margin-top: 0;
+    margin-bottom: 0;
+    white-space: pre-wrap;
+}
+
+.card-content{
+    display: flex;
+    justify-content: space-between;
+}
+
+strong {
+    color: var(--mat-sys-primary);
+}
+
+.no-data {
+    font-style: italic;
+}
+
+.title-block {
+    display: flex;
+    gap: 10px;
+}
+
+.title-block > span {
+    color: green;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.title-block > span.outdated {
+    color: #ff2f2f;
+}
+
+mat-icon {
+    transform: scale(0.75);
+}

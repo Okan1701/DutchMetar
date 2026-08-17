@@ -45,7 +45,7 @@
         <h2>Latest Weather</h2>
         @if (airportDetails().latestWeather) {
             <app-airport-latest-weather
-                [airportWeather]="airportDetails().latestWeather!"
+                    [airportDetails]="airportDetails()"
             ></app-airport-latest-weather>
         } @else {
             <p>No information about current weather available.</p>

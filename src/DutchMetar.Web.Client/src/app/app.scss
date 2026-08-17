@@ -61,3 +61,9 @@ mat-sidenav-content {
 mat-form-field {
     @include mat.form-field-density(-4);
 }
+
+@media (max-width: 768px) {
+    .page-content {
+        padding: 15px 10px;
+    }
+}
