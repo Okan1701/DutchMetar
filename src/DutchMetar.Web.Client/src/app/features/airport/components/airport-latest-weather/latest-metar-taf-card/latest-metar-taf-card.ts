@@ -69,6 +69,7 @@ export class LatestMetarTafCard {
         if (isNaN(parsedIssuedAt.valueOf())) return 0;
 
         let now = new Date();
+        console.log(Math.abs(parsedIssuedAt.getTime() - now.getTime()) / 60000)
         return Math.abs(parsedIssuedAt.getTime() - now.getTime()) / 60000;
     }
 }
