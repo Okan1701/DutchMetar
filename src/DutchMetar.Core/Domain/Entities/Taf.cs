@@ -11,6 +11,6 @@ public class Taf : Entity
     
     public DateTimeOffset? IssuedAt { get; set; }
     
-    [MaxLength(EntityConstants.DefaultMaxStringLength)]
+    [MaxLength(int.MaxValue)]
     public required string RawTaf { get; set; }
 }
