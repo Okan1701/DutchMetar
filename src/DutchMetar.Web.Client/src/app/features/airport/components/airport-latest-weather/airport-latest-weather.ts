@@ -9,6 +9,8 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AirportDetails } from '../../../../shared/models/airport-details';
 import { LatestMetarTafCard } from './latest-metar-taf-card/latest-metar-taf-card';
+import { DecimalPipe } from '@angular/common';
+import { CeilingtypePipe } from '../../../../shared/pipes/ceilingtype-pipe';
 
 @Component({
     selector: 'app-airport-latest-weather',
@@ -20,6 +22,8 @@ import { LatestMetarTafCard } from './latest-metar-taf-card/latest-metar-taf-car
         MatIcon,
         MatIconButton,
         LatestMetarTafCard,
+        DecimalPipe,
+        CeilingtypePipe,
     ],
     templateUrl: './airport-latest-weather.html',
     styleUrl: './airport-latest-weather.scss',
@@ -27,8 +31,10 @@ import { LatestMetarTafCard } from './latest-metar-taf-card/latest-metar-taf-car
 export class AirportLatestWeather {
     public airportDetails = input.required<AirportDetails>();
 
-    private readonly clipboard: Clipboard = inject(Clipboard);
-    private readonly snackBar: MatSnackBar = inject(MatSnackBar);
+    protected sortedCeilings = computed(() => {
+        let ceilings = this.airportDetails().latestWeather?.ceilings ?? [];
+        return ceilings.sort((x) => x.type);
+    });
 
     protected issuedAt = computed(() => {
         let issuedAtString = this.airportDetails().latestWeather?.issuedAt;

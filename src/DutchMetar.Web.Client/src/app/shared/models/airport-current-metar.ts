@@ -1,4 +1,6 @@
-﻿export type AirportCurrentMetar = {
+﻿import { AirportMetarCeiling } from './airport-metar-ceiling';
+
+export type AirportCurrentMetar = {
     rawMetar: string;
     issuedAt: string;
     isAuto: boolean;
@@ -13,4 +15,5 @@
     dewpointCelsius?: number;
     altimeterValue?: number;
     remarks?: string;
+    ceilings: AirportMetarCeiling[];
 };
