@@ -1,0 +1,55 @@
+.decoded-card-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.decoded-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+
+.decoded-content-container {
+    display: flex;
+    gap: 50px;
+    margin-top: 10px;
+}
+
+.ceilings-container {
+    justify-self: end;
+    display: flex;
+    gap: 10px;
+}
+
+.ceilings-title {
+    color: var(--mat-sys-primary);
+}
+
+.ceiling-row {
+    display: flex;
+    gap: 5px;
+}
+
+.ceiling-row > span:first-child {
+    color: gray;
+}
+
+.ceiling-row > span:last-child {
+    font-weight: 500;
+}
+
+.footer {
+    color: gray;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.full-height {
+    height: 100%
+}

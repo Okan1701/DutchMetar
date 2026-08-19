@@ -1,0 +1,66 @@
+<mat-card appearance="outlined" class="full-height">
+    <mat-card-header>
+        <mat-card-subtitle>Decoded Observations</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="full-height">
+        <div class="decoded-card-content">
+            <div class="decoded-content-container">
+                <div class="decoded-content">
+                    @if (airportDetails().latestWeather?.issuedAt) {
+                        <app-latest-weather-value-card icon="access_time" label="Issued At">
+                            {{ issuedAt() }}z
+                        </app-latest-weather-value-card>
+                    }
+                    @if (airportDetails().latestWeather?.temperatureCelsius) {
+                        <app-latest-weather-value-card icon="device_thermostat" label="Temperature">
+                            {{ airportDetails().latestWeather?.temperatureCelsius }} °C
+                        </app-latest-weather-value-card>
+                    }
+                    @if (airportDetails().latestWeather?.dewpointCelsius) {
+                        <app-latest-weather-value-card icon="water_drop" label="Dewpoint">
+                            {{ airportDetails().latestWeather?.dewpointCelsius }} °C
+                        </app-latest-weather-value-card>
+                    }
+                </div>
+                <div class="decoded-content">
+                    @if (airportDetails().latestWeather?.windDirection && airportDetails().latestWeather?.windSpeedKnots) {
+                        <app-latest-weather-value-card icon="air" label="Wind Direction & Speed">
+                            {{ airportDetails().latestWeather?.windDirection }}° / {{ airportDetails().latestWeather?.windSpeedKnots }} kt
+                        </app-latest-weather-value-card>
+                    }
+                    @if (airportDetails().latestWeather?.visibilityMeters) {
+                        <app-latest-weather-value-card icon="visibility" label="Visibility">
+                            {{ airportDetails().latestWeather?.visibilityMeters }} m
+                        </app-latest-weather-value-card>
+                    }
+                    @if (airportDetails().latestWeather?.altimeterValue) {
+                        <app-latest-weather-value-card icon="compress" label="Pressure">
+                            {{ airportDetails().latestWeather?.altimeterValue }} hPA
+                        </app-latest-weather-value-card>
+                    }
+                </div>
+                <div class="ceilings-container">
+                    <div>
+                        <mat-icon>cloud</mat-icon>
+                    </div>
+                    <div>
+                        <span class="ceilings-title">Cloud Ceilings</span>
+                        @let ceilings = sortedCeilings();
+                        @for (ceiling of ceilings; track $index) {
+                            <div class="ceiling-row">
+                                <span>{{ ceiling.type | ceilingtype }}</span>
+                                <span>{{ ceiling.height | number }} ft</span>
+                            </div>
+                        } @empty {
+                            <i>No cloud layers</i>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <mat-icon>info</mat-icon>
+                <span>Click on an item to copy it.</span>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

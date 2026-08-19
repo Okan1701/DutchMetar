@@ -1,0 +1,34 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.value {
+    font-weight: 500;
+}
+
+.label {
+    color: var(--mat-sys-primary);
+}
+
+.icon-container {
+    transform: scale(1);
+}
+
+.outer-container {
+    padding: 5px;
+    display: flex; 
+    gap: 10px;
+    align-items: center;
+}
+
+.outer-container:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.outer-container:hover > .copy {
+    visibility: unset;
+}
