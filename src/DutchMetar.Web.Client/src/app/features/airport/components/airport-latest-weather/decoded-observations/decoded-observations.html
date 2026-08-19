@@ -1,4 +1,4 @@
-<mat-card appearance="outlined" class="full-height">
+<mat-card appearance="outlined" class="ful">
     <mat-card-header>
         <mat-card-subtitle>Decoded Observations</mat-card-subtitle>
     </mat-card-header>
@@ -30,7 +30,11 @@
                     }
                     @if (airportDetails().latestWeather?.visibilityMeters) {
                         <app-latest-weather-value-card icon="visibility" label="Visibility">
-                            {{ airportDetails().latestWeather?.visibilityMeters }} m
+                            @if (isMaxVisibility()) {
+                                Greater than 10km
+                            } @else {
+                                {{ airportDetails().latestWeather?.visibilityMeters | number }}
+                            }
                         </app-latest-weather-value-card>
                     }
                     @if (airportDetails().latestWeather?.altimeterValue) {

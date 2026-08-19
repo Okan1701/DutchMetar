@@ -41,4 +41,11 @@ export class DecodedObservations {
 
         return issuedAtDate.toISOString().slice(11, 16);
     });
+
+    protected isMaxVisibility = computed(() => {
+        // KNMI uses a max value of 10000 km visibility while their raw METAR only goes up to 9999
+        let visibility = this.airportDetails().latestWeather?.visibilityMeters;
+        if (!visibility) return false;
+        return visibility > 9999;
+    });
 }
