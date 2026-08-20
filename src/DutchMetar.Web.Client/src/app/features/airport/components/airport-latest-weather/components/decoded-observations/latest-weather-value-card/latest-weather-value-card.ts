@@ -20,7 +20,6 @@ export class LatestWeatherValueCard {
     private readonly snackBar: MatSnackBar = inject(MatSnackBar);
 
     protected copyToClipboard() {
-        console.warn(this.valueElement)
         if (this.valueElement) {
             this.clipboard.copy(this.valueElement.nativeElement.innerText);
             this.snackBar.open('Value copied to clipboard!', undefined, {

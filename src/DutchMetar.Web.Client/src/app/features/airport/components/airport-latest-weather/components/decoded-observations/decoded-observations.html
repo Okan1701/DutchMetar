@@ -1,4 +1,4 @@
-<mat-card appearance="outlined" class="ful">
+<mat-card appearance="outlined" class="full-height">
     <mat-card-header>
         <mat-card-subtitle>Decoded Observations</mat-card-subtitle>
     </mat-card-header>
@@ -43,11 +43,11 @@
                         </app-latest-weather-value-card>
                     }
                 </div>
-                <div class="ceilings-container">
+                <div (click)="copyCeilingsToClipboard()" matRipple class="ceilings-container">
                     <div>
                         <mat-icon>cloud</mat-icon>
                     </div>
-                    <div>
+                    <div #ceilingsElement>
                         <span class="ceilings-title">Cloud Ceilings</span>
                         @let ceilings = sortedCeilings();
                         @for (ceiling of ceilings; track $index) {
