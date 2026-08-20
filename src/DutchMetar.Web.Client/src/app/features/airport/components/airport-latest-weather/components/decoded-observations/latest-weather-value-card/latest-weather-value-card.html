@@ -1,4 +1,4 @@
-<div style="display: flex; gap: 10px;align-items: center">
+<div (click)="copyToClipboard()" class="outer-container" matRipple>
     @if (icon()) {
         <div class="icon-container">
             <mat-icon>{{ icon() }}</mat-icon>
@@ -8,7 +8,7 @@
         @if (label()) {
             <div class="label">{{ label() }}</div>
         }
-        <div class="value">
+        <div #value class="value">
             <ng-content></ng-content>
         </div>
     </div>

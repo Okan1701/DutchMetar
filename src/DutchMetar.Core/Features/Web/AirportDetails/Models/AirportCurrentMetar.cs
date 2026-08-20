@@ -29,4 +29,6 @@ public class AirportCurrentMetar
     public int? AltimeterValue { get; set; }
     
     public string? Remarks { get; set; }
+    
+    public ICollection<AirportMetarCeiling> Ceilings { get; set; } = Array.Empty<AirportMetarCeiling>();
 }

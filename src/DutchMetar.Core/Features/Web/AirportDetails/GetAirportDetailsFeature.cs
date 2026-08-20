@@ -27,6 +27,7 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
             .Include(x => x.MetarReports
                 .OrderByDescending(m => m.IssuedAt)
                 .Take(1))
+            .ThenInclude(x => x.Ceilings)
             .FirstOrDefaultAsync(x => x.Icao.ToUpper() == airportCode.ToUpper(), cancellationToken: cancellationToken);
 
         if (airport == null)
@@ -77,6 +78,11 @@ public class GetAirportDetailsFeature : IGetAirportDetailsFeature
         DewpointCelsius = metar.DewpointCelsius,
         AltimeterValue = metar.AltimeterValue,
         Remarks = metar.Remarks,
+        Ceilings = metar.Ceilings?.Select(ceiling => new AirportMetarCeiling
+        {
+            Type = ceiling.Type,
+            Height = ceiling.Height
+        }).ToArray() ?? []
     };
 
     private AirportForecast MapTafEntityToModel(Taf taf) => new()

@@ -5,8 +5,8 @@ import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AirportCurrentMetar } from '../../../../../shared/models/airport-current-metar';
-import { AirportForecast } from '../../../../../shared/models/airport-forecast';
+import { AirportCurrentMetar } from '../../../../../../shared/models/airport-current-metar';
+import { AirportForecast } from '../../../../../../shared/models/airport-forecast';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
