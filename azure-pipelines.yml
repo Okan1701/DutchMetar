@@ -1,7 +1,17 @@
+name: $(fullVersion)
+
 trigger:
   - master
 
 parameters:
+  - name: version
+    displayName: Version
+    type: string
+    default: 0.1.0
+  - name: versionSuffix
+    displayName: Version Suffix
+    type: string
+    default: dev
   - name: deployDev
     displayName: Deploy to Dev
     type: boolean
@@ -20,6 +30,7 @@ variables:
   webAppWin64ArtifactName: dutchmetar-webapp-win-x64
   workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
+  fullVersion: '${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)'
 
 stages:
   - stage: build
@@ -43,6 +54,16 @@ stages:
             displayName: Setup Node v$(nodeVersion)
             inputs:
               version: $(nodeVersion)
+
+          - task: PowerShell@2
+            displayName: Set frontend app version
+            inputs:
+              targetType: 'inline'
+              script: |
+                $file = '$(Build.SourcesDirectory)/src/DutchMetar.Web.Client/src/environments/environment.ts'
+                $content = Get-Content -Path $file -Raw
+                $updated = $content.Replace('%APP_VERSION%', '$(fullVersion)')
+                Set-Content -Path $file -Value $updated -NoNewline
 
           - template: templates/nuget-config.yml
 
