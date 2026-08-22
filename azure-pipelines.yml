@@ -31,6 +31,7 @@ variables:
   workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
   fullVersion: '${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)'
+  versionSuffixFull: '${{ parameters.versionSuffix }}$(Build.BuildId)'
 
 stages:
   - stage: build
@@ -80,7 +81,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: './src/DutchMetar.Web.Server'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -164,7 +165,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: './src/DutchMetar.WorkerService'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
               zipAfterPublish: false
               modifyOutputPath: false
 
