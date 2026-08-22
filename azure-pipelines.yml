@@ -1,4 +1,4 @@
-name: $(fullVersion)
+name: ${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)
 
 trigger:
   - master
