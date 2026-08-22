@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AirportService } from './shared/services/airport-service';
 import { AirportNavList } from './shared/components/airport-nav-list/airport-nav-list';
 import { MatIconButton } from '@angular/material/button';
+import { environment } from '../environments/environment';
 
 const MOBILE_WIDTH_BREAKPOINT = 786;
 
@@ -29,6 +30,7 @@ export class App implements OnInit {
     @ViewChild(MatSidenav)
     public matSideNav?: MatSidenav;
     protected showMobileSideNav = computed(() => this.windowWidth() <= MOBILE_WIDTH_BREAKPOINT);
+    protected version = computed(() => environment.version);
     private windowWidth = signal<number>(0);
 
     constructor(private readonly airportService: AirportService) {}
