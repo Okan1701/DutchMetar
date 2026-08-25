@@ -1,7 +1,17 @@
+name: ${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)
+
 trigger:
   - master
 
 parameters:
+  - name: version
+    displayName: Version
+    type: string
+    default: 0.1.0
+  - name: versionSuffix
+    displayName: Version Suffix
+    type: string
+    default: dev
   - name: deployDev
     displayName: Deploy to Dev
     type: boolean
@@ -20,6 +30,8 @@ variables:
   webAppWin64ArtifactName: dutchmetar-webapp-win-x64
   workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
+  fullVersion: '${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)'
+  versionSuffixFull: '${{ parameters.versionSuffix }}$(Build.BuildId)'
 
 stages:
   - stage: build
@@ -44,6 +56,16 @@ stages:
             inputs:
               version: $(nodeVersion)
 
+          - task: PowerShell@2
+            displayName: Set frontend app version
+            inputs:
+              targetType: 'inline'
+              script: |
+                $file = '$(Build.SourcesDirectory)/src/DutchMetar.Web.Client/src/environments/environment.ts'
+                $content = Get-Content -Path $file -Raw
+                $updated = $content.Replace('%APP_VERSION%', '$(fullVersion)')
+                Set-Content -Path $file -Value $updated -NoNewline
+
           - template: templates/nuget-config.yml
 
           - task: DotNetCoreCLI@2
@@ -59,7 +81,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: './src/DutchMetar.Web.Server'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
               zipAfterPublish: false
               modifyOutputPath: false
 
@@ -143,7 +165,7 @@ stages:
               command: 'publish'
               publishWebProjects: false
               projects: './src/DutchMetar.WorkerService'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory)'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
               zipAfterPublish: false
               modifyOutputPath: false
 

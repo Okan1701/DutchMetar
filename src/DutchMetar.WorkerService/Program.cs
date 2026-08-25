@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Reflection;
 using DutchMetar.Core.Features.DataWarehouse;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.DailySync;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.HostedServices;
@@ -9,6 +11,12 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 const string hangfireConnectionStringKey = "HangfireMssql";
+
+// Get application version
+var assembly = Assembly.GetExecutingAssembly();
+var fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+var version = fileVersionInfo?.ProductVersion;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseWindowsService();
@@ -32,7 +40,7 @@ app.UseHangfireDashboard("", new DashboardOptions
 {
     AppPath = null,
     DarkModeEnabled = true,
-    DashboardTitle = "DutchMetar - Hangfire",
+    DashboardTitle = string.IsNullOrEmpty(version) ? "DutchMetar Worker" : $"DutchMetar Worker v{version.Split('+')[0]}",
     DisplayStorageConnectionString = true,
     Authorization = [new HangfireAuthorizationFilter()]
 });

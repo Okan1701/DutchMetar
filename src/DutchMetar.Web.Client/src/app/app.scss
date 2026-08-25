@@ -48,6 +48,7 @@ mat-sidenav-content {
 
 .page-content {
     padding: 30px 20px;
+    margin-bottom: 2vh;
 }
 
 .active-link {
@@ -66,4 +67,28 @@ mat-form-field {
     .page-content {
         padding: 15px 10px;
     }
+}
+
+.footer {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 98vh;
+    height: 2vh;
+    width: 100vw;
+    background-color: rgb(0 0 0 / 0.60);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+}
+
+.footer > * {
+    padding: 0 5px;
+}
+
+.github {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
