@@ -1,6 +1,7 @@
 using DutchMetar.Core.Features.Web.AirportDetails;
 using DutchMetar.Core.Features.Web.AirportPerDayHistory;
 using DutchMetar.Core.Features.Web.AirportSummary;
+using DutchMetar.Core.Features.Web.MetarHistory;
 using DutchMetar.Core.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddAirportSummaryFeature();
 builder.Services.AddAirportDetailsFeature();
 builder.Services.AddAirportDayHistoryFeature();
+builder.Services.AddMetarHistoryFeature();
 
 var app = builder.Build();
 
