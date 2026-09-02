@@ -1,5 +1,5 @@
 ﻿import { AirportCurrentMetar } from './airport-current-metar';
-import { MeteoCondition } from '../types/meteo-condition';
+import { MeteoCondition } from '../../types/meteo-condition';
 import { AirportForecast } from './airport-forecast';
 
 export type AirportDetails = {

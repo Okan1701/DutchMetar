@@ -1,0 +1,30 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-subtitle>Published METAR History</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <app-status-display [status]="status()">
+            <span class="subtext">{{ metarHistory().totalItems | number }} total reports</span>
+            <table mat-table matSort matSortDirection="desc" matSortActive="issuedAt" [dataSource]="dataSource">
+                <ng-container matColumnDef="issuedAt">
+                    <th mat-header-cell mat-sort-header class="issued-at-column" *matHeaderCellDef>Issued At</th>
+                    <td mat-cell *matCellDef="let element"> {{ element.issuedAt | date:'yyyy-MM-dd HH:mm' }}z </td>
+                </ng-container>
+
+                <ng-container matColumnDef="metar">
+                    <th mat-header-cell *matHeaderCellDef>METAR Text</th>
+                    <td mat-cell *matCellDef="let element"> {{ element.rawMetar }} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+            </table>
+        </app-status-display>
+        <mat-paginator
+                [pageSize]="50"
+                [pageIndex]="metarHistory().currentPage"
+                [showFirstLastButtons]="true"
+                [length]="metarHistory().totalItems"
+                (page)="changePage($event)"></mat-paginator>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,13 @@
+.subtext {
+    color: gray;
+}
+
+.issued-at-column {
+    width: 190px;
+}
+
+@media screen and (max-width: 786px) {
+    .issued-at-column {
+        width: 100px;
+    }
+}

@@ -1,0 +1,11 @@
+<app-stack>
+    <button (click)="returnToAirport()" mat-button><mat-icon>arrow_back</mat-icon> Back to airport overview</button>
+    <div>
+        <h1>{{ airportIcao() }}</h1>
+        <div>{{ airportName() }}</div>
+    </div>
+
+    <app-metar-filters (filtersChanged)="filtersChanged($event)"></app-metar-filters>
+
+    <app-metar-list (newPage)="pageChanged($event)" [status]="status()" [metarHistory]="metarHistory()"></app-metar-list>
+</app-stack>

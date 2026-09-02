@@ -5,7 +5,7 @@ import {
     OnInit,
     signal,
 } from '@angular/core';
-import { AirportDayHistory } from '../../../../shared/models/airport-day-history';
+import { AirportDayHistory } from '../../../../shared/models/airport/airport-day-history';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
