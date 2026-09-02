@@ -40,6 +40,7 @@ export class MetarFilters {
         let model = this.filtersModel();
         return model.startDate !== null || model.endDate !== null;
     });
+    protected readonly maxDate = new Date(Date.now());
 
     constructor() {
         effect(() => {

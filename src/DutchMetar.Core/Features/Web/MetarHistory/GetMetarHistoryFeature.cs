@@ -40,12 +40,28 @@ public class GetMetarHistoryFeature : IGetMetarHistoryFeature
 
         if (request.StartDate.HasValue)
         {
-            query = query.Where(x => x.IssuedAt >= request.StartDate.Value);
+            var startDate = new DateTimeOffset(
+                request.StartDate.Value.Year,
+                request.StartDate.Value.Month,
+                request.StartDate.Value.Day,
+                0,
+                0,
+                0,
+                request.StartDate.Value.Offset);
+            query = query.Where(x => x.IssuedAt >= startDate);
         }
 
         if (request.EndDate.HasValue)
         {
-            query = query.Where(x => x.IssuedAt <= request.EndDate.Value);
+            var endDate = new DateTimeOffset(
+                request.EndDate.Value.Year,
+                request.EndDate.Value.Month,
+                request.EndDate.Value.Day,
+                23,
+                59,
+                59,
+                request.EndDate.Value.Offset);
+            query = query.Where(x => x.IssuedAt <= endDate);
         }
 
         var pageSize = request.PageSize ?? DefaultPageSize;

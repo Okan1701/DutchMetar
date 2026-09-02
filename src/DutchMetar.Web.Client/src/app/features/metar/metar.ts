@@ -58,8 +58,8 @@ export class Metar {
                 this.metarService.getMetarHistory({
                     icao: icao,
                     page: page,
-                    startDate: filters?.startDate?.toISOString(),
-                    endDate: filters?.endDate?.toISOString(),
+                    startDate: this.toDate(filters?.startDate),
+                    endDate: this.toDate(filters?.endDate),
                 });
 
                 this.previousFilters = filters;
@@ -84,5 +84,17 @@ export class Metar {
 
     protected pageChanged(page: number): void {
         this.page.set(page);
+    }
+
+    private toDate(date: Date | null | undefined): string | undefined {
+        if (!date) {
+            return undefined;
+        }
+
+        return [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, '0'),
+            String(date.getDate()).padStart(2, '0'),
+        ].join('-');
     }
 }
