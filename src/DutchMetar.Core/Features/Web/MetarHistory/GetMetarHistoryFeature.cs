@@ -52,7 +52,7 @@ public class GetMetarHistoryFeature : IGetMetarHistoryFeature
         var totalData = await query.CountAsync(cancellationToken);
         var metarData = await query
             .OrderByDescending(x => x.IssuedAt)
-            .Skip((request.Page - 1) * pageSize)
+            .Skip(request.Page * pageSize)
             .Take(pageSize)
             .ToArrayAsync(cancellationToken);
 
@@ -68,7 +68,8 @@ public class GetMetarHistoryFeature : IGetMetarHistoryFeature
                 .. metarData.Select(x => new GetMetarHistoryResultReports
                 {
                     MetarId = x.Id,
-                    RawMetar = x.RawMetar
+                    RawMetar = x.RawMetar,
+                    IssuedAt = x.IssuedAt
                 })
             ]
         };
@@ -76,9 +77,9 @@ public class GetMetarHistoryFeature : IGetMetarHistoryFeature
 
     private void Validate(GetMetarHistoryRequest request)
     {
-        if (request.Page <= 0)
+        if (request.Page < 0)
         {
-            throw new RequestValidationExxception("Page cannot be zero or negative");
+            throw new RequestValidationExxception("Page cannot be negative");
         }
 
         if (request.PageSize.GetValueOrDefault() <= 0)

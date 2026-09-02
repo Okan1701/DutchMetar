@@ -4,7 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { LatestWeatherValueCard } from './latest-weather-value-card/latest-weather-value-card';
 import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-import { AirportDetails } from '../../../../../../shared/models/airport-details';
+import { AirportDetails } from '../../../../../../shared/models/airport/airport-details';
 import { MatRipple } from '@angular/material/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';

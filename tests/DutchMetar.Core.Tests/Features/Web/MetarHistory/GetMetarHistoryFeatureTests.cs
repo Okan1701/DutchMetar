@@ -39,12 +39,12 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
         var result = await _feature.GetHistoryAsync(new GetMetarHistoryRequest
         {
             Icao = _testAirport.Icao,
-            Page = 1
+            Page = 0
         });
 
         Assert.NotNull(result);
         Assert.Equal(_testAirport.Icao, result.Icao);
-        Assert.Equal(1, result.CurrentPage);
+        Assert.Equal(0, result.CurrentPage);
         Assert.Equal(1, result.MaxPages);
         Assert.Equal(1, result.TotalItems);
         Assert.Equal(_testAirport.Name, result.AirportName);
@@ -100,10 +100,10 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
         {
             Icao = _testAirport.Icao,
             PageSize = 2,
-            Page = 2
+            Page = 1
         });
 
-        Assert.Equal(2, result.CurrentPage);
+        Assert.Equal(1, result.CurrentPage);
         Assert.Equal(3, result.MaxPages);
         Assert.Equal(5, result.TotalItems);
         Assert.Equal(2, result.MetarReports.Count);
@@ -129,12 +129,12 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
         var result = await _feature.GetHistoryAsync(new GetMetarHistoryRequest
         {
             Icao = _testAirport.Icao,
-            PageSize = 2,
-            Page = 3
+            PageSize = 4,
+            Page = 1
         });
 
-        Assert.Equal(3, result.CurrentPage);
-        Assert.Equal(3, result.MaxPages);
+        Assert.Equal(1, result.CurrentPage);
+        Assert.Equal(2, result.MaxPages);
         Assert.Equal(5, result.TotalItems);
         Assert.Single(result.MetarReports);
         Assert.Equal("REPORT-0", result.MetarReports.First().RawMetar);

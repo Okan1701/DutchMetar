@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Stack } from '../../../../shared/components/stack/stack';
-import { AirportDetails } from '../../../../shared/models/airport-details';
+import { AirportDetails } from '../../../../shared/models/airport/airport-details';
 import { LatestMetarTafCard } from './components/latest-metar-taf-card/latest-metar-taf-card';
 import { DecodedObservations } from './components/decoded-observations/decoded-observations';
 

@@ -1,0 +1,10 @@
+@use '@angular/material' as mat;
+
+mat-form-field {
+    @include mat.form-field-density(-4);
+}
+
+.content {
+    display: flex;
+    gap: 10px;
+}

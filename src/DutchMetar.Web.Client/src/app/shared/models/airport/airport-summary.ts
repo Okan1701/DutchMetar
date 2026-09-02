@@ -1,4 +1,4 @@
-﻿import { MeteoCondition } from '../types/meteo-condition';
+﻿import { MeteoCondition } from '../../types/meteo-condition';
 
 export type AirportSummary = {
     icao: string;

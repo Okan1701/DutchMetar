@@ -1,0 +1,21 @@
+<mat-card appearance="outlined">
+    <mat-card-content>
+        <form [formRoot]="filtersForm" class="content">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>Start Date</mat-label>
+                <input [formField]="filtersForm.startDate" matInput [matDatepicker]="startPicker">
+                <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                <mat-label>End Date</mat-label>
+                <input [formField]="filtersForm.endDate" matInput [matDatepicker]="endPicker">
+                <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+            <button (click)="resetFilters()" [disabled]="!isFiltered()" matTooltip="Reset filters" mat-icon-button>
+                <mat-icon>settings_backup_restore</mat-icon>
+            </button>
+        </form>
+    </mat-card-content>
+</mat-card>

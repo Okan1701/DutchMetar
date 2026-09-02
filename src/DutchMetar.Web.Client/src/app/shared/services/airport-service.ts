@@ -1,10 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AirportSummary } from '../models/airport-summary';
+import { AirportSummary } from '../models/airport/airport-summary';
 import { LoadingStatus } from '../types/status';
 import { HttpClient } from '@angular/common/http';
-import { AirportDetails } from '../models/airport-details';
-import { AirportDayHistory } from '../models/airport-day-history';
+import { AirportDetails } from '../models/airport/airport-details';
+import { AirportDayHistory } from '../models/airport/airport-day-history';
 
 @Injectable({
     providedIn: 'root',

@@ -4,7 +4,7 @@ import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
 import { LoadingStatus } from '../../types/status';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AirportSummary } from '../../models/airport-summary';
+import { AirportSummary } from '../../models/airport/airport-summary';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';

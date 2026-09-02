@@ -1,8 +1,8 @@
 import { Component, computed, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { NgApexchartsModule, ApexOptions } from 'ng-apexcharts';
-import { AirportDayHistory } from '../../../../../../shared/models/airport-day-history';
-import { AirportDayHistorySnapshot } from '../../../../../../shared/models/airport-day-history-snapshot';
+import { AirportDayHistory } from '../../../../../../shared/models/airport/airport-day-history';
+import { AirportDayHistorySnapshot } from '../../../../../../shared/models/airport/airport-day-history-snapshot';
 
 @Component({
     selector: 'app-airport-wind-speed-chart',

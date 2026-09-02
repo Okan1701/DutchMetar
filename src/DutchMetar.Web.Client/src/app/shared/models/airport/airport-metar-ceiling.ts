@@ -1,4 +1,4 @@
-﻿import { CeilingType } from '../enums/ceiling-type';
+﻿import { CeilingType } from '../../enums/ceiling-type';
 
 export type AirportMetarCeiling = {
     type: CeilingType;
