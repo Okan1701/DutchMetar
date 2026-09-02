@@ -8,3 +8,18 @@ mat-form-field {
     display: flex;
     gap: 10px;
 }
+
+.stackable {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stackable > * {
+    flex: 1 1 200px;
+}
+
+.center-flex {
+    display: flex;
+    align-items: center;
+}
