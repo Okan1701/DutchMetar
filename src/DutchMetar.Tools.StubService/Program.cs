@@ -8,6 +8,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = Host.CreateApplicationBuilder(args);
+        builder.Services.AddWindowsService();
         builder.Services.AddHostedService<Worker>();
         builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
         builder.Services.AddScoped<IMetarStubDataService, MetarStubDataService>();
