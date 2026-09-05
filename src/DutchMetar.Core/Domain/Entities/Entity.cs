@@ -19,10 +19,4 @@ public abstract class Entity
     /// <see cref="DateTimeOffset"/> when this entity was last updated.
     /// </summary>
     public DateTimeOffset LastUpdatedAt { get; set; }
-    
-    /// <summary>
-    /// ID of the request/session that created this entity.
-    /// Can be useful for logging.
-    /// </summary>
-    public virtual Guid? CorrelationId { get; set; }
 }

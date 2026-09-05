@@ -15,8 +15,6 @@ public class DutchMetarContext : DbContext
     
     public DbSet<Taf> Tafs { get; set; }
     
-    public DbSet<MetarImportResult> MetarImportResults { get; set; }
-    
     public DbSet<KnmiMetarFile> KnmiMetarFiles { get; set; }
 
     public DutchMetarContext()
