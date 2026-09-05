@@ -1,14 +1,13 @@
 .badge {
-    padding: 5px 10px;
+    padding: 0 10px;
     border-radius: 10px;
-    font-weight: 1000;
     text-align: center;
-    letter-spacing: 1px;
+    font-size: 11px;
 }
 
 .success {
     background-color: #007300;
-    color: #c1ffc1;
+    color: #e1ffe1;
 }
 
 .danger {
@@ -24,10 +23,4 @@
 .neutral {
     background-color: #2b2b2b;
     color: #ffffff;
-}
-
-.narrow {
-    border-radius: 5px;
-    padding: 0 5px;
-    font-size: 11px;
 }

@@ -10,6 +10,4 @@ export type BadgeType = 'success' | 'warning' | 'danger' | 'primary' | 'neutral'
 })
 export class Badge {
     public type = input.required<BadgeType>();
-    
-    public narrow = input<boolean>(false);
 }

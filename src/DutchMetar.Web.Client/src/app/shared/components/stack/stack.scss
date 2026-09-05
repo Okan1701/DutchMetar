@@ -1,7 +1,7 @@
 :host {
     display: flex;
     flex-direction: var(--direction, column);
-    gap: 20px;
+    gap: var(--app-default-element-gap);
     flex-wrap: var(--wrap, nowrap);
 }
 
@@ -21,6 +21,6 @@
 
 @media screen and (max-width: 786px) {
     :host {
-        gap: 15px;
+        gap: var(--app-default-element-gap-mobile);
     }
 }
