@@ -175,6 +175,36 @@ stages:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
               ArtifactName: $(workerSvcWin64ArtifactName)
               publishLocation: 'Container'
+              
+      - job: publishStubsService
+        displayName: Publish stubs service
+        pool:
+          name: emeni-build-windows
+        
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET 10
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.Tools.StubsService (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.Tools.StubService'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: dutchmetar-stubs-win-x64
+              publishLocation: 'Container'
 
   - stage: deploy_dev
     displayName: Deploy Dev
