@@ -1,11 +1,9 @@
-<app-stack>
-    <app-stack direction="horizontal" [wrap]="true">
-        <app-latest-metar-taf-card class="flex-grow"
-                [latestMetar]="airportDetails().latestWeather"
-                [latestForecast]="airportDetails().latestForecast"
-        ></app-latest-metar-taf-card>
-        <app-decoded-observations class="flex-grow"
-                [airportDetails]="airportDetails()"
-        ></app-decoded-observations>
-    </app-stack>
+<app-stack direction="horizontal" [wrap]="true">
+    <app-latest-metar-taf-card class="flex-grow"
+                               [latestMetar]="airportDetails().latestWeather"
+                               [latestForecast]="airportDetails().latestForecast"
+    ></app-latest-metar-taf-card>
+    <app-decoded-observations class="flex-grow"
+                              [airportDetails]="airportDetails()"
+    ></app-decoded-observations>
 </app-stack>

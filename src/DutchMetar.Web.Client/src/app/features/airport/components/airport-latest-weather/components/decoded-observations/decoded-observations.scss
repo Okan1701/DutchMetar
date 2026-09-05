@@ -12,23 +12,12 @@
     gap: 10px;
     justify-content: start;
     flex-wrap: wrap;
-
-    /* allow this column to shrink on small screens */
-    flex: 1 1 220px;
-    min-width: 0;
 }
 
 .decoded-content-container {
     display: flex;
-    gap: 40px;
+    gap: 50px;
     margin-top: 10px;
-    flex-wrap: wrap;
-}
-
-@media screen and (max-width: 600px) {
-    .decoded-content-container {
-        gap: 15px;
-    }
 }
 
 .ceilings-container {
@@ -37,10 +26,6 @@
     gap: 10px;
     height: fit-content;
     padding: 5px;
-
-    /* allow ceilings block to shrink and wrap with other columns */
-    flex: 1 1 200px;
-    min-width: 0;
 }
 
 .ceilings-container:hover {

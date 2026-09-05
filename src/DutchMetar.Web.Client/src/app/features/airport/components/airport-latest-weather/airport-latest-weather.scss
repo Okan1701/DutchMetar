@@ -1,7 +1,3 @@
 .flex-grow {
-    /* Allow the column to shrink on small screens and wrap
-       Use a reasonable base width so cards stay readable but can reduce when needed */
-    flex: 1 1 320px;
-    min-width: 0; /* allow overflowing children to shrink instead of forcing overflow */
-    max-width: 100%;
+    flex: 1 1 500px;
 }
