@@ -8,15 +8,12 @@
                         <span>Last update: {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}Z</span>
                     </div>
                 }
-                @if (airportDetails().name) {
-                    <h1 class="page-header-title">
-                        @if (airportDetails().name) {
-                            <span>{{ airportDetails().name }}</span>
-                            <span class="page-header-title-suplement">|</span>
-                        }
-                        <span [class.page-header-title-suplement]="airportDetails().name">{{ airportDetails().icao }}</span>
-                    </h1>
-                }
+                <div>
+                    <h1 class="page-header-title">{{ airportDetails().icao }}</h1>
+                    @if (airportDetails().name) {
+                        <div>{{ airportDetails().name }}</div>
+                    }
+                </div>
                 <div class="page-header-title">
                     @if (airportDetails().latestWeather?.isCorrected) {
                         <app-badge type="primary">COR</app-badge>
@@ -41,7 +38,7 @@
                 </button>
             </div>
         </div>
-
+        <br />  
         <h2>Latest Weather</h2>
         @if (airportDetails().latestWeather) {
             <app-airport-latest-weather

@@ -26,19 +26,19 @@
                     </div>
                     <div class="badges">
                         @if (airport.isCorrected) {
-                            <app-badge [narrow]="true" type="primary">COR</app-badge>
+                            <app-badge type="primary">COR</app-badge>
                         }
                         @if (airport.isCavok) {
-                            <app-badge [narrow]="true" type="success">CAVOK</app-badge>
+                            <app-badge type="success">CAVOK</app-badge>
                         } @else if (isVmc(airport)) {
-                            <app-badge [narrow]="true" type="success">VMC</app-badge>
+                            <app-badge type="success">VMC</app-badge>
                         } @else if (isImc(airport)) {
-                            <app-badge [narrow]="true" type="danger">IMC</app-badge>
+                            <app-badge type="danger">IMC</app-badge>
                         } @else if (isMarginal(airport)) {
-                            <app-badge [narrow]="true" type="warning">MARGINAL</app-badge>
+                            <app-badge type="warning">MARGINAL</app-badge>
                         }
                         @if (airport.isAuto) {
-                            <app-badge [narrow]="true" type="neutral">AUTO</app-badge>
+                            <app-badge type="neutral">AUTO</app-badge>
                         }
                     </div>
                 </div>

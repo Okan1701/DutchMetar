@@ -53,3 +53,15 @@ h2 {
     margin: 0;
     font-weight: 500;
 }
+
+:root {
+    --app-default-element-gap: 20px;
+    --app-default-element-gap-mobile: 15px;
+    --app-element-gap: var(--app-default-element-gap);
+}
+
+@media screen and (max-width: 768px) {
+    :root {
+        --app-element-gap: var(--app-default-element-gap-mobile);
+    }
+}
