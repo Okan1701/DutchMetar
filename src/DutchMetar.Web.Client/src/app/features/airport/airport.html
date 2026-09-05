@@ -3,11 +3,13 @@
         
         <div class="page-header-flex">
             <div class="page-header">
-                @if (airportDetails().lastUpdated) {
-                    <div class="page-header-subtitle">
-                        <span>Last update: {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}Z</span>
-                    </div>
-                }
+                <div class="page-header-subtitle">
+                    @if (airportDetails().lastUpdated) {
+                        <span>Source: KNMI (Last update at {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}z)</span>
+                    } @else {
+                      <span>Source: KNMI</span>  
+                    }
+                </div>
                 <div>
                     <h1 class="page-header-title">{{ airportDetails().icao }}</h1>
                     @if (airportDetails().name) {

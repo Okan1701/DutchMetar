@@ -8,6 +8,7 @@ import { AirportService } from './shared/services/airport-service';
 import { AirportNavList } from './shared/components/airport-nav-list/airport-nav-list';
 import { MatIconButton } from '@angular/material/button';
 import { environment } from '../environments/environment';
+import { NgOptimizedImage } from '@angular/common';
 
 const MOBILE_WIDTH_BREAKPOINT = 786;
 
@@ -22,6 +23,7 @@ const MOBILE_WIDTH_BREAKPOINT = 786;
         AirportNavList,
         RouterLink,
         MatIconButton,
+        NgOptimizedImage,
     ],
     templateUrl: './app.html',
     styleUrl: './app.scss',
