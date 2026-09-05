@@ -30,6 +30,7 @@ variables:
   webAppWin64ArtifactName: dutchmetar-webapp-win-x64
   workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
+  stubsWin64ArtifactName: dutchmetar-stubs-win-x64
   fullVersion: '${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)'
   versionSuffixFull: '${{ parameters.versionSuffix }}$(Build.BuildId)'
 
@@ -203,7 +204,7 @@ stages:
             displayName: Upload artifacts
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: dutchmetar-stubs-win-x64
+              ArtifactName: $(stubsWin64ArtifactName)
               publishLocation: 'Container'
 
   - stage: deploy_dev
@@ -260,6 +261,54 @@ stages:
                     ServerName: '$(DatabaseServer)'
                     DatabaseName: '$(MainDatabaseName)'
                     AuthScheme: 'windowsAuthentication'
+                    
+      - deployment: stubs
+        environment:
+          name: Dev
+          resourceType: VirtualMachine
+        pool: emeni-deploy-windows
+        displayName: Deploy stubs service
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: PowerShell@2
+                  displayName: Stop stub service
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      Stop-Service -Name '$(StubsSvcWinServiceName)' -Force
+                      (Get-Service -Name '$(StubsSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
+
+                - task: CopyFiles@2
+                  displayName: Deploy worker files
+                  inputs:
+                    SourceFolder: '$(Pipeline.Workspace)/$(stubsWin64ArtifactName)'
+                    Contents: '**'
+                    TargetFolder: '$(StubsSvcPath)'
+                    overWrite: true
+
+                - task: DownloadSecureFile@1
+                  displayName: Download stub appsettings
+                  name: workerAppsettingsFile
+                  inputs:
+                    secureFile: 'appsettings.stubservice.dev.json'
+
+                - task: PowerShell@2
+                  displayName: Move stub appsettings
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      $source = '$(workerAppsettingsFile.secureFilePath)'
+                      $dest = Join-Path '$(StubsSvcPath)' 'appsettings.Production.json'
+                      Move-Item -Path $source -Destination $dest -Force
+
+                - task: PowerShell@2
+                  displayName: Start stub service
+                  inputs:
+                    targetType: 'inline'
+                    script: |
+                      Start-Service -Name '$(StubsSvcWinServiceName)'
 
   - stage: deploy_test
     displayName: Deploy Test
