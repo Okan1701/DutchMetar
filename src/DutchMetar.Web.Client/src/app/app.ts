@@ -9,6 +9,7 @@ import { AirportNavList } from './shared/components/airport-nav-list/airport-nav
 import { MatIconButton } from '@angular/material/button';
 import { environment } from '../environments/environment';
 import { NgOptimizedImage } from '@angular/common';
+import { UtcClock } from './shared/components/utc-clock/utc-clock';
 
 const MOBILE_WIDTH_BREAKPOINT = 786;
 
@@ -24,6 +25,7 @@ const MOBILE_WIDTH_BREAKPOINT = 786;
         RouterLink,
         MatIconButton,
         NgOptimizedImage,
+        UtcClock,
     ],
     templateUrl: './app.html',
     styleUrl: './app.scss',
