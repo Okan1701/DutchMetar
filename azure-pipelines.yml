@@ -412,3 +412,42 @@ stages:
                     targetType: 'inline'
                     script: |
                       Start-Service -Name '$(WorkerSvcWinServiceName)'
+
+  - stage: publish_images
+    displayName: Publish Docker images
+    dependsOn: deploy_test
+    condition: succeeded()
+    jobs:
+      - job: publishWebImage
+        displayName: Publish dutchmetar image
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: Docker@2
+            displayName: Build and push image
+            inputs:
+              command: buildAndPush
+              containerRegistry: Docker Hub
+              repository: ultimateantic/dutchmetar
+              Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.Web.Server/Dockerfile'
+              buildContext: '$(Build.SourcesDirectory)'
+              tags: |
+                ${{ parameters.version }}-${{ parameters.versionSuffix }}
+              arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
+
+      - job: publishWorkerImage
+        displayName: Publish dutchmetar-worker image
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: Docker@2
+            displayName: Build and push image
+            inputs:
+              command: buildAndPush
+              containerRegistry: Docker Hub
+              repository: ultimateantic/dutchmetar-worker
+              Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.WorkerService/Dockerfile'
+              buildContext: '$(Build.SourcesDirectory)'
+              tags: |
+                ${{ parameters.version }}-${{ parameters.versionSuffix }}
+              arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
