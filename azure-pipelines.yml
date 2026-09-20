@@ -469,3 +469,70 @@ stages:
               repository: ultimateantic/dutchmetar-worker
               tags: |
                 ${{ parameters.version }}-${{ parameters.versionSuffix }}
+
+  - stage: deploy_staging
+    displayName: Deploy Staging
+    variables:
+      - group: DutchMetarStagingEnv
+    dependsOn: publish_images
+    condition: succeeded()
+    jobs:
+      - deployment: database
+        environment: Staging
+        pool: emeni-deploy-windows
+        displayName: Deploy Database
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: SqlDacpacDeploymentOnMachineGroup@0
+                  inputs:
+                    TaskType: 'sqlQuery'
+                    SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
+                    ServerName: '$(DatabaseServer)'
+                    DatabaseName: '$(MainDatabaseName)'
+                    AuthScheme: 'windowsAuthentication'
+
+      - deployment: dutchmetar
+        environment:
+          name: Staging
+          resourceType: VirtualMachine
+        displayName: Deploy Containers
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+
+                - task: Bash@3
+                  displayName: Back up and update .env
+                  inputs:
+                    targetType: inline
+                    workingDirectory: $(DockerComposePath)
+                    script: |
+                      cp -f .env .env.backup
+                      sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=${{ parameters.version }}-${{ parameters.versionSuffix }}/' .env
+
+                - task: Bash@3
+                  displayName: Update Containers
+                  inputs:
+                    targetType: inline
+                    workingDirectory: $(DockerComposePath)
+                    script: docker compose up --force-recreate --pull always -d
+
+            on:
+              failure:
+                steps:
+                  - task: Bash@3
+                    displayName: Roll back staging environment
+                    inputs:
+                      targetType: inline
+                      workingDirectory: $(DockerComposePath)
+                      script: |
+                        if [ -f .env.backup ]; then
+                          mv .env.backup .env
+                          docker compose up --force-recreate -d
+                        else
+                          echo "No environment backup found; rollback cannot be performed." >&2
+                          exit 1
+                        fi
