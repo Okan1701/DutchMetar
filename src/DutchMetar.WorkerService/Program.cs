@@ -38,7 +38,8 @@ builder.Services.AddHangfire(configuration => configuration
 #endif
 
 var app = builder.Build();
-app.MapHealthChecks("/health");
+app.UseRouting();
+app.MapHealthChecks("/health").ShortCircuit();
 app.UseHangfireDashboard("", new DashboardOptions
 {
     AppPath = null,
