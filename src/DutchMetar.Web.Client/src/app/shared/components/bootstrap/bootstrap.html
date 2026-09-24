@@ -1,0 +1,16 @@
+@let status = loadingStatus$ | async;
+@if (status === 'success') {
+    <ng-content></ng-content>
+} @else {
+    <main class="bootstrap-page" aria-live="polite">
+        <div class="bootstrap-content">
+            <h1>DutchMetar</h1>
+            @if (status === 'loading') {
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <span class="subtext">Loading airports</span>
+            } @else {
+                <p class="subtext error">The airport data could not be loaded. Please try again later.</p>
+            }
+        </div>
+    </main>
+}

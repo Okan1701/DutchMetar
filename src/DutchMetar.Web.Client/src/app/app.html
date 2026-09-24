@@ -1,24 +1,26 @@
-<mat-toolbar>
-    @if (showMobileSideNav()) {
-        <button (click)="toggleSideNav()" mat-icon-button><mat-icon>menu</mat-icon></button>
-    }
-    <span class="pointer" routerLink="/" >DutchMetar</span>
-</mat-toolbar>
-<mat-sidenav-container class="sidenav">
-    <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()">
-        <app-airport-nav-list></app-airport-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <div class="page-content">
-            <router-outlet/>
-        </div>
-    </mat-sidenav-content>
-</mat-sidenav-container>
-<div class="footer">
-    <span>v{{ version() }}</span>
-    <app-utc-clock></app-utc-clock>
-    <a class="github" href="https://github.com/Okan1701/DutchMetar">
-        <img ngSrc="/github.svg" alt="GitHub" height="16" width="16">
-        <span>Okan1701/DutchMetar</span>
-    </a>
-</div>
+<app-bootstrap>
+    <mat-toolbar>
+        @if (showMobileSideNav()) {
+            <button (click)="toggleSideNav()" mat-icon-button><mat-icon>menu</mat-icon></button>
+        }
+        <span class="pointer" routerLink="/">DutchMetar</span>
+    </mat-toolbar>
+    <mat-sidenav-container class="sidenav" autosize>
+        <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()">
+            <app-airport-nav-list></app-airport-nav-list>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <div class="page-content">
+                <router-outlet/>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+    <div class="footer">
+        <span>v{{ version() }}</span>
+        <app-utc-clock></app-utc-clock>
+        <a class="github" href="https://github.com/Okan1701/DutchMetar">
+            <img ngSrc="/github.svg" alt="GitHub" height="16" width="16">
+            <span>Okan1701/DutchMetar</span>
+        </a>
+    </div>
+</app-bootstrap>

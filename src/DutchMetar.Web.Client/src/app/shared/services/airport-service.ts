@@ -11,11 +11,10 @@ import { AirportDayHistory } from '../models/airport/airport-day-history';
 })
 export class AirportService {
     private readonly airportsSubject = new BehaviorSubject<AirportSummary[]>([]);
-    private readonly loadingStatusSubject = new BehaviorSubject<LoadingStatus>('loading')
-    private readonly airportsEndpoint = "/api/airport"
+    private readonly loadingStatusSubject = new BehaviorSubject<LoadingStatus>('loading');
+    private readonly airportsEndpoint = '/api/airport';
 
-    constructor(private readonly httpClient: HttpClient) {
-    }
+    constructor(private readonly httpClient: HttpClient) {}
 
     public get airports$(): Observable<AirportSummary[]> {
         return this.airportsSubject.asObservable();
@@ -24,7 +23,7 @@ export class AirportService {
     public get loadingStatus$(): Observable<LoadingStatus> {
         return this.loadingStatusSubject.asObservable();
     }
-    
+
     public initializeAirports(): void {
         this.httpClient.get<AirportSummary[]>(this.airportsEndpoint).subscribe({
             next: (airports) => {
@@ -32,12 +31,12 @@ export class AirportService {
                 this.loadingStatusSubject.next('success');
             },
             error: (err) => {
-                console.error('Failed to retrieve airports', err)
+                console.error('Failed to retrieve airports', err);
                 this.loadingStatusSubject.next('error');
             },
         });
     }
-    
+
     public getAirportDetails(icao: string): Observable<AirportDetails> {
         return this.httpClient.get<AirportDetails>(`${this.airportsEndpoint}/${icao}`);
     }

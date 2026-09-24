@@ -1,0 +1,43 @@
+@use '@angular/material' as mat;
+
+:host {
+    display: block;
+    height: 100%;
+}
+
+.bootstrap-page {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+}
+
+.bootstrap-content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: min(90vw, 420px);
+    text-align: center;
+}
+
+.bootstrap-content h1 {
+    color: var(--mat-sys-primary);
+    line-height: 1;
+}
+
+.bootstrap-content mat-progress-bar {
+    width: min(60vw, 320px);
+}
+
+.bootstrap-content p {
+    margin: 0;
+}
+
+.subtext {
+    color: gray;
+}
+
+.error {
+    color: var(--mat-sys-error);
+}
