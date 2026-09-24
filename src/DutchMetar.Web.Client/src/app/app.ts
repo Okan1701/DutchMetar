@@ -1,11 +1,11 @@
-import { Component, computed, HostListener, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, HostListener, signal, ViewChild } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { AirportService } from './shared/services/airport-service';
 import { AirportNavList } from './shared/components/airport-nav-list/airport-nav-list';
+import { Bootstrap } from './shared/components/bootstrap/bootstrap';
 import { MatIconButton } from '@angular/material/button';
 import { environment } from '../environments/environment';
 import { NgOptimizedImage } from '@angular/common';
@@ -21,6 +21,7 @@ const MOBILE_WIDTH_BREAKPOINT = 786;
         MatSidenavModule,
         MatListModule,
         MatIconModule,
+        Bootstrap,
         AirportNavList,
         RouterLink,
         MatIconButton,
@@ -30,19 +31,12 @@ const MOBILE_WIDTH_BREAKPOINT = 786;
     templateUrl: './app.html',
     styleUrl: './app.scss',
 })
-export class App implements OnInit {
+export class App {
     @ViewChild(MatSidenav)
     public matSideNav?: MatSidenav;
     protected showMobileSideNav = computed(() => this.windowWidth() <= MOBILE_WIDTH_BREAKPOINT);
     protected version = computed(() => environment.version);
-    private windowWidth = signal<number>(0);
-
-    constructor(private readonly airportService: AirportService) {}
-
-    public ngOnInit(): void {
-        this.airportService.initializeAirports();
-        this.windowWidth.set(window.innerWidth);
-    }
+    private windowWidth = signal<number>(window.innerWidth);
 
     @HostListener('window:resize')
     public onResize() {
