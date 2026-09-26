@@ -5,6 +5,17 @@ using DutchMetar.Core.Features.Web.MetarHistory;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.Web.Server.Constants;
+using Grafana.OpenTelemetry;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+
+using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .UseGrafana()
+    .Build();
+using var meterProvider = Sdk.CreateMeterProviderBuilder()
+    .UseGrafana()
+    .Build();
 
 var builder = WebApplication.CreateBuilder(args);
 
