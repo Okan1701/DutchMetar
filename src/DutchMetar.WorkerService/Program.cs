@@ -11,6 +11,7 @@ using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
+const string hangfireConnectionStringKey = "HangfireMssql";
 const string sentryDsnConnectionString = "SentryDsn";
 
 // Get application version
