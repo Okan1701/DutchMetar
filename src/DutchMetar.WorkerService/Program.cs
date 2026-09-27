@@ -11,7 +11,7 @@ using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
-const string hangfireConnectionStringKey = "HangfireMssql";
+const string sentryDsnConnectionString = "SentryDsn";
 
 // Get application version
 var assembly = Assembly.GetExecutingAssembly();
@@ -20,6 +20,18 @@ var version = fileVersionInfo?.ProductVersion;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseSentry(o =>
+{
+    o.Dsn = builder.Configuration.GetConnectionString(sentryDsnConnectionString);
+    // Set TracesSampleRate to 1.0 to capture 100%
+    // of transactions for tracing.
+    // We recommend adjusting this value in production
+    o.TracesSampleRate = 1.0;
+    // Enable logs to be sent to Sentry
+    o.EnableLogs = true;
+});
+
 builder.Host.UseWindowsService();
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<DutchMetarContext>();
