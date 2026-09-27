@@ -17,6 +17,8 @@ public class DutchMetarContext : DbContext
     
     public DbSet<KnmiMetarFile> KnmiMetarFiles { get; set; }
 
+    public DbSet<KnmiTafFile> KnmiTafFiles { get; set; }
+
     public DutchMetarContext()
     {
     }
@@ -33,6 +35,14 @@ public class DutchMetarContext : DbContext
         
         builder.Entity<KnmiMetarFile>()
             .Property(d => d.FileContent)
+            .HasColumnType("nvarchar(max)");
+
+        builder.Entity<KnmiTafFile>()
+            .HasIndex(file => file.FileName)
+            .IsUnique();
+
+        builder.Entity<KnmiTafFile>()
+            .Property(file => file.FileContent)
             .HasColumnType("nvarchar(max)");
         
         // When deleting a Metar entity, it is safe to auto-delete related MetarCeiling entities

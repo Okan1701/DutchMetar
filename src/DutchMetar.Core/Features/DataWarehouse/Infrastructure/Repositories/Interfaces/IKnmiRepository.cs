@@ -6,4 +6,6 @@ public interface IKnmiRepository
 {
     Task<ICollection<KnmiFileMeta>> GetKnmiMetarFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken,
         Guid correlationId);
+    Task<ICollection<KnmiFileMeta>> GetKnmiTafFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken,
+        Guid correlationId);
 }

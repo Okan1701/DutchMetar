@@ -1,6 +1,7 @@
 ﻿using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Notifications;
 using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Parsers;
+using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Processing.Handlers;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiDataPlatform;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiNotifications.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,12 @@ public class NewTafNotificationFeatureTests : TestsWithContext
         _apiClient = Substitute.For<IKnmiApiClient>();
         var logger = Substitute.For<ILogger<NewTafNotificationFeature>>();
         _tafParser = Substitute.For<IRawTafFileParser>();
-        _feature = new NewTafNotificationFeature(_apiClient, logger, Context, _tafParser);
+        var handler = new TafFileHandler(
+            Context,
+            Substitute.For<ILogger<TafFileHandler>>(),
+            _apiClient,
+            _tafParser);
+        _feature = new NewTafNotificationFeature(logger, handler);
     }
 
     [Fact]
@@ -98,6 +104,47 @@ public class NewTafNotificationFeatureTests : TestsWithContext
 
         var taf = allTafs.First();
         Assert.NotNull(taf.Airport);
+        var savedFile = await Context.KnmiTafFiles.SingleAsync();
+        Assert.Equal("taf_mock_test_ehgg.txt", savedFile.FileName);
+        Assert.Equal(EhggTafPayload, savedFile.FileContent);
+        Assert.True(savedFile.IsFileProcessed);
+        Assert.Equal(taf.RawTaf, savedFile.ExtractedRawTaf);
+    }
+
+    [Fact]
+    public async Task HandleNotificationAsync_SameRawTafFromDifferentFiles_SavesEachFileOnlyOnce()
+    {
+        _apiClient
+            .GetDatasetFileContentAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(EhggTafPayload);
+        _tafParser
+            .ParseRawTafToEntity(Arg.Any<string>())
+            .Returns(_ => new Domain.Entities.Taf
+            {
+                RawTaf = "TAF AMD EHGG 150739Z 1507/1612 33004KT 9999 BKN007",
+                Airport = new Airport { Icao = "EHGG" }
+            });
+
+        FileEvent CreateFileEvent(string fileName) => new()
+        {
+            Data = new FileData
+            {
+                DataSetName = KnmiDatasetNames.Taf,
+                FileName = fileName
+            }
+        };
+
+        await _feature.HandleNotificationAsync(CreateFileEvent("taf-file-1.txt"));
+        await _feature.HandleNotificationAsync(CreateFileEvent("taf-file-2.txt"));
+        await _feature.HandleNotificationAsync(CreateFileEvent("taf-file-1.txt"));
+
+        var savedFiles = await Context.KnmiTafFiles.Select(x => x.FileName).ToArrayAsync();
+        Assert.Equal(2, savedFiles.Length);
+        Assert.Contains("taf-file-1.txt", savedFiles);
+        Assert.Contains("taf-file-2.txt", savedFiles);
+        Assert.Equal(2, await Context.Tafs.CountAsync());
+        await _apiClient.Received(2).GetDatasetFileContentAsync(
+            KnmiDatasetNames.Taf, Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -152,6 +199,7 @@ public class NewTafNotificationFeatureTests : TestsWithContext
         await _feature.HandleNotificationAsync(fileEvent, CancellationToken.None);
 
         Assert.Empty(await Context.Tafs.ToListAsync());
+        Assert.Empty(await Context.KnmiTafFiles.ToListAsync());
         Assert.DoesNotContain(
             _apiClient.ReceivedCalls(),
             call => call.GetMethodInfo().Name == nameof(IKnmiApiClient.GetDatasetFileContentAsync));
@@ -203,5 +251,7 @@ public class NewTafNotificationFeatureTests : TestsWithContext
         await _feature.HandleNotificationAsync(fileEvent, CancellationToken.None);
 
         Assert.Empty(await Context.Tafs.ToListAsync());
+        var savedFile = await Context.KnmiTafFiles.SingleAsync();
+        Assert.False(savedFile.IsFileProcessed);
     }
 }
