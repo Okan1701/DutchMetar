@@ -18,21 +18,29 @@ public class KnmiRepository : IKnmiRepository
     
     public async Task<ICollection<KnmiFileMeta>> GetKnmiMetarFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken, Guid correlationId)
     {
+        return await GetKnmiFiles(KnmiDatasetNames.Metar, parameters, cancellationToken);
+    }
+
+    public async Task<ICollection<KnmiFileMeta>> GetKnmiTafFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken, Guid correlationId)
+    {
+        return await GetKnmiFiles(KnmiDatasetNames.Taf, parameters, cancellationToken);
+    }
+
+    private async Task<ICollection<KnmiFileMeta>> GetKnmiFiles(string dataset, KnmiFilesParameters parameters, CancellationToken cancellationToken)
+    {
         // Truncated means that the last request is not the final page.
         // So we can keep retrieving the next page.
         var isTruncated = true;
 
         var knmiFileNames = new List<KnmiFileMeta>();
         
-        // Main loop of the bulk retrieval process.
-        // This will in essence retrieve a list of files, retrieve content of each file and process it into Airport and Metar entities.
+        // Main loop of the bulk retrieval process, retrieving all file summaries for the selected dataset.
         // This loop will continue until the API response indicates that all files have been listed.
         while (isTruncated && !cancellationToken.IsCancellationRequested)
         {
-            _logger.LogTrace("Retrieving next batch of metar files");
+            _logger.LogTrace("Retrieving next batch of {Dataset} files", dataset);
             
-            // Get list of available METAR files.
-            var data = await _knmiApiClient.GetDatasetFileSummaries(KnmiDatasetNames.Metar, parameters, cancellationToken);
+            var data = await _knmiApiClient.GetDatasetFileSummaries(dataset, parameters, cancellationToken);
             
             // If the API returns empty array, then we most likely reached the end.
             if (data.Files.Count == 0)
@@ -60,7 +68,7 @@ public class KnmiRepository : IKnmiRepository
             
             if (cancellationToken.IsCancellationRequested)
             {
-                _logger.LogWarning("Aborting KNMI metar sync, cancellation was requested!");
+                _logger.LogWarning("Aborting KNMI {Dataset} sync, cancellation was requested!", dataset);
                 break;
             }
         }

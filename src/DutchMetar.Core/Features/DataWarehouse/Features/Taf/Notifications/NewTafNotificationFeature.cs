@@ -1,25 +1,20 @@
-﻿using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Parsers;
+using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Processing.Handlers;
+using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Repositories;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiDataPlatform;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiNotifications.Contracts;
-using DutchMetar.Core.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DutchMetar.Core.Features.DataWarehouse.Features.Taf.Notifications;
 
 public class NewTafNotificationFeature : INewTafNotificationFeature
 {
-    private readonly IKnmiApiClient _knmiApiClient;
     private readonly ILogger<NewTafNotificationFeature> _logger;
-    private readonly DutchMetarContext _context;
-    private readonly IRawTafFileParser _tafFileParser;
+    private readonly ITafFileHandler _tafFileHandler;
 
-    public NewTafNotificationFeature(IKnmiApiClient knmiApiClient, ILogger<NewTafNotificationFeature> logger, DutchMetarContext context, IRawTafFileParser tafFileParser)
+    public NewTafNotificationFeature(ILogger<NewTafNotificationFeature> logger, ITafFileHandler tafFileHandler)
     {
-        _knmiApiClient = knmiApiClient;
         _logger = logger;
-        _context = context;
-        _tafFileParser = tafFileParser;
+        _tafFileHandler = tafFileHandler;
     }
 
     public bool CanHandleMessage(FileEvent fileEvent)
@@ -36,35 +31,12 @@ public class NewTafNotificationFeature : INewTafNotificationFeature
             return;
         }
         
-        var fileContent = await _knmiApiClient.GetDatasetFileContentAsync(KnmiDatasetNames.Taf, fileEvent.Data.FileName, cancellationToken);
-
-        if (string.IsNullOrEmpty(fileContent))
+        await _tafFileHandler.HandleFileAsync(new KnmiFileMeta
         {
-            _logger.LogWarning("Downloaded TAF file has empty content!");
-            return;
-        }
-
-        Domain.Entities.Taf tafEntity;
-        try
-        {
-            tafEntity = _tafFileParser.ParseRawTafToEntity(fileContent);
-        }
-        catch (TafParsingException ex)
-        {
-            _logger.LogError(ex, "Failed to parse raw TAF message: {FileName}", fileEvent.Data.DataSetName);
-            return;
-        }
-
-        var icaoNormalized = tafEntity.Airport?.Icao.ToUpperInvariant() ?? string.Empty;
-        var existingAirportEntity = await _context.Airports.FirstOrDefaultAsync(x => x.Icao == icaoNormalized, cancellationToken);
-
-        if (existingAirportEntity != null)
-        {
-            _logger.LogDebug("TAF Airport already exists in database.");
-            tafEntity.Airport = existingAirportEntity;
-        }
-        
-        _context.Tafs.Add(tafEntity);
-        await _context.SaveChangesAsync(cancellationToken);
+            FileName = fileEvent.Data.FileName,
+            CreatedOn = !string.IsNullOrEmpty(fileEvent.Time)
+                ? DateTimeOffset.Parse(fileEvent.Time)
+                : DateTimeOffset.MinValue
+        }, cancellationToken);
     }
 }

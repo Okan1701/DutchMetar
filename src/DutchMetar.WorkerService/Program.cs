@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Reflection;
 using DutchMetar.Core.Features.DataWarehouse;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.DailySync;
+using DutchMetar.Core.Features.DataWarehouse.Features.Taf.DailySync;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.HostedServices;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
@@ -61,5 +62,6 @@ using (var scope = app.Services.CreateScope())
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(3600));
 RecurringJob.AddOrUpdate<IDailyMetarSyncFeature>("KnmiDailySync", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.DayInterval(1));;
+RecurringJob.AddOrUpdate<IDailyTafSyncFeature>("KnmiDailyTafSync", feature => feature.SyncKnmiTafFiles(CancellationToken.None), Cron.DayInterval(1));
 
 app.Run();
