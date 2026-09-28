@@ -1,4 +1,4 @@
-name: ${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)
+name: ${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)
 
 trigger:
   - master
@@ -8,18 +8,14 @@ parameters:
     displayName: Version
     type: string
     default: 0.1.0
-  - name: versionSuffix
-    displayName: Version Suffix
+  - name: channel
+    displayName: Release Channel
     type: string
+    values:
+      - dev
+      - rc
+      - rev
     default: dev
-  - name: deployDev
-    displayName: Deploy to Dev
-    type: boolean
-    default: true
-  - name: deployTest
-    displayName: Deploy to Test
-    type: boolean
-    default: true
 
 pool:
   vmImage: ubuntu-latest
@@ -31,8 +27,16 @@ variables:
   workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
   stubsWin64ArtifactName: dutchmetar-stubs-win-x64
-  fullVersion: '${{ parameters.version }}-${{ parameters.versionSuffix }}$(Build.BuildId)'
-  versionSuffixFull: '${{ parameters.versionSuffix }}$(Build.BuildId)'
+  fullVersion: '${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)'
+  versionSuffixFull: '${{ parameters.channel }}$(Build.BuildId)'
+  ${{ if eq(parameters.channel, 'rev') }}:
+    dockerImageTag: '${{ parameters.version }}'
+    dockerImageTags: |
+      ${{ parameters.version }}
+      latest
+  ${{ else }}:
+    dockerImageTag: '${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)'
+    dockerImageTags: '${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)'
 
 stages:
   - stage: build
@@ -209,7 +213,7 @@ stages:
 
   - stage: deploy_dev
     displayName: Deploy Dev
-    condition: eq('${{ parameters.deployDev }}', 'true')
+    condition: succeeded()
     variables:
       - group: DutchMetarDevEnv
     jobs:
@@ -312,7 +316,7 @@ stages:
 
   - stage: deploy_test
     displayName: Deploy Test
-    condition: and(succeeded(), eq('${{ parameters.deployTest }}', 'true'), ne(variables['Build.Reason'], 'PullRequest'))
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     variables:
       - group: DutchMetarTestEnv
     jobs:
@@ -416,7 +420,7 @@ stages:
   - stage: publish_images
     displayName: Publish Docker images
     dependsOn: deploy_test
-    condition: succeeded()
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq('${{ parameters.channel }}', 'rc'), eq('${{ parameters.channel }}', 'rev')))
     jobs:
       - job: publishWebImage
         displayName: Publish dutchmetar image
@@ -431,8 +435,7 @@ stages:
               repository: ultimateantic/dutchmetar
               Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.Web.Server/Dockerfile'
               buildContext: '$(Build.SourcesDirectory)'
-              tags: |
-                ${{ parameters.version }}-${{ parameters.versionSuffix }}
+              tags: $(dockerImageTags)
               arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
 
           - task: Docker@2
@@ -441,8 +444,7 @@ stages:
               command: push
               containerRegistry: Docker Hub
               repository: ultimateantic/dutchmetar
-              tags: |
-                ${{ parameters.version }}-${{ parameters.versionSuffix }}
+              tags: $(dockerImageTags)
 
       - job: publishWorkerImage
         displayName: Publish dutchmetar-worker image
@@ -457,8 +459,7 @@ stages:
               repository: ultimateantic/dutchmetar-worker
               Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.WorkerService/Dockerfile'
               buildContext: '$(Build.SourcesDirectory)'
-              tags: |
-                ${{ parameters.version }}-${{ parameters.versionSuffix }}
+              tags: $(dockerImageTags)
               arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
 
           - task: Docker@2
@@ -467,15 +468,14 @@ stages:
               command: push
               containerRegistry: Docker Hub
               repository: ultimateantic/dutchmetar-worker
-              tags: |
-                ${{ parameters.version }}-${{ parameters.versionSuffix }}
+              tags: $(dockerImageTags)
 
   - stage: deploy_staging
     displayName: Deploy Staging
     variables:
       - group: DutchMetarStagingEnv
     dependsOn: publish_images
-    condition: succeeded()
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq('${{ parameters.channel }}', 'rc'), eq('${{ parameters.channel }}', 'rev')))
     jobs:
       - deployment: database
         environment: Staging
@@ -511,7 +511,7 @@ stages:
                     workingDirectory: $(DockerComposePath)
                     script: |
                       cp -f .env .env.backup
-                      sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=${{ parameters.version }}-${{ parameters.versionSuffix }}/' .env
+                      sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=$(dockerImageTag)/' .env
 
                 - task: Bash@3
                   displayName: Update Containers
