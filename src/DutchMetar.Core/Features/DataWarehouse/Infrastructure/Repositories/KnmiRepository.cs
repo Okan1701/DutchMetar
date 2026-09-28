@@ -16,12 +16,12 @@ public class KnmiRepository : IKnmiRepository
         _logger = logger;
     }
     
-    public async Task<ICollection<KnmiFileMeta>> GetKnmiMetarFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken, Guid correlationId)
+    public async Task<ICollection<KnmiFileMeta>> GetKnmiMetarFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken)
     {
         return await GetKnmiFiles(KnmiDatasetNames.Metar, parameters, cancellationToken);
     }
 
-    public async Task<ICollection<KnmiFileMeta>> GetKnmiTafFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken, Guid correlationId)
+    public async Task<ICollection<KnmiFileMeta>> GetKnmiTafFiles(KnmiFilesParameters parameters, CancellationToken cancellationToken)
     {
         return await GetKnmiFiles(KnmiDatasetNames.Taf, parameters, cancellationToken);
     }

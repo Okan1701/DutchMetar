@@ -3,7 +3,6 @@ using System.Reflection;
 using DutchMetar.Core.Features.DataWarehouse;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.HostedServices;
 using DutchMetar.Core.Infrastructure;
-using DutchMetar.Core.Infrastructure.Accessors;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.WorkerService;
 using Hangfire;
@@ -35,7 +34,6 @@ builder.WebHost.UseSentry(o =>
 builder.Host.UseWindowsService();
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<DutchMetarContext>();
-builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
 builder.Services.AddDataWarehouseServices(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
 builder.Services.AddTransient<ScheduledSyncJobs>();
