@@ -1,4 +1,5 @@
-﻿using DutchMetar.Core.Domain.Entities;
+﻿using DutchMetar.Core.Domain.Constants;
+using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Processing.Exceptions;
 using DutchMetar.Core.Features.DataWarehouse.Features.Metar.Processing.Parsers;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiDataPlatform;
@@ -56,6 +57,9 @@ public class MetarFileHandler : IMetarFileHandler
 
             if (metarEntity?.Airport?.Icao != null)
             {
+                metarEntity.Source = DataSourceConstants.Knmi;
+                metarEntity.SourceFileName = fileMeta.FileName;
+
                 var existingAirport = await _context.Airports.FirstOrDefaultAsync(x => x.Icao == metarEntity.Airport.Icao, cancellationToken);
 
                 if (existingAirport != null)

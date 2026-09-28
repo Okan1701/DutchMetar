@@ -1,3 +1,4 @@
+using DutchMetar.Core.Domain.Constants;
 using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Parsers;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiDataPlatform;
@@ -72,6 +73,9 @@ public class TafFileHandler : ITafFileHandler
             _logger.LogError(ex, "Failed to parse raw TAF message: {FileName}", fileMeta.FileName);
             return;
         }
+
+        tafEntity.Source = DataSourceConstants.Knmi;
+        tafEntity.SourceFileName = fileMeta.FileName;
 
         var icaoNormalized = tafEntity.Airport?.Icao.ToUpperInvariant() ?? string.Empty;
         var existingAirportEntity = await _context.Airports.FirstOrDefaultAsync(
