@@ -3,7 +3,6 @@ using DutchMetar.Core.Features.DataWarehouse.Features.Taf.Processing.Handlers;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Clients.KnmiDataPlatform.Contracts;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Repositories;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.Repositories.Interfaces;
-using DutchMetar.Core.Infrastructure.Accessors;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -17,12 +16,9 @@ public class DailyTafSyncFeatureTests
 
     public DailyTafSyncFeatureTests()
     {
-        var correlation = Substitute.For<ICorrelationIdAccessor>();
-        correlation.CorrelationId.Returns(Guid.NewGuid());
         _feature = new DailyTafSyncFeature(
             Substitute.For<ILogger<DailyTafSyncFeature>>(),
             _repository,
-            correlation,
             _handler);
     }
 
@@ -32,8 +28,7 @@ public class DailyTafSyncFeatureTests
         KnmiFilesParameters? capturedParameters = null;
         _repository.GetKnmiTafFiles(
                 Arg.Do<KnmiFilesParameters>(parameters => capturedParameters = parameters),
-                Arg.Any<CancellationToken>(),
-                Arg.Any<Guid>())
+                Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<ICollection<KnmiFileMeta>>(new List<KnmiFileMeta>
             {
                 new() { FileName = "taf-file", CreatedOn = DateTimeOffset.UtcNow }
