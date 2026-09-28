@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
 using DutchMetar.Core.Features.DataWarehouse;
-using DutchMetar.Core.Features.DataWarehouse.Features.Metar.DailySync;
-using DutchMetar.Core.Features.DataWarehouse.Features.Taf.DailySync;
 using DutchMetar.Core.Features.DataWarehouse.Infrastructure.HostedServices;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Accessors;
@@ -10,6 +8,7 @@ using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.WorkerService;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using Sentry.Hangfire;
 
 const string hangfireConnectionStringKey = "HangfireMssql";
 const string sentryDsnConnectionString = "SentryDsn";
@@ -39,12 +38,14 @@ builder.Services.AddHealthChecks()
 builder.Services.AddScoped<ICorrelationIdAccessor, SimpleCorrelationIdAccessor>();
 builder.Services.AddDataWarehouseServices(builder.Configuration);
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
+builder.Services.AddTransient<ScheduledSyncJobs>();
 builder.Services.AddHangfireServer();
 builder.Services.AddHostedService<NotificationHostedService>();
 builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
+    .UseSentry()
 #if RELEASE
     .UseSqlServerStorage(builder.Configuration.GetConnectionString(hangfireConnectionStringKey)));
 #else
@@ -74,7 +75,7 @@ using (var scope = app.Services.CreateScope())
 // Register recurring jobs
 GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0, OnAttemptsExceeded = AttemptsExceededAction.Fail});
 GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(3600));
-RecurringJob.AddOrUpdate<IDailyMetarSyncFeature>("KnmiDailySync", feature => feature.SyncKnmiMetarFiles(CancellationToken.None),  Cron.DayInterval(1));;
-RecurringJob.AddOrUpdate<IDailyTafSyncFeature>("KnmiDailyTafSync", feature => feature.SyncKnmiTafFiles(CancellationToken.None), Cron.DayInterval(1));
+RecurringJob.AddOrUpdate<ScheduledSyncJobs>("KnmiDailySync", job => job.SyncKnmiMetarFiles(CancellationToken.None), Cron.DayInterval(1));
+RecurringJob.AddOrUpdate<ScheduledSyncJobs>("KnmiDailyTafSync", job => job.SyncKnmiTafFiles(CancellationToken.None), Cron.DayInterval(1));
 
 app.Run();
