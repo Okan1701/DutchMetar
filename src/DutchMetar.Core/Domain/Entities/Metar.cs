@@ -28,6 +28,12 @@ public class Metar : Entity
     
     [MaxLength(EntityConstants.DefaultMaxStringLength)]
     public required string RawMetar { get; set; }
+
+    [MaxLength(EntityConstants.DefaultMaxStringLength)]
+    public string? Source { get; set; }
+
+    [MaxLength(EntityConstants.DefaultMaxStringLength)]
+    public string? SourceFileName { get; set; }
     
     public int? TemperatureCelsius { get; set; }
     

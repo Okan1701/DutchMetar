@@ -13,4 +13,10 @@ public class Taf : Entity
     
     [MaxLength(int.MaxValue)]
     public required string RawTaf { get; set; }
+
+    [MaxLength(EntityConstants.DefaultMaxStringLength)]
+    public string? Source { get; set; }
+
+    [MaxLength(EntityConstants.DefaultMaxStringLength)]
+    public string? SourceFileName { get; set; }
 }

@@ -104,6 +104,8 @@ public class NewTafNotificationFeatureTests : TestsWithContext
 
         var taf = allTafs.First();
         Assert.NotNull(taf.Airport);
+        Assert.Equal("KNMI", taf.Source);
+        Assert.Equal("taf_mock_test_ehgg.txt", taf.SourceFileName);
         var savedFile = await Context.KnmiTafFiles.SingleAsync();
         Assert.Equal("taf_mock_test_ehgg.txt", savedFile.FileName);
         Assert.Equal(EhggTafPayload, savedFile.FileContent);

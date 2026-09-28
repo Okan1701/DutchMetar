@@ -80,6 +80,9 @@ public class MetarFileHandlerTests : TestsWithContext
         Assert.True(savedFile.IsFileProcessed);
         Assert.Equal("raw", savedFile.ExtractedRawMetar);
         Assert.Equal(1, Context.Metars.Count());
-        Assert.Equal(airport.Icao, Context.Metars.Include(m => m.Airport!).Single().Airport!.Icao);
+        var savedMetar = Context.Metars.Include(m => m.Airport!).Single();
+        Assert.Equal(airport.Icao, savedMetar.Airport!.Icao);
+        Assert.Equal("KNMI", savedMetar.Source);
+        Assert.Equal(fileMeta.FileName, savedMetar.SourceFileName);
     }
 }
