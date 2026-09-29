@@ -35,8 +35,8 @@ variables:
       ${{ parameters.version }}
       latest
   ${{ else }}:
-    dockerImageTag: '${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)'
-    dockerImageTags: '${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)'
+    dockerImageTag: '${{ parameters.version }}-${{ parameters.channel }}'
+    dockerImageTags: '${{ parameters.version }}-${{ parameters.channel }}'
 
 stages:
   - stage: build
