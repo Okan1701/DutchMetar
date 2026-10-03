@@ -9,8 +9,10 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Sentry.Hangfire;
 
-const string hangfireConnectionStringKey = "HangfireMssql";
 const string sentryDsnConnectionString = "SentryDsn";
+#if RELEASE
+const string hangfireConnectionStringKey = "HangfireMssql";
+#endif
 
 // Get application version
 var assembly = Assembly.GetExecutingAssembly();
