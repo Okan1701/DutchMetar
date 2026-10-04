@@ -52,7 +52,7 @@
         <br/>
         <div class="historical-data-header">
             <h2>Historical Data</h2>
-            <button (click)="metarHistory()" mat-button><mat-icon>history</mat-icon> View all METARs</button>
+            <button (click)="history()" mat-button><mat-icon>history</mat-icon> View METAR/TAF history</button>
         </div>
         @if (airportDetails().icao) {
             <app-airport-history-data

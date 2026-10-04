@@ -162,4 +162,36 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
         Assert.NotNull(result);
         Assert.Empty(result.MetarReports);
     }
+
+    [Fact]
+    public async Task GetHistory_EndDate_IncludesReportsThroughLastTickOfDay()
+    {
+        var date = new DateTimeOffset(2026, 10, 4, 0, 0, 0, TimeSpan.Zero);
+        Context.Metars.AddRange(
+            new Metar
+            {
+                AirportId = _testAirport.Id,
+                Airport = _testAirport,
+                RawMetar = "END OF DAY",
+                IssuedAt = date.AddDays(1).AddTicks(-1)
+            },
+            new Metar
+            {
+                AirportId = _testAirport.Id,
+                Airport = _testAirport,
+                RawMetar = "NEXT DAY",
+                IssuedAt = date.AddDays(1)
+            });
+        await Context.SaveChangesAsync();
+
+        var result = await _feature.GetHistoryAsync(new GetMetarHistoryRequest
+        {
+            Icao = _testAirport.Icao,
+            Page = 0,
+            EndDate = date
+        });
+
+        Assert.Single(result.MetarReports);
+        Assert.Equal("END OF DAY", result.MetarReports.Single().RawMetar);
+    }
 }

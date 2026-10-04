@@ -1,27 +1,29 @@
-﻿using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Domain.Entities;
 using DutchMetar.Core.Domain.Exceptions;
 using DutchMetar.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DutchMetar.Core.Features.Web.MetarHistory;
+namespace DutchMetar.Core.Features.Web.TafHistory;
 
-public class GetMetarHistoryFeature : IGetMetarHistoryFeature
+public class GetTafHistoryFeature : IGetTafHistoryFeature
 {
     public const int DefaultPageSize = 50;
-    
-    private readonly DutchMetarContext _context;
-    private readonly ILogger<GetMetarHistoryFeature> _logger;
 
-    public GetMetarHistoryFeature(ILogger<GetMetarHistoryFeature> logger, DutchMetarContext context)
+    private readonly DutchMetarContext _context;
+    private readonly ILogger<GetTafHistoryFeature> _logger;
+
+    public GetTafHistoryFeature(ILogger<GetTafHistoryFeature> logger, DutchMetarContext context)
     {
         _logger = logger;
         _context = context;
     }
 
-    public async Task<GetMetarHistoryResult> GetHistoryAsync(GetMetarHistoryRequest request, CancellationToken cancellationToken = default)
+    public async Task<GetTafHistoryResult> GetHistoryAsync(
+        GetTafHistoryRequest request,
+        CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Retrieving METAR history for Airport {ICAO}", request.Icao);
+        _logger.LogInformation("Retrieving TAF history for Airport {ICAO}", request.Icao);
         Validate(request);
 
         var normalizedIcao = request.Icao.ToUpperInvariant();
@@ -34,7 +36,7 @@ public class GetMetarHistoryFeature : IGetMetarHistoryFeature
             throw new EntityNotFoundException(nameof(Airport), normalizedIcao);
         }
 
-        var query = _context.Metars
+        var query = _context.Tafs
             .AsNoTracking()
             .Where(x => x.AirportId == airport.Id);
 
@@ -67,32 +69,33 @@ public class GetMetarHistoryFeature : IGetMetarHistoryFeature
 
         var pageSize = request.PageSize ?? DefaultPageSize;
         var totalData = await query.CountAsync(cancellationToken);
-        var metarData = await query
+        var tafData = await query
             .OrderByDescending(x => x.IssuedAt)
+            .ThenByDescending(x => x.Id)
             .Skip(request.Page * pageSize)
             .Take(pageSize)
             .ToArrayAsync(cancellationToken);
 
-        return new GetMetarHistoryResult
+        return new GetTafHistoryResult
         {
             Icao = airport.Icao,
             AirportName = airport.Name,
             CurrentPage = request.Page,
             MaxPages = totalData == 0 ? 0 : (int)Math.Ceiling(totalData / (double)pageSize),
             TotalItems = totalData,
-            MetarReports =
+            TafReports =
             [
-                .. metarData.Select(x => new GetMetarHistoryResultReports
+                .. tafData.Select(x => new GetTafHistoryResultReport
                 {
-                    MetarId = x.Id,
-                    RawMetar = x.RawMetar,
+                    TafId = x.Id,
+                    RawTaf = x.RawTaf,
                     IssuedAt = x.IssuedAt
                 })
             ]
         };
     }
 
-    private void Validate(GetMetarHistoryRequest request)
+    private static void Validate(GetTafHistoryRequest request)
     {
         if (request.Page < 0)
         {
