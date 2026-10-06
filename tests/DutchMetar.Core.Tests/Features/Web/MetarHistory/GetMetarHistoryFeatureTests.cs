@@ -164,7 +164,7 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
     }
 
     [Fact]
-    public async Task GetHistory_EndDate_IncludesReportsThroughLastTickOfDay()
+    public async Task GetHistory_EndDate_IncludesReportsUpToEndOfSpecifiedSecond()
     {
         var date = new DateTimeOffset(2026, 10, 4, 0, 0, 0, TimeSpan.Zero);
         Context.Metars.AddRange(
@@ -172,15 +172,15 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
             {
                 AirportId = _testAirport.Id,
                 Airport = _testAirport,
-                RawMetar = "END OF DAY",
-                IssuedAt = date.AddDays(1).AddTicks(-1)
+                RawMetar = "END OF END SECOND",
+                IssuedAt = date.AddHours(23).AddMinutes(59).AddSeconds(59)
             },
             new Metar
             {
                 AirportId = _testAirport.Id,
                 Airport = _testAirport,
-                RawMetar = "NEXT DAY",
-                IssuedAt = date.AddDays(1)
+                RawMetar = "AFTER END SECOND",
+                IssuedAt = date.AddDays(1).AddTicks(-1)
             });
         await Context.SaveChangesAsync();
 
@@ -192,6 +192,6 @@ public class GetMetarHistoryFeatureTests : TestsWithContext
         });
 
         Assert.Single(result.MetarReports);
-        Assert.Equal("END OF DAY", result.MetarReports.Single().RawMetar);
+        Assert.Equal("END OF END SECOND", result.MetarReports.Single().RawMetar);
     }
 }

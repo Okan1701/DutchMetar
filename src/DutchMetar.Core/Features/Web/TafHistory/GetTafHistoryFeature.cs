@@ -55,16 +55,15 @@ public class GetTafHistoryFeature : IGetTafHistoryFeature
 
         if (request.EndDate.HasValue)
         {
-            var endDateExclusive = new DateTimeOffset(
+            var endDate = new DateTimeOffset(
                 request.EndDate.Value.Year,
                 request.EndDate.Value.Month,
                 request.EndDate.Value.Day,
-                0,
-                0,
-                0,
+                23,
+                59,
+                59,
                 request.EndDate.Value.Offset);
-            endDateExclusive = endDateExclusive.AddDays(1);
-            query = query.Where(x => x.IssuedAt < endDateExclusive);
+            query = query.Where(x => x.IssuedAt <= endDate);
         }
 
         var pageSize = request.PageSize ?? DefaultPageSize;

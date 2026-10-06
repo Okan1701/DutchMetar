@@ -8,12 +8,12 @@
     <mat-tab-group>
         <mat-tab label="METAR">
             <ng-template matTabContent>
-                <app-metar-history-tab [icao]="airportIcao()" (airportNameChanged)="setAirportName($event)"></app-metar-history-tab>
+                <app-metar-history-tab class="tab-content" [icao]="airportIcao()" (airportNameChanged)="setAirportName($event)"></app-metar-history-tab>
             </ng-template>
         </mat-tab>
         <mat-tab label="TAF">
             <ng-template matTabContent>
-                <app-taf-history-tab [icao]="airportIcao()" (airportNameChanged)="setAirportName($event)"></app-taf-history-tab>
+                <app-taf-history-tab class="tab-content" [icao]="airportIcao()" (airportNameChanged)="setAirportName($event)"></app-taf-history-tab>
             </ng-template>
         </mat-tab>
     </mat-tab-group>

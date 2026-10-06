@@ -80,7 +80,8 @@ public class GetTafHistoryFeatureTests : TestsWithContext
         Context.Tafs.AddRange(
             CreateTaf("BEFORE", date.AddTicks(-1)),
             CreateTaf("START", date),
-            CreateTaf("END", date.AddDays(1).AddTicks(-1)),
+            CreateTaf("END", date.AddHours(23).AddMinutes(59).AddSeconds(59)),
+            CreateTaf("AFTER END", date.AddDays(1).AddTicks(-1)),
             CreateTaf("AFTER", date.AddDays(1)),
             CreateTaf("NULL", null));
         await Context.SaveChangesAsync();
@@ -96,6 +97,7 @@ public class GetTafHistoryFeatureTests : TestsWithContext
         Assert.Equal(2, result.TotalItems);
         Assert.Equal(2, result.TafReports.Count);
         Assert.DoesNotContain(result.TafReports, x => x.RawTaf == "NULL");
+        Assert.DoesNotContain(result.TafReports, x => x.RawTaf == "AFTER END");
     }
 
     [Fact]

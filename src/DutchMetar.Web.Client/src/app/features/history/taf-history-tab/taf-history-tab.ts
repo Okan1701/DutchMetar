@@ -11,16 +11,7 @@ import { Stack } from '../../../shared/components/stack/stack';
 @Component({
     selector: 'app-taf-history-tab',
     imports: [Stack, TafFilters, TafList],
-    template: `
-        <app-stack>
-            <app-taf-filters (filtersChanged)="filtersChanged($event)"></app-taf-filters>
-            <app-taf-list
-                (newPage)="pageChanged($event)"
-                [status]="status()"
-                [tafHistory]="tafHistory()">
-            </app-taf-list>
-        </app-stack>
-    `,
+    templateUrl: './taf-history-tab.html',
 })
 export class TafHistoryTab {
     public icao = input.required<string>();

@@ -11,16 +11,7 @@ import { Stack } from '../../../shared/components/stack/stack';
 @Component({
     selector: 'app-metar-history-tab',
     imports: [Stack, MetarList, MetarFilters],
-    template: `
-        <app-stack>
-            <app-metar-filters (filtersChanged)="filtersChanged($event)"></app-metar-filters>
-            <app-metar-list
-                (newPage)="pageChanged($event)"
-                [status]="status()"
-                [metarHistory]="metarHistory()">
-            </app-metar-list>
-        </app-stack>
-    `,
+    templateUrl: './metar-history-tab.html',
 })
 export class MetarHistoryTab {
     public icao = input.required<string>();
