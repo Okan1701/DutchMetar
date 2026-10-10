@@ -48,4 +48,30 @@ describe('TafService', () => {
         expect(result).toEqual(response);
         expect(status).toBe('success');
     });
+
+    it('cancels superseded TAF history requests', () => {
+        let result: TafHistory | undefined;
+        let status: string | undefined;
+        service.tafHistory$.subscribe((history) => (result = history));
+        service.status$.subscribe((currentStatus) => (status = currentStatus));
+
+        service.getTafHistory({ icao: 'EHAM', page: 0 });
+        const firstRequest = httpTestingController.expectOne('/api/taf/EHAM?page=0');
+
+        service.getTafHistory({ icao: 'EHAM', page: 1 });
+        expect(firstRequest.cancelled).toBe(true);
+        expect(status).toBe('loading');
+
+        const latestResponse: TafHistory = {
+            icao: 'EHAM',
+            currentPage: 1,
+            maxPages: 2,
+            totalItems: 51,
+            tafReports: [{ tafId: 2, rawTaf: 'TAF EHAM latest', issuedAt: null }],
+        };
+        httpTestingController.expectOne('/api/taf/EHAM?page=1').flush(latestResponse);
+
+        expect(result).toEqual(latestResponse);
+        expect(status).toBe('success');
+    });
 });

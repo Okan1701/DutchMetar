@@ -1,5 +1,5 @@
 ﻿import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 import { MetarHistory } from '../models/metar/metar-history';
 import { LoadingStatus } from '../types/status';
 import { MetarHistoryRequest } from '../models/metar/metar-history-request';
@@ -19,21 +19,44 @@ export class MetarService {
         totalItems: 0,
         airportName: '',
     });
-    
-    private readonly metarEndpoint = "/api/metar"
-    
+    private readonly historyRequests = new Subject<MetarHistoryRequest>();
+    private readonly metarEndpoint = '/api/metar';
+
+    constructor() {
+        this.historyRequests
+            .pipe(
+                switchMap((request) => {
+                    this.statusSubject.next('loading');
+                    return this.httpClient.get<MetarHistory>(this.buildUrl(request)).pipe(
+                        tap((data) => {
+                            this.metarHistorySubject.next(data);
+                            this.statusSubject.next('success');
+                        }),
+                        catchError(() => {
+                            this.statusSubject.next('error');
+                            return EMPTY;
+                        }),
+                    );
+                }),
+            )
+            .subscribe();
+    }
+
     public get metarHistory$(): Observable<MetarHistory> {
         return this.metarHistorySubject.asObservable();
     }
-    
+
     public get status$(): Observable<LoadingStatus> {
         return this.statusSubject.asObservable();
     }
-    
+
     public getMetarHistory(request: MetarHistoryRequest): void {
-        this.statusSubject.next('loading')
+        this.historyRequests.next(request);
+    }
+
+    private buildUrl(request: MetarHistoryRequest): string {
         let url = this.metarEndpoint + `/${request.icao}?page=${request.page}`;
-        
+
         if (request.startDate) {
             url += `&startDate=${request.startDate}`;
         }
@@ -41,13 +64,7 @@ export class MetarService {
         if (request.endDate) {
             url += `&endDate=${request.endDate}`;
         }
-        
-        this.httpClient.get<MetarHistory>(url).subscribe({
-            next: (data) => {
-                this.metarHistorySubject.next(data);
-                this.statusSubject.next('success');
-            },
-            error: () => this.statusSubject.next('error'),
-        });
+
+        return url;
     }
 }

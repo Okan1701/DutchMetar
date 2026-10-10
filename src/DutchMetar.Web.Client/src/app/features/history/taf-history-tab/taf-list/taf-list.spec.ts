@@ -15,8 +15,11 @@ describe('TafList', () => {
             icao: 'EHAM',
             currentPage: 0,
             maxPages: 1,
-            totalItems: 1,
-            tafReports: [{ tafId: 1, rawTaf: 'TAF EHAM', issuedAt: null }],
+            totalItems: 2,
+            tafReports: [
+                { tafId: 1, rawTaf: 'TAF EHAM', issuedAt: null },
+                { tafId: 2, rawTaf: 'TAF EHAM issued', issuedAt: '2026-10-06T12:34:00Z' },
+            ],
         });
         fixture.detectChanges();
         await fixture.whenStable();
@@ -25,5 +28,6 @@ describe('TafList', () => {
     it('shows TAF history, including a fallback for a missing issue time', () => {
         expect(fixture.nativeElement.textContent).toContain('TAF EHAM');
         expect(fixture.nativeElement.textContent).toContain('Unknown');
+        expect(fixture.nativeElement.textContent).toContain('2026-10-06 12:34z');
     });
 });

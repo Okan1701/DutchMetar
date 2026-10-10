@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LoadingStatus } from '../types/status';
 import { TafHistory } from '../models/taf/taf-history';
@@ -19,8 +19,29 @@ export class TafService {
         totalItems: 0,
         airportName: '',
     });
+    private readonly historyRequests = new Subject<TafHistoryRequest>();
 
     private readonly tafEndpoint = '/api/taf';
+
+    constructor() {
+        this.historyRequests
+            .pipe(
+                switchMap((request) => {
+                    this.statusSubject.next('loading');
+                    return this.httpClient.get<TafHistory>(this.buildUrl(request)).pipe(
+                        tap((data) => {
+                            this.tafHistorySubject.next(data);
+                            this.statusSubject.next('success');
+                        }),
+                        catchError(() => {
+                            this.statusSubject.next('error');
+                            return EMPTY;
+                        }),
+                    );
+                }),
+            )
+            .subscribe();
+    }
 
     public get tafHistory$(): Observable<TafHistory> {
         return this.tafHistorySubject.asObservable();
@@ -31,7 +52,10 @@ export class TafService {
     }
 
     public getTafHistory(request: TafHistoryRequest): void {
-        this.statusSubject.next('loading');
+        this.historyRequests.next(request);
+    }
+
+    private buildUrl(request: TafHistoryRequest): string {
         let url = this.tafEndpoint + `/${request.icao}?page=${request.page}`;
 
         if (request.startDate) {
@@ -42,12 +66,6 @@ export class TafService {
             url += `&endDate=${request.endDate}`;
         }
 
-        this.httpClient.get<TafHistory>(url).subscribe({
-            next: (data) => {
-                this.tafHistorySubject.next(data);
-                this.statusSubject.next('success');
-            },
-            error: () => this.statusSubject.next('error'),
-        });
+        return url;
     }
 }
