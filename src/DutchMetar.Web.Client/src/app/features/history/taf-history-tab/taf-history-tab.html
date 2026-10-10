@@ -1,0 +1,8 @@
+<app-stack>
+    <app-taf-filters (filtersChanged)="filtersChanged($event)"></app-taf-filters>
+    <app-taf-list
+        (newPage)="pageChanged($event)"
+        [status]="status()"
+        [tafHistory]="tafHistory()">
+    </app-taf-list>
+</app-stack>
