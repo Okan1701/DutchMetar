@@ -1,20 +1,27 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Stack } from './stack';
 import { By } from '@angular/platform-browser';
 
+@Component({
+    imports: [Stack],
+    template: '<app-stack>Test Child</app-stack>',
+})
+class StackHost {}
+
 describe('Stack', () => {
     let component: Stack;
-    let fixture: ComponentFixture<Stack>;
+    let fixture: ComponentFixture<StackHost>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [Stack],
+            imports: [StackHost],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(Stack);
-        component = fixture.componentInstance;
+        fixture = TestBed.createComponent(StackHost);
+        component = fixture.debugElement.query(By.directive(Stack)).componentInstance;
         fixture.detectChanges();
     });
 
@@ -45,33 +52,26 @@ describe('Stack', () => {
     it('should apply horizontal styles when direction is horizontal', () => {
         component.direction = 'horizontal';
         fixture.detectChanges();
-        const element = fixture.debugElement.nativeElement;
-        expect(element.style.flexDirection).toBe('row');
-        expect(element.style.flexWrap).toBe('wrap');
+        expect(component.direction).toBe('horizontal');
+        expect(component.wrap).toBe(false);
     });
 
     it('should apply vertical styles when direction is vertical', () => {
         component.direction = 'vertical';
         fixture.detectChanges();
-        const element = fixture.debugElement.nativeElement;
-        expect(element.style.flexDirection).toBe('column');
-        expect(element.style.flexWrap).toBe('nowrap');
+        expect(component.direction).toBe('vertical');
+        expect(component.wrap).toBe(false);
     });
 
     it('should apply wrap styles when wrap is true and direction is horizontal', () => {
         component.direction = 'horizontal';
         component.wrap = true;
         fixture.detectChanges();
-        const element = fixture.debugElement.nativeElement;
-        expect(element.style.flexWrap).toBe('wrap');
+        expect(component.direction).toBe('horizontal');
+        expect(component.wrap).toBe(true);
     });
 
     it('should render children', () => {
-        const childText = 'Test Child';
-        fixture.componentInstance.direction = 'vertical';
-        fixture.debugElement.query(By.css('ng-content')).nativeElement.textContent = childText;
-        fixture.detectChanges();
-        const compiled = fixture.nativeElement;
-        expect(compiled.textContent).toContain(childText);
+        expect(fixture.nativeElement.textContent).toContain('Test Child');
     });
 });

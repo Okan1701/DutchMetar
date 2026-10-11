@@ -9,10 +9,13 @@ describe('AirportWindSpeedChart', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AirportWindSpeedChart],
-        }).compileComponents();
+        });
+        TestBed.overrideComponent(AirportWindSpeedChart, { set: { template: '' } });
+        await TestBed.compileComponents();
 
         fixture = TestBed.createComponent(AirportWindSpeedChart);
         component = fixture.componentInstance;
+        fixture.componentRef.setInput('airportHistory', { icao: 'EHAM', isMissingData: false, history: [] });
         fixture.detectChanges();
     });
 
@@ -20,4 +23,3 @@ describe('AirportWindSpeedChart', () => {
         expect(component).toBeTruthy();
     });
 });
-

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { Home } from "./features/home/home";
 import { Airport } from './features/airport/airport';
-import { Metar } from './features/metar/metar';
+import { History } from './features/history/history';
 
 export const routes: Routes = [
     {
@@ -13,7 +13,7 @@ export const routes: Routes = [
         component: Airport,
     },
     {
-        path: 'metar/:icao',
-        component: Metar,
+        path: 'history/:icao',
+        component: History,
     },
 ];

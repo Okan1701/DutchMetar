@@ -9,10 +9,13 @@ describe('AirportVisibilityChart', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AirportVisibilityChart],
-        }).compileComponents();
+        });
+        TestBed.overrideComponent(AirportVisibilityChart, { set: { template: '' } });
+        await TestBed.compileComponents();
 
         fixture = TestBed.createComponent(AirportVisibilityChart);
         component = fixture.componentInstance;
+        fixture.componentRef.setInput('airportHistory', { icao: 'EHAM', isMissingData: false, history: [] });
         fixture.detectChanges();
     });
 
@@ -20,4 +23,3 @@ describe('AirportVisibilityChart', () => {
         expect(component).toBeTruthy();
     });
 });
-

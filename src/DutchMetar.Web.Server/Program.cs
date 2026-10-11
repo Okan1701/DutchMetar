@@ -2,6 +2,7 @@ using DutchMetar.Core.Features.Web.AirportDetails;
 using DutchMetar.Core.Features.Web.AirportPerDayHistory;
 using DutchMetar.Core.Features.Web.AirportSummary;
 using DutchMetar.Core.Features.Web.MetarHistory;
+using DutchMetar.Core.Features.Web.TafHistory;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.Web.Server.Constants;
@@ -32,6 +33,7 @@ builder.Services.AddAirportSummaryFeature();
 builder.Services.AddAirportDetailsFeature();
 builder.Services.AddAirportDayHistoryFeature();
 builder.Services.AddMetarHistoryFeature();
+builder.Services.AddTafHistoryFeature();
 
 var app = builder.Build();
 

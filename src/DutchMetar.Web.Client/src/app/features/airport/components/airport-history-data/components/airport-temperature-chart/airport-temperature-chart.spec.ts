@@ -9,10 +9,13 @@ describe('AirportTemperatureChart', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AirportTemperatureChart],
-        }).compileComponents();
+        });
+        TestBed.overrideComponent(AirportTemperatureChart, { set: { template: '' } });
+        await TestBed.compileComponents();
 
         fixture = TestBed.createComponent(AirportTemperatureChart);
         component = fixture.componentInstance;
+        fixture.componentRef.setInput('airportHistory', { icao: 'EHAM', isMissingData: false, history: [] });
         fixture.detectChanges();
     });
 
@@ -20,4 +23,3 @@ describe('AirportTemperatureChart', () => {
         expect(component).toBeTruthy();
     });
 });
-

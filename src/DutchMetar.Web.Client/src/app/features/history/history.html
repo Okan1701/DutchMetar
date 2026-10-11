@@ -1,0 +1,20 @@
+<app-stack>
+    <button (click)="returnToAirport()" mat-button><mat-icon>arrow_back</mat-icon> Back to airport overview</button>
+    <div>
+        <h1>{{ airportIcao() }}</h1>
+        <div>{{ airportName() }}</div>
+    </div>
+
+    <mat-tab-group>
+        <mat-tab label="METAR">
+            <ng-template matTabContent>
+                <app-metar-history-tab class="tab-content" [icao]="airportIcao()" (airportNameChanged)="setAirportName($event)"></app-metar-history-tab>
+            </ng-template>
+        </mat-tab>
+        <mat-tab label="TAF">
+            <ng-template matTabContent>
+                <app-taf-history-tab class="tab-content" [icao]="airportIcao()" (airportNameChanged)="setAirportName($event)"></app-taf-history-tab>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
+</app-stack>

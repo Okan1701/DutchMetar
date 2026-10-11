@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MeteoCondition } from '../../../../../../shared/types/meteo-condition';
 import { DecodedObservations } from './decoded-observations';
 
 describe('DecodedObservations', () => {
@@ -13,6 +13,12 @@ describe('DecodedObservations', () => {
 
         fixture = TestBed.createComponent(DecodedObservations);
         component = fixture.componentInstance;
+        fixture.componentRef.setInput('airportDetails', {
+            icao: 'EHAM',
+            meteoCondition: MeteoCondition.None,
+            lastUpdated: new Date(),
+        });
+        fixture.detectChanges();
         await fixture.whenStable();
     });
 

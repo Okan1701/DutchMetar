@@ -1,0 +1,8 @@
+<app-stack>
+    <app-metar-filters (filtersChanged)="filtersChanged($event)"></app-metar-filters>
+    <app-metar-list
+        (newPage)="pageChanged($event)"
+        [status]="status()"
+        [metarHistory]="metarHistory()">
+    </app-metar-list>
+</app-stack>

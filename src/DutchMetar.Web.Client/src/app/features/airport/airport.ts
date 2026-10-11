@@ -83,8 +83,8 @@ export class Airport {
         this.refreshClicked$.next(true);
     }
     
-    protected metarHistory(): void {
-        this.router.navigate(['metar', this.airportIcao]);
+    protected history(): void {
+        this.router.navigate(['history', this.airportIcao]);
     }
 
     private onAirportDetailsRetrieved(airportDetails: AirportDetails): void {
