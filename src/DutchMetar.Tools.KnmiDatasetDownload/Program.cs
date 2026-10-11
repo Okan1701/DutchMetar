@@ -10,8 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-const int fileDownloadIntervalMs = 1000;
-
 if (args.Length > 1)
 {
     Console.Error.WriteLine($"Specify only one dataset: {KnmiDatasetNames.Metar} or {KnmiDatasetNames.Taf}.");
@@ -92,7 +90,6 @@ try
 
         logger.LogInformation("Processed {Dataset} file {FileNumber} of {FileCount}: {FileName}",
             dataset, index + 1, files.Count, file.FileName);
-        await Task.Delay(fileDownloadIntervalMs, cancellationTokenSource.Token);
     }
 
     logger.LogInformation("Finished downloading the KNMI {Dataset} dataset.", dataset);
