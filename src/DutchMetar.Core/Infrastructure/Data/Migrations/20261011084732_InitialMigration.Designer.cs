@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DutchMetar.Core.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DutchMetarContext))]
-    [Migration("20260928102251_AddMetarTafSource")]
-    partial class AddMetarTafSource
+    [Migration("20261011084732_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
