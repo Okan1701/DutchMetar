@@ -1,12 +1,12 @@
 ﻿import { MeteoCondition } from '../../types/meteo-condition';
+import { AirportCurrentMetar } from './airport-current-metar';
+import { AirportForecast } from './airport-forecast';
 
 export type AirportSummary = {
     icao: string;
-    lastIssuedMetarDate: string;
-    isAuto: boolean;
-    isCavok: boolean;
-    isCorrected: boolean;
+    name?: string;
+    lastUpdated: Date;
+    latestWeather?: AirportCurrentMetar;
+    latestForecast?: AirportForecast;
     meteoCondition: MeteoCondition
-    windDirection?: number;
-    windSpeedKnots?: number;
 };

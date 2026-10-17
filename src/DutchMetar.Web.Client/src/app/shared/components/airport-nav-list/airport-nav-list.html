@@ -21,14 +21,18 @@
                     </div>
                     <div>
                         <div class="title">{{ airport.icao }}</div>
-                        <div>Issued at {{ airport.lastIssuedMetarDate | date:'HH:mm':'UTC' }}Z</div>
-                        <div>Wind {{ airport.windDirection }}° at {{ airport.windSpeedKnots }}kt</div>
+                        @if (airport.latestWeather?.issuedAt) {
+                            <div>Issued at {{ airport.latestWeather?.issuedAt | date:'HH:mm':'UTC' }}Z</div>
+                        }
+                        @if (airport.latestWeather?.windDirection && airport.latestWeather?.windSpeedKnots) {
+                            <div>Wind {{ airport.latestWeather?.windDirection }}° at {{ airport.latestWeather?.windSpeedKnots }}kt</div>
+                        }
                     </div>
                     <div class="badges">
-                        @if (airport.isCorrected) {
+                        @if (airport.latestWeather?.isCorrected) {
                             <app-badge type="primary">COR</app-badge>
                         }
-                        @if (airport.isCavok) {
+                        @if (airport.latestWeather?.isCavok) {
                             <app-badge type="success">CAVOK</app-badge>
                         } @else if (isVmc(airport)) {
                             <app-badge type="success">VMC</app-badge>
@@ -37,7 +41,7 @@
                         } @else if (isMarginal(airport)) {
                             <app-badge type="warning">MARGINAL</app-badge>
                         }
-                        @if (airport.isAuto) {
+                        @if (airport.latestWeather?.isAuto) {
                             <app-badge type="neutral">AUTO</app-badge>
                         }
                     </div>
