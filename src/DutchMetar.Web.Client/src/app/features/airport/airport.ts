@@ -4,8 +4,8 @@ import { AirportDetails } from '../../shared/models/airport/airport-details';
 import { LoadingStatus } from '../../shared/types/status';
 import { AirportService } from '../../shared/services/airport-service';
 import { StatusDisplay } from '../../shared/components/status-display/status-display';
-import { BehaviorSubject, combineLatestWith, delay, switchMap, tap } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, combineLatestWith, delay, Observable, switchMap, tap } from 'rxjs';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Stack } from '../../shared/components/stack/stack';
 import { MatChipsModule } from '@angular/material/chips';
 import { AirportLatestWeather } from './components/airport-latest-weather/airport-latest-weather';
@@ -17,6 +17,8 @@ import { MeteoCondition } from '../../shared/types/meteo-condition';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { AirportSummary } from '../../shared/models/airport/airport-summary';
+import NewCommandModule from '@angular/cli/src/commands/new/cli';
 
 @Component({
     selector: 'app-airport',
@@ -38,17 +40,21 @@ import { MatTooltip } from '@angular/material/tooltip';
 })
 export class Airport {
     protected airportIcao: string | null = null;
-    protected airportDetails = signal<AirportDetails>({
-        icao: '',
-        meteoCondition: MeteoCondition.None,
+    protected airportDetails = signal<AirportSummary>({
+        name: "",
+        icao: "",
         lastUpdated: new Date(),
-    });
-    protected loadingStatus = signal<LoadingStatus>('loading');
+        meteoCondition: MeteoCondition.None
+    })
     protected readonly MeteoCondition = MeteoCondition;
 
     // The actual value of this is never used, it is merely to signal a refresh of the data
     // A normal subject would not be suitable because we need it to emit at least once
     private readonly refreshClicked$ = new BehaviorSubject<boolean>(false);
+    
+    protected get airport$(): Observable<AirportSummary> {
+        return this.airportService.currentAirport$;
+    }
 
     constructor(
         route: ActivatedRoute,
@@ -56,27 +62,15 @@ export class Airport {
         private readonly airportService: AirportService,
     ) {
         route.params
-            .pipe(
-                combineLatestWith(this.refreshClicked$),
-                tap(([params]) => {
-                    this.airportIcao = params['icao'];
-                    if (this.airportIcao != null) {
-                        this.loadingStatus.set('loading');
-                    }
-                }),
-                switchMap(([params]) => {
-                    const icao = params['icao'];
-                    if (icao != null) {
-                        return this.airportService.getAirportDetails(icao).pipe(delay(200));
-                    }
-                    return [];
-                }),
-                takeUntilDestroyed(),
-            )
-            .subscribe({
-                next: (data) => this.onAirportDetailsRetrieved(data),
-                error: (error) => this.onRetrievalError(error),
-            });
+            .pipe(takeUntilDestroyed())
+            .subscribe((params) => {
+            let airportIcao = params['icao'];
+            this.airportService.setCurrentAirport(airportIcao)
+        });
+        
+        airportService.currentAirport$
+            .pipe(takeUntilDestroyed())
+            .subscribe(x => this.airportDetails.set(x))
     }
 
     protected refresh(): void {
@@ -85,15 +79,5 @@ export class Airport {
     
     protected history(): void {
         this.router.navigate(['history', this.airportIcao]);
-    }
-
-    private onAirportDetailsRetrieved(airportDetails: AirportDetails): void {
-        this.loadingStatus.set('success');
-        this.airportDetails.set(airportDetails);
-    }
-
-    private onRetrievalError(error: HttpErrorResponse): void {
-        this.loadingStatus.set('error');
-        console.error('Failed to retrieve details for ' + this.airportIcao, error);
     }
 }
