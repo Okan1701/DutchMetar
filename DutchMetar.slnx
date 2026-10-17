@@ -17,6 +17,7 @@
   </Folder>
   <Folder Name="/src/tools/">
     <Project Path="src/DutchMetar.Tools.KnmiDatasetDownload/DutchMetar.Tools.KnmiDatasetDownload.csproj" />
+    <Project Path="src/DutchMetar.Tools.TafCorrection/DutchMetar.Tools.TafCorrection.csproj" />
     <Project Path="src/DutchMetar.Tools.StubData/DutchMetar.Tools.StubData.csproj" />
     <Project Path="src/DutchMetar.Tools.StubService/DutchMetar.Tools.StubService.csproj" />
   </Folder>
