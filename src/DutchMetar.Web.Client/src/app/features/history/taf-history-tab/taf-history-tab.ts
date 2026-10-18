@@ -15,7 +15,8 @@ import { Stack } from '../../../shared/components/stack/stack';
 })
 export class TafHistoryTab {
     public icao = input.required<string>();
-    public airportNameChanged = output<string | undefined>();
+    public refreshToken = input<number>(0);
+    public statusChanged = output<LoadingStatus>();
 
     protected readonly status = signal<LoadingStatus>('loading');
     protected readonly tafHistory = signal<TafHistory>({
@@ -34,6 +35,7 @@ export class TafHistoryTab {
     constructor(private readonly tafService: TafService) {
         effect(() => this.activeIcao.set(this.icao()));
         effect(() => {
+            this.refreshToken();
             this.tafService.getTafHistory({
                 icao: this.icao(),
                 page: this.page(),
@@ -47,9 +49,11 @@ export class TafHistoryTab {
                 return;
             }
             this.tafHistory.set(history);
-            this.airportNameChanged.emit(history.airportName);
         });
-        this.tafService.status$.pipe(takeUntilDestroyed()).subscribe((status) => this.status.set(status));
+        this.tafService.status$.pipe(takeUntilDestroyed()).subscribe((status) => {
+            this.status.set(status);
+            this.statusChanged.emit(status);
+        });
     }
 
     protected filtersChanged(filters: HistoryFilterModel): void {
