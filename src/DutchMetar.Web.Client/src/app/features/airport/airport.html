@@ -1,63 +1,63 @@
-<app-status-display [status]="loadingStatus()">
-    <app-stack>
-        
-        <div class="page-header-flex">
-            <div class="page-header">
-                <div class="page-header-subtitle">
-                    @if (airportDetails().lastUpdated) {
-                        <span>Source: KNMI (Last update at {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}z)</span>
-                    } @else {
-                      <span>Source: KNMI</span>  
-                    }
-                </div>
-                <div>
-                    <h1 class="page-header-title">{{ airportDetails().icao }}</h1>
-                    @if (airportDetails().name) {
-                        <div>{{ airportDetails().name }}</div>
-                    }
-                </div>
-                <div class="page-header-title">
-                    @if (airportDetails().latestWeather?.isCorrected) {
-                        <app-badge type="primary">COR</app-badge>
-                    }
-                    @if (airportDetails().latestWeather?.isCavok) {
-                        <app-badge type="success">CAVOK</app-badge>
-                    } @else if (airportDetails().meteoCondition === MeteoCondition.Vmc) {
-                        <app-badge type="success">VMC</app-badge>
-                    } @else if (airportDetails().meteoCondition === MeteoCondition.Imc) {
-                        <app-badge type="danger">IMC</app-badge>
-                    } @else if (airportDetails().meteoCondition === MeteoCondition.Marginal) {
-                        <app-badge type="warning">MARGINAL</app-badge>
-                    }
-                    @if (airportDetails().latestWeather?.isAuto) {
-                        <app-badge type="neutral">AUTO</app-badge>
-                    }
-                </div>
+<app-stack>
+    <div class="page-header-flex">
+        <div class="page-header">
+            <div class="page-header-subtitle">
+                @if (airportDetails().lastUpdated) {
+                    <span>Source: KNMI (Last update at {{ airportDetails()?.lastUpdated | date: 'HH:mm' : 'UTC' }}z)</span>
+                } @else {
+                    <span>Source: KNMI</span>
+                }
             </div>
             <div>
-                <button (click)="refresh()" mat-icon-button>
-                    <mat-icon matTooltip="Refresh page">refresh</mat-icon>
-                </button>
+                <h1 class="page-header-title">{{ airportDetails().icao }}</h1>
+                @if (airportDetails().name) {
+                    <div>{{ airportDetails().name }}</div>
+                }
+            </div>
+            <div class="page-header-title">
+                @if (airportDetails().latestWeather?.isCorrected) {
+                    <app-badge type="primary">COR</app-badge>
+                }
+                @if (airportDetails().latestWeather?.isCavok) {
+                    <app-badge type="success">CAVOK</app-badge>
+                } @else if (airportDetails().meteoCondition === MeteoCondition.Vmc) {
+                    <app-badge type="success">VMC</app-badge>
+                } @else if (airportDetails().meteoCondition === MeteoCondition.Imc) {
+                    <app-badge type="danger">IMC</app-badge>
+                } @else if (airportDetails().meteoCondition === MeteoCondition.Marginal) {
+                    <app-badge type="warning">MARGINAL</app-badge>
+                }
+                @if (airportDetails().latestWeather?.isAuto) {
+                    <app-badge type="neutral">AUTO</app-badge>
+                }
             </div>
         </div>
-        <br />  
-        <h2>Latest Weather</h2>
-        @if (airportDetails().latestWeather) {
-            <app-airport-latest-weather
-                    [airportDetails]="airportDetails()"
-            ></app-airport-latest-weather>
-        } @else {
-            <p>No information about current weather available.</p>
-        }
-        <br/>
-        <div class="historical-data-header">
-            <h2>Historical Data</h2>
-            <button (click)="history()" mat-button><mat-icon>history</mat-icon> View METAR/TAF history</button>
+        <div>
+            <button [disabled]="isRefreshDisabled$ | async" (click)="refresh()" mat-icon-button>
+                <mat-icon matTooltip="Refresh page">refresh</mat-icon>
+            </button>
         </div>
-        @if (airportDetails().icao) {
+    </div>
+    <br />
+    <h2>Latest Weather</h2>
+    @if (airportDetails().latestWeather) {
+        <app-airport-latest-weather
+                [airportDetails]="airportDetails()"
+        ></app-airport-latest-weather>
+    } @else {
+        <p>No information about current weather available.</p>
+    }
+    <br/>
+    <div class="historical-data-header">
+        <h2>Historical Data</h2>
+        <button (click)="history()" mat-button><mat-icon>history</mat-icon> View METAR/TAF history</button>
+    </div>
+    @if (airportIcao()) {
+        <app-status-display notFoundText="No historial data found for the chosen date." loadingText="Retrieving history" [status]="historyLoadingStatus()">
             <app-airport-history-data
-                [airportIcao]="airportDetails().icao"
+                    [airportHistory]="airportHistory()"
+                    (dateSelected)="onHistoryDateSelected($event)"
             ></app-airport-history-data>
-        }
-    </app-stack>
-</app-status-display>
+        </app-status-display>
+    }
+</app-stack>

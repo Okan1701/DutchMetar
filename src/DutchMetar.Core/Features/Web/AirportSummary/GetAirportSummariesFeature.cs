@@ -1,4 +1,5 @@
-﻿using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
+﻿using DutchMetar.Core.Domain.Entities;
+using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 using DutchMetar.Core.Features.Web.AirportSummary.Models;
 using DutchMetar.Core.Helpers;
 using DutchMetar.Core.Infrastructure.Data;
@@ -23,19 +24,62 @@ public class GetAirportSummariesFeature : IGetAirportSummariesFeature
                 .OrderByDescending(m => m.IssuedAt)
                 .Take(1)
             )
+            .ThenInclude(x => x.Ceilings)
+            .Include(x => x.TafReports
+                .OrderByDescending(t => t.IssuedAt)
+                .Take(1)
+            )
             .Where(x => x.MetarReports.Any())
             .ToArrayAsync();
 
-        return allAirports.Select(x => new SingleAirportSummary
+        return allAirports.Select(airport =>
         {
-            Icao = x.Icao,
-            IsAuto = x.MetarReports.First().IsAuto,
-            IsCavok = x.MetarReports.First().IsCavok,
-            IsCorrected = x.MetarReports.First().IsCorrected,
-            MeteoCondition = MeteoConditionsHelper.GetMeteoCondition(x.MetarReports.First()),
-            LastIssuedMetarDate = x.MetarReports.First().IssuedAt,
-            WindDirection = x.MetarReports.First().WindDirection,
-            WindSpeedKnots = x.MetarReports.First().WindSpeedKnots
+            var latestMetar = airport.MetarReports.First();
+            var summary = new SingleAirportSummary
+            {
+                Icao = airport.Icao,
+                Name = airport.Name,
+                MeteoCondition = MeteoConditionsHelper.GetMeteoCondition(latestMetar),
+                LatestWeather = MapMetarEntityToModel(latestMetar)
+            };
+
+            var latestTaf = airport.TafReports.FirstOrDefault();
+            if (latestTaf != null)
+            {
+                summary.LatestForecast = MapTafEntityToModel(latestTaf);
+            }
+
+            summary.LastUpdated = latestMetar.LastUpdatedAt;
+            return summary;
         }).ToArray();
     }
+
+    private AirportCurrentMetar MapMetarEntityToModel(Metar metar) => new()
+    {
+        IssuedAt = metar.IssuedAt,
+        IsAuto = metar.IsAuto,
+        IsCavok = metar.IsCavok,
+        IsCorrected = metar.IsCorrected,
+        WindDirection = metar.WindDirection,
+        WindSpeedKnots = metar.WindSpeedKnots,
+        WindSpeedGustsKnots = metar.WindSpeedGustsKnots,
+        NoCloudsDetected = metar.NoCloudsDetected,
+        VisibilityMeters = metar.VisibilityMeters,
+        RawMetar = metar.RawMetar,
+        TemperatureCelsius = metar.TemperatureCelsius,
+        DewpointCelsius = metar.DewpointCelsius,
+        AltimeterValue = metar.AltimeterValue,
+        Remarks = metar.Remarks,
+        Ceilings = metar.Ceilings?.Select(ceiling => new AirportMetarCeiling
+        {
+            Type = ceiling.Type,
+            Height = ceiling.Height
+        }).ToArray() ?? []
+    };
+
+    private AirportForecast MapTafEntityToModel(Taf taf) => new()
+    {
+        RawTaf = taf.RawTaf,
+        IssuedAt = taf.IssuedAt ?? DateTimeOffset.MinValue,
+    };
 }

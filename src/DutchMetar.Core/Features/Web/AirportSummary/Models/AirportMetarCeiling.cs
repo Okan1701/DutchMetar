@@ -1,6 +1,6 @@
 ﻿using DutchMetar.Core.Domain.Enums;
 
-namespace DutchMetar.Core.Features.Web.AirportDetails.Models;
+namespace DutchMetar.Core.Features.Web.AirportSummary.Models;
 
 public class AirportMetarCeiling
 {

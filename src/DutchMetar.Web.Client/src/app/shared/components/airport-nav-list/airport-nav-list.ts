@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AirportService } from '../../services/airport-service';
 import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
-import { LoadingStatus } from '../../types/status';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AirportSummary } from '../../models/airport/airport-summary';
@@ -42,12 +41,6 @@ export class AirportNavList {
     private searchValue$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
     constructor(private readonly airportService: AirportService) {}
-
-    protected get isLoading$(): Observable<boolean> {
-        return this.airportService.loadingStatus$.pipe(
-            map((status: LoadingStatus) => status === 'loading'),
-        );
-    }
 
     protected get airports$(): Observable<AirportSummary[]> {
         return this.airportService.airports$.pipe(

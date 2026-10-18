@@ -1,9 +1,9 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LoadingStatus } from '../../types/status';
 import { AirportService } from '../../services/airport-service';
-import { Observable } from 'rxjs';
+import { Observable, takeWhile } from 'rxjs';
 
 @Component({
     selector: 'app-bootstrap',
@@ -15,7 +15,7 @@ export class Bootstrap implements OnInit {
     private readonly airportService = inject(AirportService);
 
     protected get loadingStatus$(): Observable<LoadingStatus> {
-        return this.airportService.loadingStatus$;
+        return this.airportService.loadingStatus$.pipe(takeWhile((x) => x !== 'success', true));
     }
 
     public ngOnInit(): void {
