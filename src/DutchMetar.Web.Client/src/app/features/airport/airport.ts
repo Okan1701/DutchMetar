@@ -142,6 +142,6 @@ export class Airport {
     }
 
     protected history(): void {
-        this.router.navigate(['history', this.airportIcao]);
+        this.router.navigate(['history', this.airportIcao()]);
     }
 }
