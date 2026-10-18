@@ -58,10 +58,6 @@ export class AirportService {
         this.currentAirportIcaoSubject.next(icao);
     }
 
-    public getAirportDetails(icao: string): Observable<AirportDetails> {
-        return this.httpClient.get<AirportDetails>(`${this.airportsEndpoint}/${icao}`);
-    }
-
     public getAirportHistory(icao: string, targetDate: Date): Observable<AirportDayHistory> {
         return this.httpClient.get<AirportDayHistory>(
             `${this.airportsEndpoint}/${icao}/history/?targetDate=${targetDate.toISOString().split('T')[0]}`,

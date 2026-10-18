@@ -1,4 +1,4 @@
-﻿namespace DutchMetar.Core.Features.Web.AirportDetails.Models;
+﻿namespace DutchMetar.Core.Features.Web.AirportSummary.Models;
 
 public class AirportForecast
 {

@@ -39,33 +39,30 @@ import NewCommandModule from '@angular/cli/src/commands/new/cli';
     styleUrl: './airport.scss',
 })
 export class Airport {
-    protected airportIcao: string | null = null;
     protected airportDetails = signal<AirportSummary>({
         name: "",
         icao: "",
         lastUpdated: new Date(),
         meteoCondition: MeteoCondition.None
     })
+    protected readonly airportIcao = signal<string>("");
     protected readonly MeteoCondition = MeteoCondition;
 
     // The actual value of this is never used, it is merely to signal a refresh of the data
     // A normal subject would not be suitable because we need it to emit at least once
     private readonly refreshClicked$ = new BehaviorSubject<boolean>(false);
-    
-    protected get airport$(): Observable<AirportSummary> {
-        return this.airportService.currentAirport$;
-    }
 
     constructor(
         route: ActivatedRoute,
         private readonly router: Router,
         private readonly airportService: AirportService,
     ) {
-        route.params
-            .pipe(takeUntilDestroyed())
-            .subscribe((params) => {
-            let airportIcao = params['icao'];
-            this.airportService.setCurrentAirport(airportIcao)
+        route.params.pipe(takeUntilDestroyed()).subscribe((params) => {
+            let icao = params['icao'];
+            if (icao) {
+                this.airportIcao.set(icao);
+                this.airportService.setCurrentAirport(icao);
+            }
         });
         
         airportService.currentAirport$

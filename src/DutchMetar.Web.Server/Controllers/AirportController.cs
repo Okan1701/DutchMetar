@@ -1,5 +1,4 @@
-﻿using DutchMetar.Core.Features.Web.AirportDetails.Interfaces;
-using DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
+﻿using DutchMetar.Core.Features.Web.AirportPerDayHistory.Interfaces;
 using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 using DutchMetar.Web.Server.Constants;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +10,11 @@ namespace DutchMetar.Web.Server.Controllers;
 public class AirportController : ControllerBase
 {
     private readonly IGetAirportSummariesFeature _getAirportSummariesFeature;
-    private readonly IGetAirportDetailsFeature _getAirportDetailsFeature;
     private readonly IGetAirportDayHistoryFeature _getAirportDayHistoryFeature;
 
-    public AirportController(IGetAirportSummariesFeature getAirportSummariesFeature, IGetAirportDetailsFeature getAirportDetailsFeature, IGetAirportDayHistoryFeature getAirportDayHistoryFeature)
+    public AirportController(IGetAirportSummariesFeature getAirportSummariesFeature, IGetAirportDayHistoryFeature getAirportDayHistoryFeature)
     {
         _getAirportSummariesFeature = getAirportSummariesFeature;
-        _getAirportDetailsFeature = getAirportDetailsFeature;
         _getAirportDayHistoryFeature = getAirportDayHistoryFeature;
     }
     
@@ -26,13 +23,6 @@ public class AirportController : ControllerBase
     {
         var airports = await _getAirportSummariesFeature.GetAirportSummariesAsync();
         return Ok(airports);
-    }
-    
-    [HttpGet("{airportIcao}")]
-    public async Task<IActionResult> GetAirportDetails([FromRoute] string airportIcao, CancellationToken cancellationToken)
-    {
-        var airportDetails = await _getAirportDetailsFeature.GetAirportDetailsAsync(airportIcao, cancellationToken);
-        return Ok(airportDetails);
     }
 
     [HttpGet("{airportIcao}/history")]

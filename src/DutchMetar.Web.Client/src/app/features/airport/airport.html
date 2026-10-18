@@ -52,9 +52,9 @@
         <h2>Historical Data</h2>
         <button (click)="history()" mat-button><mat-icon>history</mat-icon> View METAR/TAF history</button>
     </div>
-    @if (airportDetails().icao) {
+    @if (airportIcao()) {
         <app-airport-history-data
-                [airportIcao]="airportDetails().icao"
+                [airportIcao]="airportIcao()"
         ></app-airport-history-data>
     }
 </app-stack>

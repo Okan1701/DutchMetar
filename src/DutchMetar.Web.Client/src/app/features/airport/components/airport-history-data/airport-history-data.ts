@@ -1,10 +1,4 @@
-import {
-    Component,
-    input,
-    OnDestroy,
-    OnInit,
-    signal,
-} from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { AirportDayHistory } from '../../../../shared/models/airport/airport-day-history';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,8 +9,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AirportService } from '../../../../shared/services/airport-service';
-import { BehaviorSubject, debounceTime, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, combineLatestWith, debounceTime, switchMap, tap } from 'rxjs';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoadingStatus } from '../../../../shared/types/status';
 import { StatusDisplay } from '../../../../shared/components/status-display/status-display';
@@ -47,7 +41,7 @@ import { AirportWindSpeedChart } from './components/airport-wind-speed-chart/air
     templateUrl: './airport-history-data.html',
     styleUrl: './airport-history-data.scss',
 })
-export class AirportHistoryData implements OnInit, OnDestroy {
+export class AirportHistoryData {
     public airportIcao = input.required<string>();
 
     protected loadingStatus = signal<LoadingStatus>('loading');
@@ -62,7 +56,6 @@ export class AirportHistoryData implements OnInit, OnDestroy {
     });
 
     private dateSelected$ = new BehaviorSubject<Date>(new Date());
-    private unsubscribe$ = new Subject<void>();
 
     constructor(private readonly airportService: AirportService) {
         this.form.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(() => {
@@ -76,25 +69,20 @@ export class AirportHistoryData implements OnInit, OnDestroy {
                 this.dateSelected$.next(new Date(utcDateEpoch));
             }
         });
-    }
 
-    public ngOnInit() {
+        // Main event logic for keeping data up-to-date
+        let airportIcaoObservable = toObservable(this.airportIcao);
         this.dateSelected$
             .pipe(
-                takeUntil(this.unsubscribe$),
+                combineLatestWith(airportIcaoObservable),
+                takeUntilDestroyed(),
                 tap(() => this.loadingStatus.set('loading')),
-                switchMap((date: Date) =>
-                    this.airportService.getAirportHistory(this.airportIcao(), date),
-                ),
+                switchMap(([date, icao]) => this.airportService.getAirportHistory(icao, date)),
             )
             .subscribe({
                 next: (data) => this.onHistoryRetrieved(data),
                 error: (err) => this.onRetrievalError(err),
             });
-    }
-
-    public ngOnDestroy() {
-        this.unsubscribe$.next();
     }
 
     private onHistoryRetrieved(history: AirportDayHistory): void {

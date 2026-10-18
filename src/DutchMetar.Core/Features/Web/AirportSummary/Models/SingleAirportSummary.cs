@@ -1,5 +1,4 @@
 ﻿using DutchMetar.Core.Helpers.Enums;
-using DutchMetar.Core.Features.Web.AirportDetails.Models;
 
 namespace DutchMetar.Core.Features.Web.AirportSummary.Models;
 

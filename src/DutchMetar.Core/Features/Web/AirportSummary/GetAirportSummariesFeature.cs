@@ -1,5 +1,4 @@
 ﻿using DutchMetar.Core.Domain.Entities;
-using DutchMetar.Core.Features.Web.AirportDetails.Models;
 using DutchMetar.Core.Features.Web.AirportSummary.Interfaces;
 using DutchMetar.Core.Features.Web.AirportSummary.Models;
 using DutchMetar.Core.Helpers;
