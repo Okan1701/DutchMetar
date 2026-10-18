@@ -1,9 +1,8 @@
 ﻿import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatestWith, map, Observable, startWith, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
 import { AirportSummary } from '../models/airport/airport-summary';
 import { LoadingStatus } from '../types/status';
 import { HttpClient } from '@angular/common/http';
-import { AirportDetails } from '../models/airport/airport-details';
 import { AirportDayHistory } from '../models/airport/airport-day-history';
 import { MeteoCondition } from '../types/meteo-condition';
 
@@ -12,7 +11,7 @@ import { MeteoCondition } from '../types/meteo-condition';
 })
 export class AirportService {
     private readonly airportsSubject = new BehaviorSubject<AirportSummary[]>([]);
-    private readonly currentAirportIcaoSubject = new BehaviorSubject<string>("");
+    private readonly currentAirportIcaoSubject = new BehaviorSubject<string>('');
     private readonly loadingStatusSubject = new BehaviorSubject<LoadingStatus>('loading');
     private readonly airportsEndpoint = '/api/airport';
 
@@ -21,27 +20,31 @@ export class AirportService {
     public get airports$(): Observable<AirportSummary[]> {
         return this.airportsSubject.asObservable();
     }
-    
+
     public get currentAirport$(): Observable<AirportSummary> {
         return this.airportsSubject.pipe(
             combineLatestWith(this.currentAirportIcaoSubject),
             map(([airports, icao]) => {
-                let airport = airports.find(x => x.icao.toUpperCase() === icao.toUpperCase());
-                return airport ?? {
-                    icao: "",
-                    name: "",
-                    meteoCondition: MeteoCondition.None,
-                    lastUpdated: new Date()
-                } as AirportSummary
+                let airport = airports.find((x) => x.icao.toUpperCase() === icao.toUpperCase());
+                return (
+                    airport ??
+                    ({
+                        icao: '',
+                        name: '',
+                        meteoCondition: MeteoCondition.None,
+                        lastUpdated: new Date(),
+                    } as AirportSummary)
+                );
             }),
         );
-    }   
+    }
 
     public get loadingStatus$(): Observable<LoadingStatus> {
         return this.loadingStatusSubject.asObservable();
     }
 
     public initializeAirports(): void {
+        this.loadingStatusSubject.next('loading');
         this.httpClient.get<AirportSummary[]>(this.airportsEndpoint).subscribe({
             next: (airports) => {
                 this.airportsSubject.next(airports);
@@ -53,7 +56,7 @@ export class AirportService {
             },
         });
     }
-    
+
     public setCurrentAirport(icao: string) {
         this.currentAirportIcaoSubject.next(icao);
     }

@@ -33,7 +33,7 @@
             </div>
         </div>
         <div>
-            <button (click)="refresh()" mat-icon-button>
+            <button [disabled]="isRefreshDisabled$ | async" (click)="refresh()" mat-icon-button>
                 <mat-icon matTooltip="Refresh page">refresh</mat-icon>
             </button>
         </div>
