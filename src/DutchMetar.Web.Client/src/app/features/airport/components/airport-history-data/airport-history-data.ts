@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { AirportDayHistory } from '../../../../shared/models/airport/airport-day-history';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,12 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AirportService } from '../../../../shared/services/airport-service';
-import { BehaviorSubject, combineLatestWith, debounceTime, switchMap, tap } from 'rxjs';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { HttpErrorResponse } from '@angular/common/http';
-import { LoadingStatus } from '../../../../shared/types/status';
-import { StatusDisplay } from '../../../../shared/components/status-display/status-display';
+import { debounceTime } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Stack } from '../../../../shared/components/stack/stack';
 import { AirportTemperatureChart } from './components/airport-temperature-chart/airport-temperature-chart';
 import { AirportDewpointChart } from './components/airport-dewpoint-chart/airport-dewpoint-chart';
@@ -31,7 +27,6 @@ import { AirportWindSpeedChart } from './components/airport-wind-speed-chart/air
         MatButtonModule,
         MatTooltipModule,
         ReactiveFormsModule,
-        StatusDisplay,
         AirportTemperatureChart,
         AirportDewpointChart,
         AirportVisibilityChart,
@@ -42,23 +37,15 @@ import { AirportWindSpeedChart } from './components/airport-wind-speed-chart/air
     styleUrl: './airport-history-data.scss',
 })
 export class AirportHistoryData {
-    public airportIcao = input.required<string>();
-
-    protected loadingStatus = signal<LoadingStatus>('loading');
-    protected airportHistory = signal<AirportDayHistory>({
-        history: [],
-        icao: '',
-        isMissingData: false,
-    });
+    public readonly airportHistory = input.required<AirportDayHistory | undefined>();
+    public readonly dateSelected = output<Date>();
     protected readonly maxDate = new Date();
     protected form = new FormGroup({
         selectedDate: new FormControl<Date>(new Date(), Validators.required),
     });
 
-    private dateSelected$ = new BehaviorSubject<Date>(new Date());
-
-    constructor(private readonly airportService: AirportService) {
-        this.form.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(() => {
+    constructor() {
+        this.form.valueChanges.pipe(debounceTime(200), takeUntilDestroyed()).subscribe(() => {
             if (this.form.valid && this.form.controls.selectedDate.value != null) {
                 // Convert to UTC format without shifting the day due to timezone change
                 let utcDateEpoch = Date.UTC(
@@ -66,36 +53,8 @@ export class AirportHistoryData {
                     this.form.controls.selectedDate.value.getMonth(),
                     this.form.controls.selectedDate.value.getDate(),
                 );
-                this.dateSelected$.next(new Date(utcDateEpoch));
+                this.dateSelected.emit(new Date(utcDateEpoch));
             }
         });
-
-        // Main event logic for keeping data up-to-date
-        let airportIcaoObservable = toObservable(this.airportIcao);
-        this.dateSelected$
-            .pipe(
-                combineLatestWith(airportIcaoObservable),
-                takeUntilDestroyed(),
-                tap(() => this.loadingStatus.set('loading')),
-                switchMap(([date, icao]) => this.airportService.getAirportHistory(icao, date)),
-            )
-            .subscribe({
-                next: (data) => this.onHistoryRetrieved(data),
-                error: (err) => this.onRetrievalError(err),
-            });
-    }
-
-    private onHistoryRetrieved(history: AirportDayHistory): void {
-        if (history.history && history.history.length > 0) {
-            this.loadingStatus.set('success');
-            this.airportHistory.set(history);
-        } else {
-            this.loadingStatus.set('notfound');
-        }
-    }
-
-    private onRetrievalError(error: HttpErrorResponse): void {
-        this.loadingStatus.set('error');
-        console.error('Failed to retrieve history', error);
     }
 }

@@ -13,18 +13,16 @@
         </mat-card-content>
     </mat-card>
 
-    <app-status-display notFoundText="No historial data found for the chosen date." loadingText="Retrieving history" [status]="loadingStatus()">
-        @if (airportHistory() !== undefined) {
-            <app-stack>
-                <div class="chart-section">
-                    <app-airport-temperature-chart [airportHistory]="airportHistory()"></app-airport-temperature-chart>
-                    <app-airport-dewpoint-chart [airportHistory]="airportHistory()"></app-airport-dewpoint-chart>
-                </div>
-                <div class="chart-section">
-                    <app-airport-visibility-chart [airportHistory]="airportHistory()"></app-airport-visibility-chart>
-                    <app-airport-wind-speed-chart [airportHistory]="airportHistory()"></app-airport-wind-speed-chart>
-                </div>
-            </app-stack>
-        }
-    </app-status-display>
+    @if (airportHistory(); as history) {
+        <app-stack>
+            <div class="chart-section">
+                <app-airport-temperature-chart [airportHistory]="history"></app-airport-temperature-chart>
+                <app-airport-dewpoint-chart [airportHistory]="history"></app-airport-dewpoint-chart>
+            </div>
+            <div class="chart-section">
+                <app-airport-visibility-chart [airportHistory]="history"></app-airport-visibility-chart>
+                <app-airport-wind-speed-chart [airportHistory]="history"></app-airport-wind-speed-chart>
+            </div>
+        </app-stack>
+    }
 </app-stack>

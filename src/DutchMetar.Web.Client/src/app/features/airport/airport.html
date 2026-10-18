@@ -53,8 +53,11 @@
         <button (click)="history()" mat-button><mat-icon>history</mat-icon> View METAR/TAF history</button>
     </div>
     @if (airportIcao()) {
-        <app-airport-history-data
-                [airportIcao]="airportIcao()"
-        ></app-airport-history-data>
+        <app-status-display notFoundText="No historial data found for the chosen date." loadingText="Retrieving history" [status]="historyLoadingStatus()">
+            <app-airport-history-data
+                    [airportHistory]="airportHistory()"
+                    (dateSelected)="onHistoryDateSelected($event)"
+            ></app-airport-history-data>
+        </app-status-display>
     }
 </app-stack>
