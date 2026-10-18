@@ -3,7 +3,7 @@
         @if (showMobileSideNav()) {
             <button (click)="toggleSideNav()" mat-icon-button><mat-icon>menu</mat-icon></button>
         }
-        <span class="pointer" routerLink="/">DutchMetar</span>
+        <span>DutchMetar</span>
     </mat-toolbar>
     <mat-sidenav-container class="sidenav" autosize>
         <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()">
