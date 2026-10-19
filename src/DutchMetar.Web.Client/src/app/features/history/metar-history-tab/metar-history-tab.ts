@@ -15,7 +15,8 @@ import { Stack } from '../../../shared/components/stack/stack';
 })
 export class MetarHistoryTab {
     public icao = input.required<string>();
-    public airportNameChanged = output<string | undefined>();
+    public refreshToken = input<number>(0);
+    public statusChanged = output<LoadingStatus>();
 
     protected readonly status = signal<LoadingStatus>('loading');
     protected readonly metarHistory = signal<MetarHistory>({
@@ -34,6 +35,7 @@ export class MetarHistoryTab {
     constructor(private readonly metarService: MetarService) {
         effect(() => this.activeIcao.set(this.icao()));
         effect(() => {
+            this.refreshToken();
             this.metarService.getMetarHistory({
                 icao: this.icao(),
                 page: this.page(),
@@ -47,9 +49,11 @@ export class MetarHistoryTab {
                 return;
             }
             this.metarHistory.set(history);
-            this.airportNameChanged.emit(history.airportName);
         });
-        this.metarService.status$.pipe(takeUntilDestroyed()).subscribe((status) => this.status.set(status));
+        this.metarService.status$.pipe(takeUntilDestroyed()).subscribe((status) => {
+            this.status.set(status);
+            this.statusChanged.emit(status);
+        });
     }
 
     protected filtersChanged(filters: HistoryFilterModel): void {

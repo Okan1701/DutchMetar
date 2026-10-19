@@ -1,0 +1,39 @@
+<div class="page-header-flex">
+    <div class="page-header">
+        <div class="page-header-subtitle">
+            @if (airport().lastUpdated) {
+                <span>Source: KNMI (Last update at {{ airport().lastUpdated | date: 'HH:mm' : 'UTC' }}z)</span>
+            } @else {
+                <span>Source: KNMI</span>
+            }
+        </div>
+        <div>
+            <h1 class="page-header-title">{{ airport().icao }}</h1>
+            @if (airport().name) {
+                <div>{{ airport().name }}</div>
+            }
+        </div>
+        <div class="page-header-title">
+            @if (airport().latestWeather?.isCorrected) {
+                <app-badge type="primary">COR</app-badge>
+            }
+            @if (airport().latestWeather?.isCavok) {
+                <app-badge type="success">CAVOK</app-badge>
+            } @else if (airport().meteoCondition === MeteoCondition.Vmc) {
+                <app-badge type="success">VMC</app-badge>
+            } @else if (airport().meteoCondition === MeteoCondition.Imc) {
+                <app-badge type="danger">IMC</app-badge>
+            } @else if (airport().meteoCondition === MeteoCondition.Marginal) {
+                <app-badge type="warning">MARGINAL</app-badge>
+            }
+            @if (airport().latestWeather?.isAuto) {
+                <app-badge type="neutral">AUTO</app-badge>
+            }
+        </div>
+    </div>
+    <div>
+        <button [disabled]="refreshDisabled()" (click)="refreshClicked.emit()" mat-icon-button>
+            <mat-icon matTooltip="Refresh page">refresh</mat-icon>
+        </button>
+    </div>
+</div>

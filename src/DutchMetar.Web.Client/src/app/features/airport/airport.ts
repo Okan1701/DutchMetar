@@ -19,19 +19,18 @@ import {
 import { Stack } from '../../shared/components/stack/stack';
 import { MatChipsModule } from '@angular/material/chips';
 import { AirportLatestWeather } from './components/airport-latest-weather/airport-latest-weather';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AirportHistoryData } from './components/airport-history-data/airport-history-data';
-import { Badge } from '../../shared/components/badge/badge';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MeteoCondition } from '../../shared/types/meteo-condition';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { AirportSummary } from '../../shared/models/airport/airport-summary';
 import { AirportDayHistory } from '../../shared/models/airport/airport-day-history';
 import { LoadingStatus } from '../../shared/types/status';
 import { HttpErrorResponse } from '@angular/common/http';
 import { StatusDisplay } from '../../shared/components/status-display/status-display';
+import { AirportPageHeader } from '../../shared/components/airport-page-header/airport-page-header';
 
 @Component({
     selector: 'app-airport',
@@ -39,15 +38,12 @@ import { StatusDisplay } from '../../shared/components/status-display/status-dis
         Stack,
         MatChipsModule,
         AirportLatestWeather,
-        DatePipe,
         AirportHistoryData,
-        Badge,
-        MatIconButton,
         MatIcon,
-        MatTooltip,
         MatButton,
         AsyncPipe,
         StatusDisplay,
+        AirportPageHeader,
     ],
     templateUrl: './airport.html',
     styleUrl: './airport.scss',
@@ -60,7 +56,6 @@ export class Airport {
         meteoCondition: MeteoCondition.None,
     });
     protected readonly airportIcao = signal<string>('');
-    protected readonly MeteoCondition = MeteoCondition;
     protected readonly airportHistory = signal<AirportDayHistory | undefined>(undefined);
     protected readonly historyLoadingStatus = signal<LoadingStatus>('loading');
     private readonly historyDate$: BehaviorSubject<Date>;
