@@ -1,0 +1,9 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/dotnet",
+  "features": {},
+  "postCreateCommand": "dotnet dev-certs https",
+  "containerEnv": {
+    "DOTNET_NOLOGO": true,
+    "DOTNET_CLI_TELEMETRY_OPTOUT": true
+  }
+}
