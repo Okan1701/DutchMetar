@@ -1,7 +1,15 @@
 {
   "image": "mcr.microsoft.com/devcontainers/dotnet",
   "features": {},
-  "postCreateCommand": "dotnet dev-certs https",
+  "onCreateCommand": "dotnet dev-certs https && nvm install --lts",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "Angular.ng-template"
+      ]
+    }
+  },
   "containerEnv": {
     "DOTNET_NOLOGO": true,
     "DOTNET_CLI_TELEMETRY_OPTOUT": true
