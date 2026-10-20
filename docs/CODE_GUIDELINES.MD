@@ -17,7 +17,8 @@ Any exceptions will be mentioned here in this document.
 #### General rules
 - Write concise and readable code. Prefer not to overengineer or use complicated patterns.
 - Max 1 class/enum/innterface/etc per file. 
-- Use classic constructor style instead of newer primary constructors.
+- Prefer using modern language syntax unless otherwise states.
+    - **Exception:** Use classic constructor style instead of newer primary constructors.
 
 #### Unit tests
 - Use naming convention `TargetMethod_Conditions_ExpectedResult` for your unit tests. Example: `GetEntity_ValidId_ReturnsCorrectEntity()`.
@@ -50,4 +51,29 @@ Any exceptions will be mentioned here in this document.
 
 #### Design principles
 
-... TODO
+The application code is divided into a features layer and shared layer, just like the backend Core project.
+Shared folder should contain all code that should be available to all features.
+
+Folder in the features layer represent features. Each feature focusses on a specific use case and contains everything that is required for that specific feature.
+Features should not reference other features except it's own child features.
+Deleting a feature should - in theory - not break other parts of the application.
+
+#### Guidelines
+
+- Write concise and readable code. Prefer not to overengineer or use complicated patterns.
+- Typescript classes should be arranged in the following order:
+    - **By symbol type:** fields -> getters -> constructor -> functions
+    - **Then by access modifier:** public -> protected -> private
+- Do **NOT** use underscore `_` prefix for fields inside classes.
+- Prefer using the newest language features where possible.
+- Prefer using union string types over enums (where possible) as those are slightly easier to use in HTML templates.
+- Components should always seperate into `*.ts/*.html/*.scss` files. 
+    - HTML templates should not be embedded inside the *.ts file.
+- Prefer using `inject()` over traditional constructor DI.
+- Prefer using Signals over Rxjs for simple events inside components.
+    - Rxjs and Signals can be mixed using the built-in interop features.
+- Services are responsible for retrieving data from the backend API and making it available to components.
+    - Services (and respective models) should always be placed in the shared folder.
+    - A service should also (if possible) act as single source of truth by exposing Observables that emit the data.
+        - Services should also (optionally) expose loading status observables so that consumer components can easily keep track of loading state.
+    - Rxjs should be used for events within services.
