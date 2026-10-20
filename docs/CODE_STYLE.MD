@@ -17,13 +17,14 @@ Any exceptions will be mentioned here in this document.
 #### General rules
 - Write concise and readable code. Prefer not to overengineer or use complicated patterns.
 - Max 1 class/enum/innterface/etc per file. 
+- Use classic constructor style instead of newer primary constructors.
 
-### Unit tests
+#### Unit tests
 - Use naming convention `TargetMethod_Conditions_ExpectedResult` for your unit tests. Example: `GetEntity_ValidId_ReturnsCorrectEntity()`.
 - Use the well known **arrange, act, assert** pattern. 
     - It is not neccesary to comment each section.
 
-### Design principles
+#### Design principles
 The majority of the application logic is contained in the ``DutchMetar.Core` project.
 The project folder structure is based on **Vertical Slices** where the application is divided into features.
 Each feature focusses on a specific use case and contains everything that is required for that specific feature.
@@ -40,5 +41,13 @@ Each feature focusses on a specific use case and contains everything that is req
 
 
 ### Angular / Typescript
+
+For this project, the goal is to stick to the official Angular guidelines as much as possible.
+Any exceptions will be mentioned here in this document.
+
+#### Online resources
+- [Angular style guide](https://angular.dev/style-guide)
+
+#### Design principles
 
 ... TODO
