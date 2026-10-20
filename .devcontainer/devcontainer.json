@@ -1,7 +1,7 @@
 {
   "image": "mcr.microsoft.com/devcontainers/dotnet",
   "features": {},
-  "onCreateCommand": "dotnet dev-certs https && nvm install --lts",
+  "postCreateCommand": "dotnet dev-certs https && nvm install --lts",
   "customizations": {
     "vscode": {
       "extensions": [
