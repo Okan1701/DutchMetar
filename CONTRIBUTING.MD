@@ -49,6 +49,10 @@ dotnet test # Runs all unit tests
 # Build specific projects
 dotnet build ./src/DutchMetar.Web.Server # Web app
 dotnet build ./src/DutchMetar.WorkerService # Worker service
+
+# Optional; if you wish to publish this to a server
+dotnet publish -c Release ./src/DutchMetar.Web.Server
+dotnet publish -c Release ./src/DutchMetar.WorkerService
 ```
 To run a specific project, navigate to the folder containing the .csproj file such as `.\src\DutchMetar.WorkerService` and run `dotnet run` in the temrinal.
 
@@ -79,3 +83,8 @@ Additionally, you can use docker compose to run the entire project. See file `do
 When starting all containers at once, some may fail and auto-restart due to SQL server not getting ready on time.
 
 Docker must be installed on your machine to for this.
+
+### GitHub Codespaces
+
+You can also use GitHub Codespaces to spin up a cloud dev environment.
+THis project contains a `.devcontainer.json` config that creates a devcontainer with dotnet and node preinstalled.
