@@ -1,7 +1,7 @@
 # Contribute to this repository
 
 Thanks for checking out my repository! 
-This document explains the way of working and how to setup your development environment!.
+This document explains the way of working and how to set up your development environment.
 
 Please read this before submitting PRs!
 
@@ -12,7 +12,7 @@ Please read this before submitting PRs!
 The `master` branch is the primary branch of this repository. This contains the latest code that has been released.<br>
 In the future, there may also be a `develop` branch which contains the code for the next feature release.
 
-The well known [Git flow](https://gitkraken.com/learn/git/git-flow) strategy has been adopted for this repository. Few naming conventions:
+The well-known [Git flow](https://gitkraken.com/learn/git/git-flow) strategy has been adopted for this repository. A few naming conventions:
 - **Branch names should be kebab-case!**
 - Feature branches -> `feature/<short-descriptive-name>`.
 - Bugfix branches -> `bugfix/<short-descriptive-name>`.
@@ -20,8 +20,8 @@ The well known [Git flow](https://gitkraken.com/learn/git/git-flow) strategy has
 ### Pull Requests
 
 Since `master` and `develop` are protected branches, new changes must be merged via Pull Requests.<br>
-When submitting a new PR, will provide a description of the changes to make it easier to review.
-Once a PRs is approved, either the reviewer or author can merge it.
+When submitting a new PR, you will provide a description of the changes to make it easier to review.
+Once a PR is approved, either the reviewer or author can merge it.
 
 **Primary merging method should be Squashing!**
 
@@ -54,7 +54,7 @@ dotnet build ./src/DutchMetar.WorkerService # Worker service
 dotnet publish -c Release ./src/DutchMetar.Web.Server
 dotnet publish -c Release ./src/DutchMetar.WorkerService
 ```
-To run a specific project, navigate to the folder containing the .csproj file such as `.\src\DutchMetar.WorkerService` and run `dotnet run` in the temrinal.
+To run a specific project, navigate to the folder containing the .csproj file such as `.\src\DutchMetar.WorkerService` and run `dotnet run` in the terminal.
 
 To build the frontend client project, navigate to DutchMetar.Web.Client and run:
 ```powershell
@@ -65,7 +65,7 @@ Running dotnet project `DutchMetar.Web.Server` will auto-start the frontend proj
 
 ### Manage database with EF migrations
 
-Entityframework Core is used to create and update the SQL database using migrations.
+Entity Framework Core is used to create and update the SQL database using migrations.
 The following example operations can be performed to help you get started
 
 ```powershell
@@ -76,15 +76,15 @@ dotnet ef database update --startup-project ..\DutchMetar.WorkerService
 # Create a new migration
 dotnet ef migrations add <MIGRATION_NAME> --startup-project ..\DutchMetar.WorkerService -o .\Infrastructure\Data\Migrations
 ```
-Ensure working directory of the terminal is set to the folder containing `DutchMetar.Core.csproj`!
+Ensure the working directory of the terminal is set to the folder containing `DutchMetar.Core.csproj`!
 
 ### Using Docker Compose
 Additionally, you can use docker compose to run the entire project. See file `docker-compose.yml`.
 When starting all containers at once, some may fail and auto-restart due to SQL server not getting ready on time.
 
-Docker must be installed on your machine to for this.
+Docker must be installed on your machine for this.
 
 ### GitHub Codespaces
 
 You can also use GitHub Codespaces to spin up a cloud dev environment.
-THis project contains a `.devcontainer.json` config that creates a devcontainer with dotnet and node preinstalled.
+This project contains a `.devcontainer.json` config that creates a devcontainer with dotnet and node preinstalled.

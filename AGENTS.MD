@@ -2,28 +2,28 @@
 
 ## Role of AI
 
-AI tools should be used to assist the developer with writing code. It should not be proposing changes on it's own without developer guidance and review.
+AI tools should be used to assist the developer with writing code. They should not be proposing changes on their own without developer guidance and review.
 
 Usage should be limited to specific tasks (such as writing unit tests or implementing a method). It should avoid building entire applications on its own.
 
 ## Project overview
 
-Dotnet solution for storing and displaying/visualizing METAR and TAF data for airports based in Netherlands.
+.NET solution for storing and displaying/visualizing METAR and TAF data for airports based in the Netherlands.
 
-Data is retrieved from KNMI Data Platform via MQTT or REST api. Retrieved data is in the form of .txt or .xml files which are further processed into relevant entities.
+Data is retrieved from KNMI Data Platform via MQTT or REST API. Retrieved data is in the form of .txt or .xml files which are further processed into relevant entities.
 
 ## Structure
 
 - `DutchMetar.Web.Server` -> backend web project
-- `DutchMetar.Web.CLient` -> Angular frontend project
-- `DutchMetar.Web.WorkerService` -> Dotnet worker service for populating database
+- `DutchMetar.Web.Client` -> Angular frontend project
+- `DutchMetar.WorkerService` -> .NET worker service for populating database
 - `DutchMetar.Core` -> Contains core business logic + infrastructure concerns
 
-Majority of backend logic is found in the core project. Other projects serve as "presentation / entrypoint" for the Core project.
+The majority of backend logic is found in the core project. Other projects serve as "presentation / entrypoint" for the Core project.
 
 ## Repository documentation
 
-THis repo contains the following docs which are useful for understanding the repo and coding style:
+This repo contains the following docs which are useful for understanding the repo and coding style:
 - README.MD
 - CONTRIBUTING.MD
 - docs/CODE_GUIDELINES.MD
@@ -31,13 +31,13 @@ THis repo contains the following docs which are useful for understanding the rep
 ## General Rules
 
 DO:
-- After every change, pferform the following checks:
+- After every change, perform the following checks:
     - Analyze if the actual changes comply with the user request
     - Analyze if it meets the repository code guidelines
     - Build the solution and/or run tests. Only build/test what is needed!
 - Only add code comments to explain specific edge cases
 - When modifying existing code, check if there are relevant unit tests to update.
-- If able, analyze existing similiar code to get a feel for implementation guidelines and style.
+- If able, analyze existing similar code to get a feel for implementation guidelines and style.
 
 **DO NOT:**
 - Auto commit, push or create PRs.

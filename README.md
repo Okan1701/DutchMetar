@@ -1,5 +1,5 @@
 > [!WARNING]  
-> This project is still a work in progress! Features are still missing. Any published binary or docker image is not meant to be used yet.
+> This project is still a work in progress! Features are still missing. Any published binary or Docker image is not meant to be used yet.
 # About
 
 [![Azure Pipelines](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
@@ -20,14 +20,14 @@ The main purpose for this project is purely for hobbyist reasons.
 The project uses the following tech stacks:
 * (ASP) .NET 10
 * Hangfire for .NET
-* Entityframework Core
+* Entity Framework Core
 * Microsoft SQL Server
 * Angular 
 * Docker
 
-# How to self host
+# How to self-host
 
-The project has it's own official website. But it is also possible to self host on your own servers.
+The project has its own official website. But it is also possible to self-host on your own servers.
 
 ### Docker
 
@@ -38,11 +38,11 @@ The following docker images on Docker Hub are available to run:
 You must provide an SQL Server instance to both containers.
 See the [docker compose file](docker-compose.yml) for an example on how to run this.
 
-You must also provide your own access token to the KNMI Data Platform. To obtain this, checkout their developer hub.
+You must also provide your own access token to the KNMI Data Platform. To obtain this, check out their developer hub.
 
 ### Windows / Linux native
 
-Currently only docker images are published to the internet. If you wish to run this natively on a Linux or Windows Server, you must manually build the project.
+Currently only Docker images are published to the internet. If you wish to run this natively on a Linux or Windows Server, you must manually build the project.
 
 # How to Contribute
 
