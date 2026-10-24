@@ -1,49 +1,35 @@
 import { Component } from '@angular/core';
 import { AirportService } from '../../services/airport-service';
-import { BehaviorSubject, combineLatestWith, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatestWith, map, Observable, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AirportSummary } from '../../models/airport/airport-summary';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { MatRippleModule } from '@angular/material/core';
-import { MatChipsModule } from '@angular/material/chips';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Badge } from '../badge/badge';
-import { MeteoCondition } from '../../types/meteo-condition';
+import { AirportNavListItem } from './airport-nav-list-item/airport-nav-list-item';
 
 @Component({
     selector: 'app-airport-nav-list',
     imports: [
         CommonModule,
-        MatProgressSpinnerModule,
         MatListModule,
         MatIconModule,
-        MatRippleModule,
-        MatChipsModule,
-        RouterLink,
-        RouterLinkActive,
         MatFormField,
         MatInput,
-        FormsModule,
         MatLabel,
-        ReactiveFormsModule,
-        MatIconModule,
         MatSuffix,
-        Badge,
+        AirportNavListItem,
     ],
     templateUrl: './airport-nav-list.html',
     styleUrl: './airport-nav-list.scss',
 })
 export class AirportNavList {
-    private searchValue$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    protected readonly airportItems$: Observable<{ airport: AirportSummary; active: boolean }[]>;
 
-    constructor(private readonly airportService: AirportService) {}
+    private readonly searchValue$ = new BehaviorSubject<string>('');
 
-    protected get airports$(): Observable<AirportSummary[]> {
-        return this.airportService.airports$.pipe(
+    constructor(airportService: AirportService) {
+        this.airportItems$ = airportService.airports$.pipe(
             combineLatestWith(this.searchValue$),
             map(([airports, searchValue]) =>
                 searchValue
@@ -52,22 +38,19 @@ export class AirportNavList {
                       )
                     : airports,
             ),
+            combineLatestWith(airportService.currentAirport$.pipe(startWith(null))),
+            map(([airports, currentAirport]) =>
+                airports.map((airport) => ({
+                    airport,
+                    active: currentAirport?.icao
+                        ? airport.icao.toUpperCase() === currentAirport.icao.toUpperCase()
+                        : false,
+                })),
+            ),
         );
     }
 
     protected onSearchValueChange(event: Event): void {
         this.searchValue$.next((event.target as HTMLInputElement).value);
-    }
-
-    protected isVmc(airport: AirportSummary) {
-        return airport.meteoCondition === MeteoCondition.Vmc;
-    }
-
-    protected isImc(airport: AirportSummary) {
-        return airport.meteoCondition === MeteoCondition.Imc;
-    }
-
-    protected isMarginal(airport: AirportSummary) {
-        return airport.meteoCondition === MeteoCondition.Marginal;
     }
 }

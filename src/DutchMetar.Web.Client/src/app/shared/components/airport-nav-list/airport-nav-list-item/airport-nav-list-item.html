@@ -1,0 +1,47 @@
+@let item = airport();
+<div
+    class="airport-item"
+    matRipple
+    [class.active]="active()"
+    [routerLink]="['/airport/', item.icao]"
+>
+    <div class="airport-item-content">
+        <div>
+            <mat-icon
+                [class.vmc]="item.meteoCondition === MeteoCondition.Vmc"
+                [class.imc]="item.meteoCondition === MeteoCondition.Imc"
+                [class.marginal]="item.meteoCondition === MeteoCondition.Marginal"
+                >circle</mat-icon
+            >
+        </div>
+        <div>
+            <div class="title">{{ item.icao }}</div>
+            @if (item.latestWeather?.issuedAt) {
+                <div>Issued at {{ item.latestWeather.issuedAt | date: 'HH:mm' : 'UTC' }}Z</div>
+            }
+            @if (item.latestWeather?.windDirection && item.latestWeather.windSpeedKnots) {
+                <div>
+                    Wind {{ item.latestWeather.windDirection }}° at
+                    {{ item.latestWeather.windSpeedKnots }}kt
+                </div>
+            }
+        </div>
+        <div class="badges">
+            @if (item.latestWeather?.isCorrected) {
+                <app-badge type="primary">COR</app-badge>
+            }
+            @if (item.latestWeather?.isCavok) {
+                <app-badge type="success">CAVOK</app-badge>
+            } @else if (item.meteoCondition === MeteoCondition.Vmc) {
+                <app-badge type="success">VMC</app-badge>
+            } @else if (item.meteoCondition === MeteoCondition.Imc) {
+                <app-badge type="danger">IMC</app-badge>
+            } @else if (item.meteoCondition === MeteoCondition.Marginal) {
+                <app-badge type="warning">MARGINAL</app-badge>
+            }
+            @if (item.latestWeather?.isAuto) {
+                <app-badge type="neutral">AUTO</app-badge>
+            }
+        </div>
+    </div>
+</div>

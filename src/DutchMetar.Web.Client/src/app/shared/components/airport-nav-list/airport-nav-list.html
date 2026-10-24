@@ -1,46 +1,17 @@
-@let airports = airports$ | async;
+@let airportItems = airportItems$ | async;
 <div>
     <mat-form-field class="search-form-field" subscriptSizing="dynamic">
         <mat-label>Search Airport</mat-label>
-        <input (input)="onSearchValueChange($event)" placeholder="EHXX" matInput >
+        <input (input)="onSearchValueChange($event)" placeholder="EHXX" matInput />
         <mat-icon matIconSuffix>search</mat-icon>
     </mat-form-field>
-    @for (airport of airports; track $index) {
+    @for (item of airportItems; track $index) {
         @if ($index > 1) {
             <mat-divider></mat-divider>
         }
-        <div class="airport-item" matRipple routerLinkActive="active" [routerLink]="['/airport/', airport.icao]" >
-            <div class="airport-item-content">
-                <div>
-                    <mat-icon [class.vmc]="isVmc(airport)" [class.imc]="isImc(airport)" [class.marginal]="isMarginal(airport)">circle</mat-icon>
-                </div>
-                <div>
-                    <div class="title">{{ airport.icao }}</div>
-                    @if (airport.latestWeather?.issuedAt) {
-                        <div>Issued at {{ airport.latestWeather?.issuedAt | date:'HH:mm':'UTC' }}Z</div>
-                    }
-                    @if (airport.latestWeather?.windDirection && airport.latestWeather?.windSpeedKnots) {
-                        <div>Wind {{ airport.latestWeather?.windDirection }}° at {{ airport.latestWeather?.windSpeedKnots }}kt</div>
-                    }
-                </div>
-                <div class="badges">
-                    @if (airport.latestWeather?.isCorrected) {
-                        <app-badge type="primary">COR</app-badge>
-                    }
-                    @if (airport.latestWeather?.isCavok) {
-                        <app-badge type="success">CAVOK</app-badge>
-                    } @else if (isVmc(airport)) {
-                        <app-badge type="success">VMC</app-badge>
-                    } @else if (isImc(airport)) {
-                        <app-badge type="danger">IMC</app-badge>
-                    } @else if (isMarginal(airport)) {
-                        <app-badge type="warning">MARGINAL</app-badge>
-                    }
-                    @if (airport.latestWeather?.isAuto) {
-                        <app-badge type="neutral">AUTO</app-badge>
-                    }
-                </div>
-            </div>
-        </div>
+        <app-airport-nav-list-item
+            [airport]="item.airport"
+            [active]="item.active"
+        ></app-airport-nav-list-item>
     }
 </div>
