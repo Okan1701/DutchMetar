@@ -87,4 +87,22 @@ Docker must be installed on your machine for this.
 ### GitHub Codespaces
 
 You can also use GitHub Codespaces to spin up a cloud dev environment.
-This project contains a `.devcontainer.json` config that creates a devcontainer with dotnet and node preinstalled.
+
+Applications running in the devcontainer automatically use SQL authentication through environment variables. To connect from a database client inside the devcontainer, use:
+
+* Server: `mssql,1433` (host `mssql`, port `1433`)
+* User: `sa`
+* Password: `Secret12345!`
+* Database: `dutchmetar`
+* Trust server certificate: enabled
+
+These credentials are for local development only. The database port is not published outside the container network.
+Database files are stored in a Docker named volume and persist across container rebuilds, but not deletion of the Codespace or volume.
+
+Create or update the database by running the following from the repository root:
+
+```powershell
+# Install once if dotnet-ef is not already available
+dotnet tool install --global dotnet-ef
+dotnet ef database update --project src/DutchMetar.Core --startup-project src/DutchMetar.WorkerService
+```
