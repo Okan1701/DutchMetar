@@ -98,17 +98,17 @@ public class GetTafHistoryFeature : IGetTafHistoryFeature
     {
         if (request.Page < 0)
         {
-            throw new RequestValidationExxception("Page cannot be negative");
+            throw new RequestValidationException("Page cannot be negative");
         }
 
         if (request.PageSize.GetValueOrDefault() <= 0)
         {
-            throw new RequestValidationExxception("PageSize cannot be zero or negative");
+            throw new RequestValidationException("PageSize cannot be zero or negative");
         }
 
         if (string.IsNullOrWhiteSpace(request.Icao) || request.Icao.Length != 4)
         {
-            throw new RequestValidationExxception("Invalid ICAO.");
+            throw new RequestValidationException("Invalid ICAO.");
         }
     }
 }

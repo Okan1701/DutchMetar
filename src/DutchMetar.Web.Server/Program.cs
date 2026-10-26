@@ -5,6 +5,7 @@ using DutchMetar.Core.Features.Web.TafHistory;
 using DutchMetar.Core.Infrastructure;
 using DutchMetar.Core.Infrastructure.Data;
 using DutchMetar.Web.Server.Constants;
+using DutchMetar.Web.Server.ExceptionHandlers;
 
 const string sentryDsnConnectionString = "SentryDsn";
 
@@ -33,6 +34,11 @@ builder.Services.AddAirportDayHistoryFeature();
 builder.Services.AddMetarHistoryFeature();
 builder.Services.AddTafHistoryFeature();
 
+// Exception handling
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<DomainExceptionHandlers>();
+builder.Services.AddExceptionHandler<DefaultExceptionHandler>();
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -49,5 +55,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks(EndpointConstants.HealthEndpoint);
 app.MapFallbackToFile("/index.html");
+app.UseExceptionHandler();
 
 app.Run();
