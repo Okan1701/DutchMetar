@@ -7,7 +7,7 @@
     </mat-toolbar>
     <mat-sidenav-container class="sidenav" autosize>
         <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()">
-            <app-airport-nav-list></app-airport-nav-list>
+            <app-airport-nav-list (airportSelected)="onAirportSelected()"></app-airport-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>
             <div class="page-content">

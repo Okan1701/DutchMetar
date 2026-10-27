@@ -1,0 +1,32 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/dotnet
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/DutchMetar
+    environment:
+      DOTNET_NOLOGO: "true"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "true"
+      ConnectionStrings__DutchMetarMssql: "Server=mssql,1433;Database=dutchmetar;User Id=sa;Password=Secret12345!;TrustServerCertificate=True;"
+      ConnectionStrings__HangfireMssql: "Server=mssql,1433;Database=dutchmetar_worker;User Id=sa;Password=Secret12345!;TrustServerCertificate=True;"
+    depends_on:
+      mssql:
+        condition: service_healthy
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: "Secret12345!"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -b -Q \"SELECT 1\""]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 12
+
+volumes:
+  mssql-data:

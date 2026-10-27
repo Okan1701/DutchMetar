@@ -32,6 +32,7 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
+**\package.g.props
 [Ll]og/
 [Ll]ogs/
 
