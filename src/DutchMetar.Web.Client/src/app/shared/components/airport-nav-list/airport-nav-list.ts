@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { AirportService } from '../../services/airport-service';
 import { BehaviorSubject, combineLatestWith, map, Observable, startWith } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -24,6 +24,7 @@ import { AirportNavListItem } from './airport-nav-list-item/airport-nav-list-ite
     styleUrl: './airport-nav-list.scss',
 })
 export class AirportNavList {
+    public readonly airportSelected = output<void>();
     protected readonly airportItems$: Observable<{ airport: AirportSummary; active: boolean }[]>;
 
     private readonly searchValue$ = new BehaviorSubject<string>('');

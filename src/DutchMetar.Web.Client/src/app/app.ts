@@ -46,4 +46,10 @@ export class App {
     protected toggleSideNav(): void {
         this.matSideNav?.toggle();
     }
+
+    protected onAirportSelected(): void {
+        if (this.showMobileSideNav()) {
+            this.matSideNav?.close();
+        }
+    }
 }

@@ -12,6 +12,7 @@
         <app-airport-nav-list-item
             [airport]="item.airport"
             [active]="item.active"
+            (click)="airportSelected.emit()"
         ></app-airport-nav-list-item>
     }
 </div>
