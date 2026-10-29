@@ -3,5 +3,6 @@ button {
 }
 
 .tab-content {
-    padding: var(--app-default-element-gap);
+    display: block;
+    padding-block: var(--app-default-element-gap);
 }
