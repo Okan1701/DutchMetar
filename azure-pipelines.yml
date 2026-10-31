@@ -486,6 +486,16 @@ stages:
             deploy:
               steps:
                 - task: SqlDacpacDeploymentOnMachineGroup@0
+                  displayName: Back up database
+                  inputs:
+                    TaskType: 'sqlInline'
+                    InlineSql: "BACKUP DATABASE [$(MainDatabaseName)] TO DISK = N'$(MainDatabaseName)_predeploy.bak' WITH COPY_ONLY, INIT, CHECKSUM"
+                    ServerName: '$(DatabaseServer)'
+                    DatabaseName: '$(MainDatabaseName)'
+                    AuthScheme: 'windowsAuthentication'
+
+                - task: SqlDacpacDeploymentOnMachineGroup@0
+                  displayName: Run migration script
                   inputs:
                     TaskType: 'sqlQuery'
                     SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
@@ -494,6 +504,7 @@ stages:
                     AuthScheme: 'windowsAuthentication'
 
       - deployment: dutchmetar
+        dependsOn: database
         environment:
           name: Staging
           resourceType: VirtualMachine
@@ -525,6 +536,105 @@ stages:
                 steps:
                   - task: Bash@3
                     displayName: Roll back staging environment
+                    inputs:
+                      targetType: inline
+                      workingDirectory: $(DockerComposePath)
+                      script: |
+                        if [ -f .env.backup ]; then
+                          mv .env.backup .env
+                          docker compose up --force-recreate -d
+                        else
+                          echo "No environment backup found; rollback cannot be performed." >&2
+                          exit 1
+                        fi
+
+  - stage: deploy_production
+    displayName: Deploy Production
+    variables:
+      - group: DutchMetarProductionEnv
+    dependsOn: deploy_staging
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.channel }}', 'rev'))
+    jobs:
+      - deployment: database
+        environment:
+          name: Production
+          resourceType: VirtualMachine
+        displayName: Deploy Database
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+
+                - task: DownloadBuildArtifacts@0
+                  displayName: Download database migrations
+                  inputs:
+                    buildType: 'current'
+                    downloadType: 'single'
+                    artifactName: $(databaseArtifactName)
+                    downloadPath: $(Pipeline.Workspace)
+                    checkDownloadedFiles: true
+
+                - task: Bash@3
+                  displayName: Back up database
+                  inputs:
+                    targetType: inline
+                    script: |
+                      docker run --rm --network prod-public \
+                        -e SQLCMDPASSWORD \
+                        mcr.microsoft.com/mssql-tools \
+                        /opt/mssql-tools/bin/sqlcmd -S "$(DatabaseServer)" -d "$(MainDatabaseName)" -U "$(DatabaseDeployUser)" -b -C \
+                        -Q "BACKUP DATABASE [$(MainDatabaseName)] TO DISK = N'$(MainDatabaseName)_predeploy.bak' WITH COPY_ONLY, INIT, CHECKSUM"
+                  env:
+                    SQLCMDPASSWORD: $(DatabaseDeployPassword)
+
+                - task: Bash@3
+                  displayName: Run migration script
+                  inputs:
+                    targetType: inline
+                    script: |
+                      docker run --rm --network prod-public \
+                        -e SQLCMDPASSWORD \
+                        -v "$(Pipeline.Workspace)/$(databaseArtifactName):/scripts:ro" \
+                        mcr.microsoft.com/mssql-tools \
+                        /opt/mssql-tools/bin/sqlcmd -S "$(DatabaseServer)" -d "$(MainDatabaseName)" -U "$(DatabaseDeployUser)" -b -C \
+                        -i /scripts/dutchmetar_mssql_migrations.sql
+                  env:
+                    SQLCMDPASSWORD: $(DatabaseDeployPassword)
+
+      - deployment: dutchmetar
+        dependsOn: database
+        environment:
+          name: Production
+          resourceType: VirtualMachine
+        displayName: Deploy Containers
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+
+                - task: Bash@3
+                  displayName: Back up and update .env
+                  inputs:
+                    targetType: inline
+                    workingDirectory: $(DockerComposePath)
+                    script: |
+                      cp -f .env .env.backup
+                      sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=$(dockerImageTag)/' .env
+
+                - task: Bash@3
+                  displayName: Update Containers
+                  inputs:
+                    targetType: inline
+                    workingDirectory: $(DockerComposePath)
+                    script: docker compose up --force-recreate --pull always -d
+
+            on:
+              failure:
+                steps:
+                  - task: Bash@3
+                    displayName: Roll back production environment
                     inputs:
                       targetType: inline
                       workingDirectory: $(DockerComposePath)
