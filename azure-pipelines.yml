@@ -24,7 +24,6 @@ variables:
   dotnetVersion: 10.x
   nodeVersion: 24.x
   webAppWin64ArtifactName: dutchmetar-webapp-win-x64
-  workerSvcWin64ArtifactName: dutchmetar-worker-win-x64
   databaseArtifactName: dutchmetar-db-migrations
   stubsWin64ArtifactName: dutchmetar-stubs-win-x64
   fullVersion: '${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)'
@@ -140,47 +139,6 @@ stages:
               ArtifactName: $(databaseArtifactName)
               publishLocation: 'Container'
 
-      - job: publishWorkerService
-        displayName: Publish worker service
-        pool:
-          name: emeni-build-windows
-        variables:
-          - group: GithubPackages
-        
-        steps:
-          - task: UseDotNet@2
-            displayName: Use .NET 10
-            inputs:
-              packageType: 'sdk'
-              version: $(dotnetVersion)
-              includePreviewVersions: false
-
-          - template: templates/nuget-config.yml
-
-          - task: DotNetCoreCLI@2
-            displayName: Run solution tests
-            inputs:
-              command: 'test'
-              projects: 'DutchMetar.slnx'
-              testRunTitle: '.NET Tests'
-
-          - task: DotNetCoreCLI@2
-            displayName: Publish DutchMetar.WorkerService (win-x64)
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: './src/DutchMetar.WorkerService'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
-              zipAfterPublish: false
-              modifyOutputPath: false
-
-          - task: PublishBuildArtifacts@1
-            displayName: Upload artifacts
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: $(workerSvcWin64ArtifactName)
-              publishLocation: 'Container'
-              
       - job: publishStubsService
         displayName: Publish stubs service
         pool:
@@ -369,53 +327,53 @@ stages:
                     DatabaseName: '$(MainDatabaseName)'
                     AuthScheme: 'windowsAuthentication'
 
-      - deployment: worker
+      - deployment: stubs
         environment:
           name: Test
           resourceType: VirtualMachine
         pool: emeni-deploy-windows
-        displayName: Deploy worker service
+        displayName: Deploy stubs service
         strategy:
           runOnce:
             deploy:
               steps:
                 - task: PowerShell@2
-                  displayName: Stop worker service
+                  displayName: Stop stub service
                   inputs:
                     targetType: 'inline'
                     script: |
-                      Stop-Service -Name '$(WorkerSvcWinServiceName)' -Force
-                      (Get-Service -Name '$(WorkerSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
+                      Stop-Service -Name '$(StubsSvcWinServiceName)' -Force
+                      (Get-Service -Name '$(StubsSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
 
                 - task: CopyFiles@2
-                  displayName: Deploy worker files
+                  displayName: Deploy stub files
                   inputs:
-                    SourceFolder: '$(Pipeline.Workspace)/$(workerSvcWin64ArtifactName)'
+                    SourceFolder: '$(Pipeline.Workspace)/$(stubsWin64ArtifactName)'
                     Contents: '**'
-                    TargetFolder: '$(WorkerSvcPath)'
+                    TargetFolder: '$(StubsSvcPath)'
                     overWrite: true
 
                 - task: DownloadSecureFile@1
-                  displayName: Download worker appsettings
-                  name: workerAppsettingsFile
+                  displayName: Download stub appsettings
+                  name: stubsAppsettingsFile
                   inputs:
-                    secureFile: 'appsettings.workerservice.test.json'
+                    secureFile: 'appsettings.stubservice.test.json'
 
                 - task: PowerShell@2
-                  displayName: Move worker appsettings
+                  displayName: Move stub appsettings
                   inputs:
                     targetType: 'inline'
                     script: |
-                      $source = '$(workerAppsettingsFile.secureFilePath)'
-                      $dest = Join-Path '$(WorkerSvcPath)' 'appsettings.Production.json'
+                      $source = '$(stubsAppsettingsFile.secureFilePath)'
+                      $dest = Join-Path '$(StubsSvcPath)' 'appsettings.Production.json'
                       Move-Item -Path $source -Destination $dest -Force
 
                 - task: PowerShell@2
-                  displayName: Start worker service
+                  displayName: Start stub service
                   inputs:
                     targetType: 'inline'
                     script: |
-                      Start-Service -Name '$(WorkerSvcWinServiceName)'
+                      Start-Service -Name '$(StubsSvcWinServiceName)'
 
   - stage: publish_images
     displayName: Publish Docker images
