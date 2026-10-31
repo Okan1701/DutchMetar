@@ -1,0 +1,174 @@
+parameters:
+  - name: version
+    type: string
+
+stages:
+  - stage: build
+    displayName: Build
+    pool:
+      vmImage: windows-latest
+    jobs:
+      - job: publishWebApp
+        displayName: Publish web app
+        variables:
+          - group: GithubPackages
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET 10
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+
+          - task: UseNode@1
+            displayName: Setup Node v$(nodeVersion)
+            inputs:
+              version: $(nodeVersion)
+
+          - task: PowerShell@2
+            displayName: Set frontend app version
+            inputs:
+              targetType: 'inline'
+              script: |
+                $file = '$(Build.SourcesDirectory)/src/DutchMetar.Web.Client/src/environments/environment.ts'
+                $content = Get-Content -Path $file -Raw
+                $updated = $content.Replace('%APP_VERSION%', '$(fullVersion)')
+                Set-Content -Path $file -Value $updated -NoNewline
+
+          - template: nuget-config.yml
+
+          - task: DotNetCoreCLI@2
+            displayName: Run solution tests
+            inputs:
+              command: 'test'
+              projects: 'DutchMetar.slnx'
+              testRunTitle: '.NET Tests'
+
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.Web.Server (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.Web.Server'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: $(webAppWin64ArtifactName)
+              publishLocation: 'Container'
+
+      - job: generateMigrations
+        displayName: Generate EF migration script
+        pool:
+          name: emeni-build-windows
+        variables:
+          - group: GithubPackages
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET $(dotnetVersion)
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+
+          - task: DotNetCoreCLI@2
+            displayName: Update dotnet-ef tool
+            inputs:
+              command: custom
+              custom: 'tool'
+              arguments: 'update --global dotnet-ef'
+
+          - template: nuget-config.yml
+
+          - task: DotNetCoreCLI@2
+            displayName: Restore solution
+            inputs:
+              command: 'restore'
+              projects: 'DutchMetar.slnx'
+
+          - task: DotNetCoreCLI@2
+            displayName: Generate SQL migration script
+            inputs:
+              command: 'custom'
+              custom: 'ef'
+              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.WorkerService'
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifact
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql'
+              ArtifactName: $(databaseArtifactName)
+              publishLocation: 'Container'
+
+      - job: publishWorkerService
+        displayName: Publish worker service
+        pool:
+          name: emeni-build-windows
+        variables:
+          - group: GithubPackages
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET 10
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+
+          - template: nuget-config.yml
+
+          - task: DotNetCoreCLI@2
+            displayName: Run solution tests
+            inputs:
+              command: 'test'
+              projects: 'DutchMetar.slnx'
+              testRunTitle: '.NET Tests'
+
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.WorkerService (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.WorkerService'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: $(workerSvcWin64ArtifactName)
+              publishLocation: 'Container'
+
+      - job: publishStubsService
+        displayName: Publish stubs service
+        pool:
+          name: emeni-build-windows
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET 10
+            inputs:
+              packageType: 'sdk'
+              version: $(dotnetVersion)
+              includePreviewVersions: false
+
+          - task: DotNetCoreCLI@2
+            displayName: Publish DutchMetar.Tools.StubsService (win-x64)
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: './src/DutchMetar.Tools.StubService'
+              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+              zipAfterPublish: false
+              modifyOutputPath: false
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload artifacts
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: $(stubsWin64ArtifactName)
+              publishLocation: 'Container'

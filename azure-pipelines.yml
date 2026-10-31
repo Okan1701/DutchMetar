@@ -39,436 +39,50 @@ variables:
     dockerImageTags: '${{ parameters.version }}-${{ parameters.channel }}'
 
 stages:
-  - stage: build
-    displayName: Build
-    pool:
-      vmImage: windows-latest
-    jobs:
-      - job: publishWebApp
-        displayName: Publish web app
-        variables:
-          - group: GithubPackages
-        steps:
-          - task: UseDotNet@2
-            displayName: Use .NET 10
-            inputs:
-              packageType: 'sdk'
-              version: $(dotnetVersion)
-              includePreviewVersions: false
+  - template: templates/build-solution-win32.yml
+    parameters:
+      version: ${{ parameters.version }}
 
-          - task: UseNode@1
-            displayName: Setup Node v$(nodeVersion)
-            inputs:
-              version: $(nodeVersion)
+  - template: templates/deploy-iis-apps-win32.yml
+    parameters:
+      stageName: deploy_dev
+      displayName: Deploy Dev
+      environment: Dev
+      variableGroup: DutchMetarDevEnv
+      condition: succeeded()
+      webAppsettingsFile: appsettings.webapp.dev.json
+      stubAppsettingsFile: appsettings.stubservice.dev.json
 
-          - task: PowerShell@2
-            displayName: Set frontend app version
-            inputs:
-              targetType: 'inline'
-              script: |
-                $file = '$(Build.SourcesDirectory)/src/DutchMetar.Web.Client/src/environments/environment.ts'
-                $content = Get-Content -Path $file -Raw
-                $updated = $content.Replace('%APP_VERSION%', '$(fullVersion)')
-                Set-Content -Path $file -Value $updated -NoNewline
-
-          - template: templates/nuget-config.yml
-
-          - task: DotNetCoreCLI@2
-            displayName: Run solution tests
-            inputs:
-              command: 'test'
-              projects: 'DutchMetar.slnx'
-              testRunTitle: '.NET Tests'
-
-          - task: DotNetCoreCLI@2
-            displayName: Publish DutchMetar.Web.Server (win-x64)
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: './src/DutchMetar.Web.Server'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
-              zipAfterPublish: false
-              modifyOutputPath: false
-
-          - task: PublishBuildArtifacts@1
-            displayName: Upload artifacts
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: $(webAppWin64ArtifactName)
-              publishLocation: 'Container'
-
-      - job: generateMigrations
-        displayName: Generate EF migration script
-        pool:
-          name: emeni-build-windows
-        variables:
-          - group: GithubPackages
-        steps:
-          - task: UseDotNet@2
-            displayName: Use .NET $(dotnetVersion)
-            inputs:
-              packageType: 'sdk'
-              version: $(dotnetVersion)
-              includePreviewVersions: false
-
-          - task: DotNetCoreCLI@2
-            displayName: Update dotnet-ef tool
-            inputs:
-              command: custom
-              custom: 'tool'
-              arguments: 'update --global dotnet-ef'
-
-          - template: templates/nuget-config.yml
-
-          - task: DotNetCoreCLI@2
-            displayName: Restore solution
-            inputs:
-              command: 'restore'
-              projects: 'DutchMetar.slnx'
-
-          - task: DotNetCoreCLI@2
-            displayName: Generate SQL migration script
-            inputs:
-              command: 'custom'
-              custom: 'ef'
-              arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.WorkerService'
-
-          - task: PublishBuildArtifacts@1
-            displayName: Upload artifact
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql'
-              ArtifactName: $(databaseArtifactName)
-              publishLocation: 'Container'
-
-      - job: publishWorkerService
-        displayName: Publish worker service
-        pool:
-          name: emeni-build-windows
-        variables:
-          - group: GithubPackages
-        
-        steps:
-          - task: UseDotNet@2
-            displayName: Use .NET 10
-            inputs:
-              packageType: 'sdk'
-              version: $(dotnetVersion)
-              includePreviewVersions: false
-
-          - template: templates/nuget-config.yml
-
-          - task: DotNetCoreCLI@2
-            displayName: Run solution tests
-            inputs:
-              command: 'test'
-              projects: 'DutchMetar.slnx'
-              testRunTitle: '.NET Tests'
-
-          - task: DotNetCoreCLI@2
-            displayName: Publish DutchMetar.WorkerService (win-x64)
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: './src/DutchMetar.WorkerService'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
-              zipAfterPublish: false
-              modifyOutputPath: false
-
-          - task: PublishBuildArtifacts@1
-            displayName: Upload artifacts
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: $(workerSvcWin64ArtifactName)
-              publishLocation: 'Container'
-              
-      - job: publishStubsService
-        displayName: Publish stubs service
-        pool:
-          name: emeni-build-windows
-        
-        steps:
-          - task: UseDotNet@2
-            displayName: Use .NET 10
-            inputs:
-              packageType: 'sdk'
-              version: $(dotnetVersion)
-              includePreviewVersions: false
-
-          - task: DotNetCoreCLI@2
-            displayName: Publish DutchMetar.Tools.StubsService (win-x64)
-            inputs:
-              command: 'publish'
-              publishWebProjects: false
-              projects: './src/DutchMetar.Tools.StubService'
-              arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
-              zipAfterPublish: false
-              modifyOutputPath: false
-
-          - task: PublishBuildArtifacts@1
-            displayName: Upload artifacts
-            inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: $(stubsWin64ArtifactName)
-              publishLocation: 'Container'
-
-  - stage: deploy_dev
-    displayName: Deploy Dev
-    condition: succeeded()
-    variables:
-      - group: DutchMetarDevEnv
-    jobs:
-      - deployment: web
-        environment:
-          name: Dev
-          resourceType: VirtualMachine
-        displayName: Deploy web app
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-
-                - task: DownloadSecureFile@1
-                  displayName: Download appsettings
-                  name: appsettingsFile
-                  inputs:
-                    secureFile: 'appsettings.webapp.dev.json'
-
-                - task: PowerShell@2
-                  displayName: Move appsettings
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      $source = '$(appsettingsFile.secureFilePath)'
-                      $targetDir = '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
-                      $dest = Join-Path $targetDir 'appsettings.Production.json'
-                      Move-Item -Path $source -Destination $dest -Force
-
-                - task: IISWebAppDeploymentOnMachineGroup@0
-                  inputs:
-                    WebSiteName: '$(WebAppSiteName)'
-                    Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
-                    RemoveAdditionalFilesFlag: true
-                    TakeAppOfflineFlag: true
-
-      - deployment: database
-        environment: Dev
-        pool: emeni-deploy-windows
-        displayName: Deploy database
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: SqlDacpacDeploymentOnMachineGroup@0
-                  inputs:
-                    TaskType: 'sqlQuery'
-                    SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
-                    ServerName: '$(DatabaseServer)'
-                    DatabaseName: '$(MainDatabaseName)'
-                    AuthScheme: 'windowsAuthentication'
-                    
-      - deployment: stubs
-        environment:
-          name: Dev
-          resourceType: VirtualMachine
-        pool: emeni-deploy-windows
-        displayName: Deploy stubs service
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: PowerShell@2
-                  displayName: Stop stub service
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      Stop-Service -Name '$(StubsSvcWinServiceName)' -Force
-                      (Get-Service -Name '$(StubsSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
-
-                - task: CopyFiles@2
-                  displayName: Deploy worker files
-                  inputs:
-                    SourceFolder: '$(Pipeline.Workspace)/$(stubsWin64ArtifactName)'
-                    Contents: '**'
-                    TargetFolder: '$(StubsSvcPath)'
-                    overWrite: true
-
-                - task: DownloadSecureFile@1
-                  displayName: Download stub appsettings
-                  name: workerAppsettingsFile
-                  inputs:
-                    secureFile: 'appsettings.stubservice.dev.json'
-
-                - task: PowerShell@2
-                  displayName: Move stub appsettings
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      $source = '$(workerAppsettingsFile.secureFilePath)'
-                      $dest = Join-Path '$(StubsSvcPath)' 'appsettings.Production.json'
-                      Move-Item -Path $source -Destination $dest -Force
-
-                - task: PowerShell@2
-                  displayName: Start stub service
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      Start-Service -Name '$(StubsSvcWinServiceName)'
-
-  - stage: deploy_test
-    displayName: Deploy Test
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-    variables:
-      - group: DutchMetarTestEnv
-    jobs:
-      - deployment: web
-        environment:
-          name: Test
-          resourceType: VirtualMachine
-        displayName: Deploy web app
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-
-                - task: DownloadSecureFile@1
-                  displayName: Download appsettings
-                  name: appsettingsFile
-                  inputs:
-                    secureFile: 'appsettings.webapp.test.json'
-
-                - task: PowerShell@2
-                  displayName: Move appsettings
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      $source = '$(appsettingsFile.secureFilePath)'
-                      $targetDir = '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
-                      $dest = Join-Path $targetDir 'appsettings.Production.json'
-                      Move-Item -Path $source -Destination $dest -Force
-
-                - task: IISWebAppDeploymentOnMachineGroup@0
-                  inputs:
-                    WebSiteName: '$(WebAppSiteName)'
-                    Package: '$(Pipeline.Workspace)/$(webAppWin64ArtifactName)'
-                    RemoveAdditionalFilesFlag: true
-                    TakeAppOfflineFlag: true
-
-      - deployment: database
-        environment: Test
-        pool: emeni-deploy-windows
-        displayName: Deploy database
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: SqlDacpacDeploymentOnMachineGroup@0
-                  inputs:
-                    TaskType: 'sqlQuery'
-                    SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
-                    ServerName: '$(DatabaseServer)'
-                    DatabaseName: '$(MainDatabaseName)'
-                    AuthScheme: 'windowsAuthentication'
-
-      - deployment: worker
-        environment:
-          name: Test
-          resourceType: VirtualMachine
-        pool: emeni-deploy-windows
-        displayName: Deploy worker service
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: PowerShell@2
-                  displayName: Stop worker service
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      Stop-Service -Name '$(WorkerSvcWinServiceName)' -Force
-                      (Get-Service -Name '$(WorkerSvcWinServiceName)').WaitForStatus('Stopped', [TimeSpan]::FromSeconds(60))
-
-                - task: CopyFiles@2
-                  displayName: Deploy worker files
-                  inputs:
-                    SourceFolder: '$(Pipeline.Workspace)/$(workerSvcWin64ArtifactName)'
-                    Contents: '**'
-                    TargetFolder: '$(WorkerSvcPath)'
-                    overWrite: true
-
-                - task: DownloadSecureFile@1
-                  displayName: Download worker appsettings
-                  name: workerAppsettingsFile
-                  inputs:
-                    secureFile: 'appsettings.workerservice.test.json'
-
-                - task: PowerShell@2
-                  displayName: Move worker appsettings
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      $source = '$(workerAppsettingsFile.secureFilePath)'
-                      $dest = Join-Path '$(WorkerSvcPath)' 'appsettings.Production.json'
-                      Move-Item -Path $source -Destination $dest -Force
-
-                - task: PowerShell@2
-                  displayName: Start worker service
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      Start-Service -Name '$(WorkerSvcWinServiceName)'
+  - template: templates/deploy-iis-apps-win32.yml
+    parameters:
+      stageName: deploy_test
+      displayName: Deploy Test
+      environment: Test
+      variableGroup: DutchMetarTestEnv
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      webAppsettingsFile: appsettings.webapp.test.json
+      stubAppsettingsFile: appsettings.stubservice.test.json
 
   - stage: publish_images
     displayName: Publish Docker images
     dependsOn: deploy_test
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq('${{ parameters.channel }}', 'rc'), eq('${{ parameters.channel }}', 'rev')))
     jobs:
-      - job: publishWebImage
-        displayName: Publish dutchmetar image
-        pool:
-          vmImage: ubuntu-latest
-        steps:
-          - task: Docker@2
-            displayName: Build image
-            inputs:
-              command: build
-              containerRegistry: Docker Hub
-              repository: ultimateantic/dutchmetar
-              Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.Web.Server/Dockerfile'
-              buildContext: '$(Build.SourcesDirectory)'
-              tags: $(dockerImageTags)
-              arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
+      - template: templates/build-docker-image-linux.yml
+        parameters:
+          jobName: publishWebImage
+          displayName: Publish dutchmetar image
+          repository: ultimateantic/dutchmetar
+          dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.Web.Server/Dockerfile'
+          version: ${{ parameters.version }}
 
-          - task: Docker@2
-            displayName: Push image
-            inputs:
-              command: push
-              containerRegistry: Docker Hub
-              repository: ultimateantic/dutchmetar
-              tags: $(dockerImageTags)
-
-      - job: publishWorkerImage
-        displayName: Publish dutchmetar-worker image
-        pool:
-          vmImage: ubuntu-latest
-        steps:
-          - task: Docker@2
-            displayName: Build image
-            inputs:
-              command: build
-              containerRegistry: Docker Hub
-              repository: ultimateantic/dutchmetar-worker
-              Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.WorkerService/Dockerfile'
-              buildContext: '$(Build.SourcesDirectory)'
-              tags: $(dockerImageTags)
-              arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
-
-          - task: Docker@2
-            displayName: Push image
-            inputs:
-              command: push
-              containerRegistry: Docker Hub
-              repository: ultimateantic/dutchmetar-worker
-              tags: $(dockerImageTags)
+      - template: templates/build-docker-image-linux.yml
+        parameters:
+          jobName: publishWorkerImage
+          displayName: Publish dutchmetar-worker image
+          repository: ultimateantic/dutchmetar-worker
+          dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.WorkerService/Dockerfile'
+          version: ${{ parameters.version }}
 
   - stage: deploy_staging
     displayName: Deploy Staging
@@ -477,76 +91,14 @@ stages:
     dependsOn: publish_images
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq('${{ parameters.channel }}', 'rc'), eq('${{ parameters.channel }}', 'rev')))
     jobs:
-      - deployment: database
-        environment: Staging
-        pool: emeni-deploy-windows
-        displayName: Deploy Database
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: SqlDacpacDeploymentOnMachineGroup@0
-                  displayName: Back up database
-                  inputs:
-                    TaskType: 'sqlInline'
-                    InlineSql: "BACKUP DATABASE [$(MainDatabaseName)] TO DISK = N'$(MainDatabaseName)_predeploy.bak' WITH COPY_ONLY, INIT, CHECKSUM"
-                    ServerName: '$(DatabaseServer)'
-                    DatabaseName: '$(MainDatabaseName)'
-                    AuthScheme: 'windowsAuthentication'
+      - template: templates/deploy-database-win32.yml
+        parameters:
+          environment: Staging
 
-                - task: SqlDacpacDeploymentOnMachineGroup@0
-                  displayName: Run migration script
-                  inputs:
-                    TaskType: 'sqlQuery'
-                    SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
-                    ServerName: '$(DatabaseServer)'
-                    DatabaseName: '$(MainDatabaseName)'
-                    AuthScheme: 'windowsAuthentication'
-
-      - deployment: dutchmetar
-        dependsOn: database
-        environment:
-          name: Staging
-          resourceType: VirtualMachine
-        displayName: Deploy Containers
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: none
-
-                - task: Bash@3
-                  displayName: Back up and update .env
-                  inputs:
-                    targetType: inline
-                    workingDirectory: $(DockerComposePath)
-                    script: |
-                      cp -f .env .env.backup
-                      sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=$(dockerImageTag)/' .env
-
-                - task: Bash@3
-                  displayName: Update Containers
-                  inputs:
-                    targetType: inline
-                    workingDirectory: $(DockerComposePath)
-                    script: docker compose up --force-recreate --pull always -d
-
-            on:
-              failure:
-                steps:
-                  - task: Bash@3
-                    displayName: Roll back staging environment
-                    inputs:
-                      targetType: inline
-                      workingDirectory: $(DockerComposePath)
-                      script: |
-                        if [ -f .env.backup ]; then
-                          mv .env.backup .env
-                          docker compose up --force-recreate -d
-                        else
-                          echo "No environment backup found; rollback cannot be performed." >&2
-                          exit 1
-                        fi
+      - template: templates/deploy-containers-linux.yml
+        parameters:
+          environment: Staging
+          rollbackDisplayName: Roll back staging environment
 
   - stage: deploy_production
     displayName: Deploy Production
@@ -555,94 +107,11 @@ stages:
     dependsOn: deploy_staging
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.channel }}', 'rev'))
     jobs:
-      - deployment: database
-        environment:
-          name: Production
-          resourceType: VirtualMachine
-        displayName: Deploy Database
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: none
+      - template: templates/deploy-database-linux.yml
+        parameters:
+          environment: Production
 
-                - task: DownloadBuildArtifacts@0
-                  displayName: Download database migrations
-                  inputs:
-                    buildType: 'current'
-                    downloadType: 'single'
-                    artifactName: $(databaseArtifactName)
-                    downloadPath: $(Pipeline.Workspace)
-                    checkDownloadedFiles: true
-
-                - task: Bash@3
-                  displayName: Back up database
-                  inputs:
-                    targetType: inline
-                    script: |
-                      docker run --rm --network prod-public \
-                        -e SQLCMDPASSWORD \
-                        mcr.microsoft.com/mssql-tools \
-                        /opt/mssql-tools/bin/sqlcmd -S "$(DatabaseServer)" -d "$(MainDatabaseName)" -U "$(DatabaseDeployUser)" -b -C \
-                        -Q "BACKUP DATABASE [$(MainDatabaseName)] TO DISK = N'$(MainDatabaseName)_predeploy.bak' WITH COPY_ONLY, INIT, CHECKSUM"
-                  env:
-                    SQLCMDPASSWORD: $(DatabaseDeployPassword)
-
-                - task: Bash@3
-                  displayName: Run migration script
-                  inputs:
-                    targetType: inline
-                    script: |
-                      docker run --rm --network prod-public \
-                        -e SQLCMDPASSWORD \
-                        -v "$(Pipeline.Workspace)/$(databaseArtifactName):/scripts:ro" \
-                        mcr.microsoft.com/mssql-tools \
-                        /opt/mssql-tools/bin/sqlcmd -S "$(DatabaseServer)" -d "$(MainDatabaseName)" -U "$(DatabaseDeployUser)" -b -C \
-                        -i /scripts/dutchmetar_mssql_migrations.sql
-                  env:
-                    SQLCMDPASSWORD: $(DatabaseDeployPassword)
-
-      - deployment: dutchmetar
-        dependsOn: database
-        environment:
-          name: Production
-          resourceType: VirtualMachine
-        displayName: Deploy Containers
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: none
-
-                - task: Bash@3
-                  displayName: Back up and update .env
-                  inputs:
-                    targetType: inline
-                    workingDirectory: $(DockerComposePath)
-                    script: |
-                      cp -f .env .env.backup
-                      sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=$(dockerImageTag)/' .env
-
-                - task: Bash@3
-                  displayName: Update Containers
-                  inputs:
-                    targetType: inline
-                    workingDirectory: $(DockerComposePath)
-                    script: docker compose up --force-recreate --pull always -d
-
-            on:
-              failure:
-                steps:
-                  - task: Bash@3
-                    displayName: Roll back production environment
-                    inputs:
-                      targetType: inline
-                      workingDirectory: $(DockerComposePath)
-                      script: |
-                        if [ -f .env.backup ]; then
-                          mv .env.backup .env
-                          docker compose up --force-recreate -d
-                        else
-                          echo "No environment backup found; rollback cannot be performed." >&2
-                          exit 1
-                        fi
+      - template: templates/deploy-containers-linux.yml
+        parameters:
+          environment: Production
+          rollbackDisplayName: Roll back production environment

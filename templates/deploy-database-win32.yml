@@ -1,0 +1,30 @@
+parameters:
+  - name: environment
+    type: string
+
+jobs:
+  - deployment: database
+    environment: ${{ parameters.environment }}
+    pool: emeni-deploy-windows
+    displayName: Deploy Database
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: SqlDacpacDeploymentOnMachineGroup@0
+              displayName: Back up database
+              inputs:
+                TaskType: 'sqlInline'
+                InlineSql: "BACKUP DATABASE [$(MainDatabaseName)] TO DISK = N'$(MainDatabaseName)_predeploy.bak' WITH COPY_ONLY, INIT, CHECKSUM"
+                ServerName: '$(DatabaseServer)'
+                DatabaseName: '$(MainDatabaseName)'
+                AuthScheme: 'windowsAuthentication'
+
+            - task: SqlDacpacDeploymentOnMachineGroup@0
+              displayName: Run migration script
+              inputs:
+                TaskType: 'sqlQuery'
+                SqlFile: '$(Pipeline.Workspace)\$(databaseArtifactName)\dutchmetar_mssql_migrations.sql'
+                ServerName: '$(DatabaseServer)'
+                DatabaseName: '$(MainDatabaseName)'
+                AuthScheme: 'windowsAuthentication'

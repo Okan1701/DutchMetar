@@ -1,0 +1,36 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: repository
+    type: string
+  - name: dockerfile
+    type: string
+  - name: version
+    type: string
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: Docker@2
+        displayName: Build image
+        inputs:
+          command: build
+          containerRegistry: Docker Hub
+          repository: ${{ parameters.repository }}
+          Dockerfile: ${{ parameters.dockerfile }}
+          buildContext: '$(Build.SourcesDirectory)'
+          tags: $(dockerImageTags)
+          arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
+
+      - task: Docker@2
+        displayName: Push image
+        inputs:
+          command: push
+          containerRegistry: Docker Hub
+          repository: ${{ parameters.repository }}
+          tags: $(dockerImageTags)

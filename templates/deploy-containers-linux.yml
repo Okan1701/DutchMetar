@@ -1,0 +1,51 @@
+parameters:
+  - name: environment
+    type: string
+  - name: rollbackDisplayName
+    type: string
+
+jobs:
+  - deployment: dutchmetar
+    dependsOn: database
+    environment:
+      name: ${{ parameters.environment }}
+      resourceType: VirtualMachine
+    displayName: Deploy Containers
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: none
+
+            - task: Bash@3
+              displayName: Back up and update .env
+              inputs:
+                targetType: inline
+                workingDirectory: $(DockerComposePath)
+                script: |
+                  cp -f .env .env.backup
+                  sed -i -E 's/^IMAGE_TAG=.*/IMAGE_TAG=$(dockerImageTag)/' .env
+
+            - task: Bash@3
+              displayName: Update Containers
+              inputs:
+                targetType: inline
+                workingDirectory: $(DockerComposePath)
+                script: docker compose up --force-recreate --pull always -d
+
+        on:
+          failure:
+            steps:
+              - task: Bash@3
+                displayName: ${{ parameters.rollbackDisplayName }}
+                inputs:
+                  targetType: inline
+                  workingDirectory: $(DockerComposePath)
+                  script: |
+                    if [ -f .env.backup ]; then
+                      mv .env.backup .env
+                      docker compose up --force-recreate -d
+                    else
+                      echo "No environment backup found; rollback cannot be performed." >&2
+                      exit 1
+                    fi

@@ -1,0 +1,51 @@
+parameters:
+  - name: environment
+    type: string
+
+jobs:
+  - deployment: database
+    environment:
+      name: ${{ parameters.environment }}
+      resourceType: VirtualMachine
+    displayName: Deploy Database
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: none
+
+            - task: DownloadBuildArtifacts@0
+              displayName: Download database migrations
+              inputs:
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: $(databaseArtifactName)
+                downloadPath: $(Pipeline.Workspace)
+                checkDownloadedFiles: true
+
+            - task: Bash@3
+              displayName: Back up database
+              inputs:
+                targetType: inline
+                script: |
+                  docker run --rm --network prod-public \
+                    -e SQLCMDPASSWORD \
+                    mcr.microsoft.com/mssql-tools \
+                    /opt/mssql-tools/bin/sqlcmd -S "$(DatabaseServer)" -d "$(MainDatabaseName)" -U "$(DatabaseDeployUser)" -b -C \
+                    -Q "BACKUP DATABASE [$(MainDatabaseName)] TO DISK = N'$(MainDatabaseName)_predeploy.bak' WITH COPY_ONLY, INIT, CHECKSUM"
+              env:
+                SQLCMDPASSWORD: $(DatabaseDeployPassword)
+
+            - task: Bash@3
+              displayName: Run migration script
+              inputs:
+                targetType: inline
+                script: |
+                  docker run --rm --network prod-public \
+                    -e SQLCMDPASSWORD \
+                    -v "$(Pipeline.Workspace)/$(databaseArtifactName):/scripts:ro" \
+                    mcr.microsoft.com/mssql-tools \
+                    /opt/mssql-tools/bin/sqlcmd -S "$(DatabaseServer)" -d "$(MainDatabaseName)" -U "$(DatabaseDeployUser)" -b -C \
+                    -i /scripts/dutchmetar_mssql_migrations.sql
+              env:
+                SQLCMDPASSWORD: $(DatabaseDeployPassword)
