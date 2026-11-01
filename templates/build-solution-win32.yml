@@ -33,10 +33,18 @@ jobs:
       - template: nuget-config.yml
 
       - task: DotNetCoreCLI@2
+        displayName: Restore solution
+        inputs:
+          command: 'restore'
+          projects: 'DutchMetar.slnx'
+          restoreArguments: '-r win-x64'
+
+      - task: DotNetCoreCLI@2
         displayName: Run solution tests
         inputs:
           command: 'test'
           projects: 'DutchMetar.slnx'
+          arguments: '--no-restore'
           testRunTitle: '.NET Tests'
 
       - task: DotNetCoreCLI@2
@@ -45,7 +53,7 @@ jobs:
           command: 'publish'
           publishWebProjects: false
           projects: './src/DutchMetar.Web.Server'
-          arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+          arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) --no-restore /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
           zipAfterPublish: false
           modifyOutputPath: false
 
@@ -86,11 +94,18 @@ jobs:
           projects: 'DutchMetar.slnx'
 
       - task: DotNetCoreCLI@2
+        displayName: Build worker service for migrations
+        inputs:
+          command: 'build'
+          projects: './src/DutchMetar.WorkerService'
+          arguments: '--no-restore'
+
+      - task: DotNetCoreCLI@2
         displayName: Generate SQL migration script
         inputs:
           command: 'custom'
           custom: 'ef'
-          arguments: 'migrations script --idempotent --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.WorkerService'
+          arguments: 'migrations script --idempotent --no-build --output $(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql --project ./src/DutchMetar.Core/DutchMetar.Core.csproj --startup-project ./src/DutchMetar.WorkerService'
 
       - task: PublishBuildArtifacts@1
         displayName: Upload artifact
@@ -98,6 +113,47 @@ jobs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)/dutchmetar_mssql_migrations.sql'
           ArtifactName: $(databaseArtifactName)
           publishLocation: 'Container'
+
+  - job: buildWorkerService
+    displayName: Build worker service
+    pool:
+      name: emeni-build-windows
+    variables:
+      - group: GithubPackages
+    steps:
+      - task: UseDotNet@2
+        displayName: Use .NET 10
+        inputs:
+          packageType: 'sdk'
+          version: $(dotnetVersion)
+          includePreviewVersions: false
+
+      - template: nuget-config.yml
+
+      - task: DotNetCoreCLI@2
+        displayName: Restore solution
+        inputs:
+          command: 'restore'
+          projects: 'DutchMetar.slnx'
+          restoreArguments: '-r win-x64'
+
+      - task: DotNetCoreCLI@2
+        displayName: Run solution tests
+        inputs:
+          command: 'test'
+          projects: 'DutchMetar.slnx'
+          arguments: '--no-restore'
+          testRunTitle: '.NET Tests'
+
+      - task: DotNetCoreCLI@2
+        displayName: Build DutchMetar.WorkerService (win-x64)
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: './src/DutchMetar.WorkerService'
+          arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) --no-restore /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+          zipAfterPublish: false
+          modifyOutputPath: false
 
   - job: publishStubsService
     displayName: Publish stubs service
@@ -113,12 +169,19 @@ jobs:
           includePreviewVersions: false
 
       - task: DotNetCoreCLI@2
+        displayName: Restore stubs service
+        inputs:
+          command: 'restore'
+          projects: './src/DutchMetar.Tools.StubService'
+          restoreArguments: '-r win-x64'
+
+      - task: DotNetCoreCLI@2
         displayName: Publish DutchMetar.Tools.StubsService (win-x64)
         inputs:
           command: 'publish'
           publishWebProjects: false
           projects: './src/DutchMetar.Tools.StubService'
-          arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
+          arguments: '-c Release -r win-x64 -o $(Build.ArtifactStagingDirectory) --no-restore /p:VersionPrefix=${{ parameters.version }} /p:VersionSuffix=$(versionSuffixFull)'
           zipAfterPublish: false
           modifyOutputPath: false
 
