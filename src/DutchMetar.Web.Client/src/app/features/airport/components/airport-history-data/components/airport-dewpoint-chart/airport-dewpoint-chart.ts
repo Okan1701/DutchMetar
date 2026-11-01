@@ -37,6 +37,10 @@ export class AirportDewpointChart {
             chart: {
                 type: 'line',
                 height: 350,
+                width: '100%',
+                animations: {
+                    enabled: false,
+                },
                 background: 'transparent',
                 zoom: {
                     enabled: false,

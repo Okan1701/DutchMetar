@@ -1,5 +1,10 @@
 @use '@angular/material' as mat;
 
+:host {
+    display: block;
+    min-width: 0;
+}
+
 mat-form-field {
     @include mat.form-field-density(-4);
 }
@@ -21,12 +26,14 @@ pre {
 .chart-section {
     display: flex;
     gap: 30px;
+    width: 100%;
+    min-width: 0;
     max-width: 100%;
     flex-wrap: wrap;
 }
 
-.chart-section * {
+.chart-section > * {
     flex: 1 1 800px;
-    min-width: 300px;
+    min-width: min(300px, 100%);
     box-sizing: border-box;
 }
