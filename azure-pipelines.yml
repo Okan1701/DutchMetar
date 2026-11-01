@@ -38,23 +38,54 @@ variables:
     dockerImageTags: '${{ parameters.version }}-${{ parameters.channel }}'
 
 stages:
-  - template: templates/build-solution-win32.yml
-    parameters:
-      version: ${{ parameters.version }}
+  - stage: build
+    displayName: Build
+    pool:
+      vmImage: windows-latest
+    jobs:
+      - template: templates/build-solution-win32.yml
+        parameters:
+          version: ${{ parameters.version }}
 
-  - template: templates/deploy-dev-win32.yml
+  - stage: deploy_dev
+    displayName: Deploy Dev
+    condition: succeeded()
+    variables:
+      - group: DutchMetarDevEnv
+    jobs:
+      - template: templates/deploy-dev-win32.yml
 
-  - template: templates/deploy-test-win32.yml
+  - stage: deploy_test
+    displayName: Deploy Test
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    variables:
+      - group: DutchMetarTestEnv
+    jobs:
+      - template: templates/deploy-test-win32.yml
 
-  - template: templates/build-docker-linux.yml
-    parameters:
-      version: ${{ parameters.version }}
-      channel: ${{ parameters.channel }}
+  - stage: publish_images
+    displayName: Publish Docker images
+    dependsOn: deploy_test
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq('${{ parameters.channel }}', 'rc'), eq('${{ parameters.channel }}', 'rev')))
+    jobs:
+      - template: templates/build-docker-linux.yml
+        parameters:
+          version: ${{ parameters.version }}
 
-  - template: templates/deploy-staging-win32-linux.yml
-    parameters:
-      channel: ${{ parameters.channel }}
+  - stage: deploy_staging
+    displayName: Deploy Staging
+    variables:
+      - group: DutchMetarStagingEnv
+    dependsOn: publish_images
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq('${{ parameters.channel }}', 'rc'), eq('${{ parameters.channel }}', 'rev')))
+    jobs:
+      - template: templates/deploy-staging-win32-linux.yml
 
-  - template: templates/deploy-production-linux.yml
-    parameters:
-      channel: ${{ parameters.channel }}
+  - stage: deploy_production
+    displayName: Deploy Production
+    variables:
+      - group: DutchMetarProductionEnv
+    dependsOn: deploy_staging
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.channel }}', 'rev'))
+    jobs:
+      - template: templates/deploy-production-linux.yml
