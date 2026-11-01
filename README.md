@@ -1,6 +1,4 @@
-> [!WARNING]  
-> This project is still a work in progress! Features are still missing. Any published binary or Docker image is not meant to be used yet.
-# About
+# Dutch METAR
 
 [![Azure Pipelines](https://dev.azure.com/okan1701/DutchMetar/_apis/build/status%2FDutchMetar%20CICD?branchName=master)](https://dev.azure.com/okan1701/DutchMetar/_build/latest?definitionId=2&branchName=master)
 [![GitHub Actions](https://github.com/Okan1701/DutchMetar/actions/workflows/build.yaml/badge.svg)](https://github.com/Okan1701/DutchMetar/actions/workflows/build.yaml)
