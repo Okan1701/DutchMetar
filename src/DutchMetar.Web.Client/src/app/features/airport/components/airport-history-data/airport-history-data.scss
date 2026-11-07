@@ -25,7 +25,7 @@ pre {
 
 .chart-section {
     display: flex;
-    gap: 30px;
+    gap: var(--app-element-gap);
     width: 100%;
     min-width: 0;
     max-width: 100%;
