@@ -17,7 +17,7 @@ jobs:
           Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.Web.Server/Dockerfile'
           buildContext: '$(Build.SourcesDirectory)'
           tags: $(dockerImageTags)
-          arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
+          arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull) --label "nl.dutchmetar.version=${{ parameters.version }}-$(versionSuffixFull)"'
 
       - task: Docker@2
         displayName: Push image
@@ -41,7 +41,7 @@ jobs:
           Dockerfile: '$(Build.SourcesDirectory)/src/DutchMetar.WorkerService/Dockerfile'
           buildContext: '$(Build.SourcesDirectory)'
           tags: $(dockerImageTags)
-          arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull)'
+          arguments: '--build-arg APP_VERSION=${{ parameters.version }} --build-arg APP_VERSION_SUFFIX=$(versionSuffixFull) --label "nl.dutchmetar.version=${{ parameters.version }}-$(versionSuffixFull)"'
 
       - task: Docker@2
         displayName: Push image
