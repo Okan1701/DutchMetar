@@ -21,7 +21,7 @@
             }
             @if (item.latestWeather?.windDirection && item.latestWeather.windSpeedKnots) {
                 <div>
-                    Wind {{ item.latestWeather.windDirection }}° at
+                    Wind {{ item.latestWeather.windDirection | heading }}° at
                     {{ item.latestWeather.windSpeedKnots }}kt
                 </div>
             }

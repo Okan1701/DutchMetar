@@ -8,6 +8,7 @@ import { AirportDetails } from '../../../../../../shared/models/airport/airport-
 import { MatRipple } from '@angular/material/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HeadingPipe } from '../../../../../../shared/pipes/heading-pipe';
 
 @Component({
     selector: 'app-decoded-observations',
@@ -21,6 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
         MatCardSubtitle,
         MatIcon,
         MatRipple,
+        HeadingPipe,
     ],
     templateUrl: './decoded-observations.html',
     styleUrl: './decoded-observations.scss',

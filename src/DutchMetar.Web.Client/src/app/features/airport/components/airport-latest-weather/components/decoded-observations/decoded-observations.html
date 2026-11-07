@@ -25,7 +25,7 @@
                 <div class="decoded-content">
                     @if (airportDetails().latestWeather?.windDirection && airportDetails().latestWeather?.windSpeedKnots) {
                         <app-latest-weather-value-card icon="air" label="Wind Direction & Speed">
-                            {{ airportDetails().latestWeather?.windDirection }}° / {{ airportDetails().latestWeather?.windSpeedKnots }} kt
+                            {{ airportDetails().latestWeather?.windDirection! | heading }}° / {{ airportDetails().latestWeather?.windSpeedKnots }} kt
                         </app-latest-weather-value-card>
                     }
                     @if (airportDetails().latestWeather?.visibilityMeters) {

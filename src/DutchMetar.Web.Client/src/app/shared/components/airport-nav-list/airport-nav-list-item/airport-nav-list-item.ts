@@ -6,10 +6,11 @@ import { RouterLink } from '@angular/router';
 import { AirportSummary } from '../../../models/airport/airport-summary';
 import { MeteoCondition } from '../../../types/meteo-condition';
 import { Badge } from '../../badge/badge';
+import { HeadingPipe } from '../../../pipes/heading-pipe';
 
 @Component({
     selector: 'app-airport-nav-list-item',
-    imports: [DatePipe, MatIconModule, MatRippleModule, RouterLink, Badge],
+    imports: [DatePipe, MatIconModule, MatRippleModule, RouterLink, Badge, HeadingPipe],
     templateUrl: './airport-nav-list-item.html',
     styleUrl: './airport-nav-list-item.scss',
 })
