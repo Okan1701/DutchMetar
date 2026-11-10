@@ -30,11 +30,12 @@ This repo contains the following docs which are useful for understanding the rep
 
 ## General Rules
 
-DO:
+**DO:**
 - After every change, perform the following checks:
     - Analyze if the actual changes comply with the user request
     - Analyze if it meets the repository code guidelines
     - Build the solution and/or run tests. Only build/test what is needed!
+    - Unused imports in the code are removed.
 - Only add code comments to explain specific edge cases
 - When modifying existing code, check if there are relevant unit tests to update.
 - If able, analyze existing similar code to get a feel for implementation guidelines and style.
@@ -45,3 +46,21 @@ DO:
     - Developers should always review the output themselves and commit/push/merge themselves.
 - Add useless/verbose comments in the code.
 - Expose domain entities outside Core project.
+
+## Rules for unit test
+
+When writing unit tests, adhere to the following rules unless overriden in the user prompt:
+
+- Always have a clear scope when generating unit tests. If the user did not provide a clear scope, ask for it if able.
+- Always write tests cases for observable behavior. Do not write tests for implementation details
+- Avoid testing builtin or external frameworks. Assume that they work
+- When mocking dependencies, always do the least amount of mocking. Do not overengineer it.
+- Do not overengineer the test cases. The fewer tests the better. 
+- When fixing failing tests, never adjust the target implementation itself to make the test pass unless agreed upon with the user.
+- Focus on testing actual business logic rather than testing infrastructure code.
+- When using placeholder/test values in objects, try to use plausible values.
+
+Folder structure:
+
+- For each project that requires unit tests, a identical named test project exists ending with *.Tests or something to that efect.
+- THe test project should mirror the folder structure of the target project as much as possible.

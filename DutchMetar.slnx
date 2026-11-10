@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path="README.md" />
     <File Path=".github/workflows/build.yaml" />
+    <File Path="AGENTS.MD" />
     <File Path="azure-pipelines.yml" />
     <File Path="docker-compose.yml" />
   </Folder>
