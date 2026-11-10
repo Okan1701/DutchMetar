@@ -2,12 +2,13 @@ name: ${{ parameters.version }}-${{ parameters.channel }}$(Build.BuildId)
 
 trigger:
   - master
+  - develop
 
 parameters:
   - name: version
     displayName: Version
     type: string
-    default: 1.0.0
+    default: 1.1.0
   - name: channel
     displayName: Release Channel
     type: string
