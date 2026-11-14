@@ -6,7 +6,7 @@
         <span class="navbar-title">Dutch METAR</span>
     </mat-toolbar>
     <mat-sidenav-container class="sidenav" autosize>
-        <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()">
+        <mat-sidenav [mode]="showMobileSideNav() ? 'over' : 'side'" [opened]="!showMobileSideNav()" [autoFocus]="false">
             <app-airport-nav-list (airportSelected)="onAirportSelected()"></app-airport-nav-list>
         </mat-sidenav>
         <mat-sidenav-content>
