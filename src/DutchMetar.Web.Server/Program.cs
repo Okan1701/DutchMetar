@@ -29,6 +29,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<DutchMetarContext>();
 builder.Services.AddDutchMetarDatabaseContext(builder.Configuration);
+builder.Services.AddDistributedCache(builder.Configuration, builder.Environment);
 builder.Services.AddAirportSummaryFeature();
 builder.Services.AddAirportDayHistoryFeature();
 builder.Services.AddMetarHistoryFeature();
