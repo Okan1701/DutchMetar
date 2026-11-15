@@ -5,8 +5,6 @@ namespace DutchMetar.Core.Infrastructure.Data;
 
 public class DutchMetarContext : DbContext
 {
-    public const string ConnectionStringKey = "DutchMetarMssql";
-    
     public DbSet<Airport> Airports { get; set; }
     
     public DbSet<Metar> Metars { get; set; }
